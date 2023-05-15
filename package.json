@@ -1,5 +1,5 @@
 {
-  "name": "vue-naive-admin",
+  "name": "trip-admin",
   "version": "1.0.0",
   "scripts": {
     "dev": "vite",
