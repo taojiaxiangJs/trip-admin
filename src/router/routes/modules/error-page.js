@@ -14,7 +14,7 @@ export default {
     {
       name: 'ERROR-404',
       path: '404',
-      component: () => import('./404.vue'),
+      component: () => import('@/views/error-page/404.vue'),
       meta: {
         title: '404',
         icon: 'tabler:error-404',

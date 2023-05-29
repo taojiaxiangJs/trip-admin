@@ -35,7 +35,6 @@ export async function addDynamicRoutes() {
     router.addRoute(EMPTY_ROUTE)
     return
   }
-
   // 有token的情况
   try {
     const userStore = useUserStore()

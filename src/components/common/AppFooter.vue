@@ -7,7 +7,7 @@
         target="__blank"
         hover="decoration-underline color-primary"
       >
-        大脸怪</a
+        传奇出行</a
       >
     </p>
     <p>

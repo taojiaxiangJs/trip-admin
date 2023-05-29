@@ -15,31 +15,57 @@
         </h5>
         <div mt-30>
           <n-input
+            v-if="!isMessage"
             v-model:value="loginInfo.name"
             autofocus
             class="h-50 items-center pl-10 text-16"
             placeholder="admin"
             :maxlength="20"
           />
+          <n-input
+            v-else
+            v-model:value="loginInfo.phone"
+            autofocus
+            class="h-50 items-center pl-10 text-16"
+            placeholder="请输入手机号"
+            :maxlength="11"
+          />
         </div>
         <div mt-30>
           <n-input
+            v-if="!isMessage"
             v-model:value="loginInfo.password"
             class="h-50 items-center pl-10 text-16"
             type="password"
             show-password-on="mousedown"
             placeholder="123456"
             :maxlength="20"
-            @keydown.enter="handleLogin"
           />
+          <n-input-group v-else>
+            <n-input
+              v-model:value="loginInfo.code"
+              class="h-50 items-center pl-10 text-16 flex-1"
+              show-password-on="mousedown"
+              placeholder="请输入验证码"
+              :maxlength="6"
+            />
+            <n-button type="primary" ghost size="large" class="h-50 items-center pl-10 text-16">
+              获取验证码
+            </n-button>
+          </n-input-group>
         </div>
 
-        <div mt-20>
+        <div mt-20 f-b-c h-24>
+          <div v-if="isMessage"></div>
           <n-checkbox
+            v-else
             :checked="isRemember"
             label="记住我"
             :on-update:checked="(val) => (isRemember = val)"
           />
+          <n-button text type="primary" @click="toMessage">{{
+            isMessage ? '账号登录' : '短信登录'
+          }}</n-button>
         </div>
 
         <div mt-20>
@@ -73,9 +99,16 @@ const router = useRouter()
 const { query } = useRoute()
 
 const loginInfo = ref({
-  name: '',
-  password: '',
+  name: 'admin',
+  password: '123456',
+  phone: '',
+  code: '',
 })
+
+const isMessage = ref(false)
+const toMessage = () => {
+  isMessage.value = !isMessage.value
+}
 
 initLoginInfo()
 

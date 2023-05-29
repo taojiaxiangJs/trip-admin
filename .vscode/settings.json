@@ -21,7 +21,8 @@
     "editor.formatOnSave": false
   },
   "[vue]": {
-    "editor.formatOnSave": false
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "Vue.volar"
   },
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
   "editor.codeActionsOnSave": {
