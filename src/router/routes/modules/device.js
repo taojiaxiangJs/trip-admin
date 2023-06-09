@@ -1,0 +1,42 @@
+const Layout = () => import('@/layout/index.vue')
+
+export default {
+  name: 'Device',
+  path: '/device',
+  component: Layout,
+  redirect: '/device/all',
+  meta: {
+    title: '设备管理',
+    icon: 'mingcute:ebike-fill',
+    order: 2,
+  },
+  children: [
+    {
+      name: 'device-all',
+      path: 'all',
+      component: () => import('@/views/device/index.vue'),
+      meta: {
+        title: '设备管理',
+        icon: 'carbon:gui-management',
+      },
+    },
+    {
+      name: 'device-product',
+      path: 'product',
+      component: () => import('@/views/device/index.vue'),
+      meta: {
+        title: '设备型号',
+        icon: 'tabler:box-model-2',
+      },
+    },
+    {
+      name: 'device-distribute',
+      path: 'distribute',
+      component: () => import('@/views/device/index.vue'),
+      meta: {
+        title: '设备分布',
+        icon: 'material-symbols:pin-drop-outline-rounded',
+      },
+    },
+  ],
+}

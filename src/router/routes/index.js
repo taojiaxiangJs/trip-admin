@@ -1,4 +1,4 @@
-const Layout = () => import('@/layout/index.vue')
+// const Layout = () => import('@/layout/index.vue')
 
 export const basicRoutes = [
   {
@@ -18,42 +18,42 @@ export const basicRoutes = [
     },
   },
 
-  {
-    name: 'ExternalLink',
-    path: '/external-link',
-    component: Layout,
-    meta: {
-      title: '外部链接',
-      icon: 'mdi:link-variant',
-      order: 4,
-    },
-    children: [
-      {
-        name: 'LinkGithubSrc',
-        path: 'https://github.com/zclzone/vue-naive-admin',
-        meta: {
-          title: '源码 - github',
-          icon: 'mdi:github',
-        },
-      },
-      {
-        name: 'LinkGiteeSrc',
-        path: 'https://gitee.com/zclzone/vue-naive-admin',
-        meta: {
-          title: '源码 - gitee',
-          icon: 'simple-icons:gitee',
-        },
-      },
-      {
-        name: 'LinkDocs',
-        path: 'https://zclzone.github.io/vue-naive-admin-docs',
-        meta: {
-          title: '文档 - vuepress',
-          icon: 'mdi:vuejs',
-        },
-      },
-    ],
-  },
+  // {
+  //   name: 'ExternalLink',
+  //   path: '/external-link',
+  //   component: Layout,
+  //   meta: {
+  //     title: '外部链接',
+  //     icon: 'mdi:link-variant',
+  //     order: 12,
+  //   },
+  //   children: [
+  //     {
+  //       name: 'LinkGithubSrc',
+  //       path: 'https://github.com/zclzone/vue-naive-admin',
+  //       meta: {
+  //         title: '源码 - github',
+  //         icon: 'mdi:github',
+  //       },
+  //     },
+  //     {
+  //       name: 'LinkGiteeSrc',
+  //       path: 'https://gitee.com/zclzone/vue-naive-admin',
+  //       meta: {
+  //         title: '源码 - gitee',
+  //         icon: 'simple-icons:gitee',
+  //       },
+  //     },
+  //     {
+  //       name: 'LinkDocs',
+  //       path: 'https://zclzone.github.io/vue-naive-admin-docs',
+  //       meta: {
+  //         title: '文档 - vuepress',
+  //         icon: 'mdi:vuejs',
+  //       },
+  //     },
+  //   ],
+  // },
 ]
 
 export const NOT_FOUND_ROUTE = {
