@@ -15,6 +15,33 @@ export function formatDate(date = undefined, format = 'YYYY-MM-DD') {
 }
 
 /**
+ * @desc  千分位格式化金额
+ * @param {fee} 金额
+ * @param {type} 类型 front、server
+ * @returns {fee}
+ */
+export function formatFee(fee, type) {
+  let feeStr = fee + ''
+  if(feeStr === '0') {
+    return '0'
+  }
+  if(type === 'front') {
+    if(feeStr.length < 3) {
+      feeStr = '000'.slice(0, -feeStr.length) + feeStr
+    }
+    return feeStr.slice(0,-2) + '.' + feeStr.slice(-2)
+  }
+  if(type === 'server') {
+    if(feeStr.includes('.')) {
+      let arr = feeStr.split('.')
+      return arr[0] + (arr[1] + '00').slice(0, 2)
+    }else{
+      return feeStr + '00'
+    }
+  }
+}
+
+/**
  * @desc  函数节流
  * @param {Function} fn
  * @param {Number} wait

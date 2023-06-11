@@ -1,6 +1,11 @@
 <template>
   <QueryBar v-if="$slots.queryBar" mb-30 @search="handleSearch" @reset="handleReset">
-    <slot name="queryBar" />
+    <template #form>
+      <slot name="queryBar" />
+    </template>
+    <template #btn>
+      <slot name="extraHandle" />
+    </template>
   </QueryBar>
 
   <n-data-table
@@ -75,7 +80,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:queryItems', 'onChecked', 'onDataChange'])
+const emit = defineEmits(['update:queryItems', 'onChecked', 'onDataChange', 'resetExtraParams'])
 const loading = ref(false)
 const initQuery = { ...props.queryItems }
 const tableData = ref([])
@@ -94,7 +99,7 @@ async function handleQuery() {
       ...props.extraParams,
       ...paginationParams,
     })
-    tableData.value = data?.pageData || data
+    tableData.value = data?.list || data
     pagination.itemCount = data.total ?? data.length
   } catch (error) {
     tableData.value = []
@@ -111,9 +116,14 @@ function handleSearch() {
 async function handleReset() {
   const queryItems = { ...props.queryItems }
   for (const key in queryItems) {
-    queryItems[key] = ''
+    queryItems[key] = null
+  }
+  const extraParams = { ...props.extraParams }
+  for (const key in extraParams) {
+    extraParams[key] = null
   }
   emit('update:queryItems', { ...queryItems, ...initQuery })
+  emit('resetExtraParams', { ...extraParams })
   await nextTick()
   pagination.page = 1
   handleQuery()

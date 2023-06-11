@@ -14,7 +14,7 @@ export default {
     {
       name: 'order-all',
       path: 'all',
-      component: () => import('@/views/order/index.vue'),
+      component: () => import('@/views/order/all/index.vue'),
       meta: {
         title: '全部订单',
         icon: 'ion:reorder-four',
@@ -23,7 +23,7 @@ export default {
     {
       name: 'order-overdue',
       path: 'overdue',
-      component: () => import('@/views/order/index.vue'),
+      component: () => import('@/views/order/overdue/index.vue'),
       meta: {
         title: '逾期订单',
         icon: 'fluent:calendar-overdue-24-regular',
@@ -32,7 +32,7 @@ export default {
     {
       name: 'order-withhold',
       path: 'withhold',
-      component: () => import('@/views/order/index.vue'),
+      component: () => import('@/views/order/withhold/index.vue'),
       meta: {
         title: '代扣明细',
         icon: 'tabler:list-details',
@@ -41,11 +41,20 @@ export default {
     {
       name: 'order-advance',
       path: 'advance',
-      component: () => import('@/views/order/index.vue'),
+      component: () => import('@/views/order/advance/index.vue'),
       meta: {
         title: '垫资订单',
         icon: 'game-icons:level-four-advanced',
       },
     },
+    {
+      name: 'order-detail',
+      path: 'detail',
+      isHidden: true,
+      component: () => import('@/views/order/common-page/detail.vue'),
+      meta: {
+        title: '订单详情'
+      },
+    }
   ],
 }

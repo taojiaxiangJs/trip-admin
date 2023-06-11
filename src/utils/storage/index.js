@@ -1,6 +1,6 @@
 import { createStorage } from './storage'
 
-const prefixKey = 'Vue_Naive_Admin_'
+const prefixKey = 'Trip_Admin_'
 
 export const createLocalStorage = function (option = {}) {
   return createStorage({
