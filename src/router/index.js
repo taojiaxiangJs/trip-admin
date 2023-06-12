@@ -46,6 +46,7 @@ export async function addDynamicRoutes() {
     })
     router.hasRoute(EMPTY_ROUTE.name) && router.removeRoute(EMPTY_ROUTE.name)
     router.addRoute(NOT_FOUND_ROUTE)
+    return accessRoutes.length && accessRoutes.sort((a, b)=> a?.meta?.order - b?.meta?.order)[0].path
   } catch (error) {
     console.error(error)
   }

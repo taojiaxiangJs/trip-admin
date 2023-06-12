@@ -139,11 +139,13 @@ async function handleLogin() {
     } else {
       lStorage.remove('loginInfo')
     }
-    await addDynamicRoutes()
-    if (query.redirect) {
+    const redirect = await addDynamicRoutes()
+    if (query.redirect && query.redirect !== '/') {
       const path = query.redirect
       Reflect.deleteProperty(query, 'redirect')
       router.push({ path, query })
+    } else if(redirect) {
+      router.push(redirect)
     } else {
       router.push('/')
     }

@@ -8,9 +8,8 @@ export function createPermissionGuard(router) {
     /** 没有token的情况 */
     if (isNullOrWhitespace(token)) {
       if (WHITE_LIST.includes(to.path)) return true
-      return { path: 'login', query: { ...to.query, redirect: to.path } }
+      return { path: 'login', query: { redirect: to.path, ...to.query } }
     }
-
     /** 有token的情况 */
     if (to.path === '/login') return { path: '/' }
 
