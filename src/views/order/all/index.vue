@@ -142,11 +142,7 @@ const valueToName = (value, options)=> {
 }
 
 const formatDate = (time) => {
-  if(time) {
-    return formatDateTime( time )
-  }else{
-    return '--'
-  }
+  return time ? formatDateTime( time ) : '--'
 }
 
 // 导出数据

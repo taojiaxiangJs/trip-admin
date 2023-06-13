@@ -1,109 +1,206 @@
 <template>
   <CommonPage>
     <n-h6 prefix="bar" align-text><n-text type="primary">基础信息</n-text></n-h6>
+    <div p-4 text-16 flex flex-wrap>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>租借人：</div>
+        <div flex-1 ml-8>{{ orderDetail.rentUserInfoVo?.name || '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>支付宝账号：</div>
+        <div flex-1 ml-8>{{ orderDetail.rentUserInfoVo?.phone || '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>身份证号码：</div>
+        <div flex-1 ml-8>
+          <span>{{ orderDetail.rentUserInfoVo?.idCard || '--' }}</span>
+          <n-button type="primary" size="small" ml-16>查看身份证</n-button>
+        </div>
+      </div>
+    </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">紧急联系人</n-text></n-h6>
+    <div p-4 text-16 flex flex-wrap>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>姓名：</div>
+        <div flex-1 ml-8>{{  orderDetail.rentUserInfoVo?.emergencyContactVos[0]?.name || '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>关系：</div>
+        <div flex-1 ml-8>{{  orderDetail.rentUserInfoVo?.emergencyContactVos[0]?.relation || '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>联系方式：</div>
+        <div flex-1 ml-8>
+          <span>{{  orderDetail.rentUserInfoVo?.emergencyContactVos[0]?.phone || '--' }}</span>
+        </div>
+      </div>
+    </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">租借设备</n-text></n-h6>
+    <div p-4 text-16 flex flex-wrap>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>车架号：</div>
+        <div flex-1 ml-8>{{ orderDetail.equipmentInfoVo?.chassisNumber || '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>车牌号：</div>
+        <div flex-1 ml-8>{{ orderDetail.equipmentInfoVo?.licensePlateNumber || '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>中控号：</div>
+        <div flex-1 ml-8>{{ orderDetail.equipmentInfoVo?.equipmentCode || '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>车辆来源：</div>
+        <div flex-1 ml-8>{{ '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>型号：</div>
+        <div flex-1 ml-8>{{ orderDetail.productInfoVo?.productName || '--' }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>电压：</div>
+        <div flex-1 ml-8>{{ orderDetail.productInfoVo?.voltage || '--' }} V</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>速度：</div>
+        <div flex-1 ml-8>{{ orderDetail.productInfoVo?.speed || '--' }} km/h</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>价值：</div>
+        <div flex-1 ml-8>{{ orderDetail.productInfoVo?.price ? formatFee( orderDetail.productInfoVo?.price, 'front') : '--' }} 元</div>
+      </div>
+    </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">换车记录</n-text></n-h6>
+    
     <n-h6 prefix="bar" align-text><n-text type="primary">租借方式</n-text></n-h6>
+    <div p-4 text-16 flex flex-wrap>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>支付方式：</div>
+        <div flex-1 ml-8>{{ orderDetail.payTypeInfoVo?.payType }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>租借合同：</div>
+        <div flex-1 ml-8><n-button type="primary" size="small">下载</n-button></div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>租借时间：</div>
+        <div flex-1 ml-8>{{ formatDate( orderDetail.payTypeInfoVo?.createTime) }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>到期时间：</div>
+        <div flex-1 ml-8>{{ formatDate( orderDetail.payTypeInfoVo?.expireTime) }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>租借期限：</div>
+        <div flex-1 ml-8>{{ orderDetail.payTypeInfoVo?.rentDays }} 天</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>退租时间：</div>
+        <div flex-1 ml-8>{{ formatDate( orderDetail.payTypeInfoVo?.returnTime ) }}</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>免押押金：</div>
+        <div flex-1 ml-8>
+          <span>{{ formatFee( orderDetail.sesameDepositDetail?.unfreeze, 'front') }} 元</span>
+          <n-button type="primary" size="small" ml-16>冻结</n-button>
+          <n-button type="primary" size="small" ml-8>申扣押金</n-button>
+        </div>
+      </div>
+    </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">其他信息</n-text></n-h6>
+    <div p-4 text-16 flex flex-wrap>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>办单人：</div>
+        <div flex-1 ml-8>
+          <span>{{ '--' }}</span>
+          <n-button type="primary" size="small" ml-16>添加办单人</n-button>
+        </div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>推荐人：</div>
+        <div flex-1 ml-8>
+          <span>{{ '--' }}</span>
+          <n-button type="primary" size="small" ml-16>添加推荐人</n-button>
+        </div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>备注：</div>
+        <div flex-1 ml-8>
+          <span>{{ '--' }}</span>
+          <n-button type="primary" size="small" ml-16>添加备注</n-button>
+        </div>
+      </div>
+    </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">租金支付情况</n-text></n-h6>
+    <div p-4 text-16 flex flex-wrap>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>租车单价：</div>
+        <div flex-1 ml-8>{{ formatFee( orderDetail.productRentVo?.rentUnitFee, 'front') }} 元/月</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>换电单价：</div>
+        <div flex-1 ml-8>{{ formatFee( orderDetail.productRentVo?.depositFee, 'front') }} 元/月</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>合计月租金：</div>
+        <div flex-1 ml-8>{{ formatFee( orderDetail.productRentVo?.sumUnitFee, 'front') }} 元/月</div>
+      </div>
+      <div class="w-1/4" flex mb-8>
+        <div w-120 text-right>总租金：</div>
+        <div flex-1 ml-8>{{ formatFee( orderDetail.productRentVo?.sumFee, 'front') }} 元</div>
+      </div>
+    </div>
     <CrudTable
       ref="$table"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.getAll"
-      @on-data-change="(data) => (tableData = data)"
+      :init-table-data="tableData"
     >
-      <!-- <template #queryBar>
-        <QueryBarItem :content-width="290">
-          <n-input
-            v-model:value="queryItems.searchString"
-            type="text"
-            placeholder="订单号/租借人/联系方式/店铺/推荐人"
-            @keydown.enter="$table?.handleSearch"
-          />
-        </QueryBarItem>
-        <QueryBarItem label="状态" :label-width="40">
-          <n-select v-model:value="queryItems.newStatus" :options="options.status" />
-        </QueryBarItem>
-        <QueryBarItem label="订单类型" :label-width="70">
-          <n-select v-model:value="queryItems.productType" :options="options.orderType" />
-        </QueryBarItem>
-        <QueryBarItem label="支付方式" :label-width="70">
-          <n-select v-model:value="queryItems.payType" :options="options.payType" />
-        </QueryBarItem>
-        <QueryBarItem label="店铺" :label-width="40">
-          <n-select v-model:value="queryItems.storeId" filterable placeholder="选择店铺" :options="storeList" />
-        </QueryBarItem>
-        <QueryBarItem label="租借日期" :label-width="70" :content-width="300">
-          <n-date-picker v-model:value="queryDate.create" type="daterange" clearable value-format="yyyy-MM-dd" @update:value="dateChange"/>
-        </QueryBarItem>
-        <QueryBarItem label="预扣日" :label-width="50" :content-width="300">
-          <n-date-picker v-model:value="queryDate.next" type="daterange" clearable value-format="yyyy-MM-dd" @update:value="nextDateChange"/>
-        </QueryBarItem>
-      </template>
-      <template #extraHandle>
-        <n-button ml-20 type="primary" @click="exportData">导出数据</n-button>
-      </template> -->
     </CrudTable>
   </CommonPage>
 </template>
 
 <script setup>
 import { NButton } from 'naive-ui'
-import { formatDateTime, formatFee, renderIcon} from '@/utils'
+import { formatDateTime, formatFee } from '@/utils'
 import { useCRUD } from '@/composables'
 import { options } from '../constant'
-import globalApi from '@/api'
 import api from '../api'
 
 defineOptions({ name: 'Crud' })
 
 const router = useRouter()
+const { query } = useRoute()
 
 const $table = ref(null)
 /** 表格数据，触发搜索的时候会更新这个值 */
 const tableData = ref([])
-/** QueryBar筛选参数（可选） */
-const queryItems = ref({})
-/** 补充参数（可选） */
-const extraParams = ref({})
-
-const queryDate = ref({
-  create: null,
-  next: null
-})
-
-onActivated(() => {
-  $table.value?.handleSearch()
-})
-
-// 店铺
-const storeList = ref([])
-const getStoreList = () => {
-  globalApi.getStore().then(res=> {
-    storeList.value = res.data?.list.map(e => ({ label: e.storeName, value: e.storeId}))
+const orderDetail = ref({})
+const getDetail = ()=> {
+  api.getOrderDetail( { rentOrderI: query.rentOrderId } ).then(res=> {
+    tableData.value = res.data?.payInfoVos || []
+    orderDetail.value = res.data
+    console.log(orderDetail, tableData.value)
   })
 }
-getStoreList()
+getDetail()
 
-// 预扣日切换
-const nextDateChange = (arg1, arg2) => {
-  extraParams.value.nextPayStartDateString = arg2[0] || ''
-  extraParams.value.nextPayEndDateString = arg2[1] || ''
+const agentUser = ref([])
+const getAgentUser = ()=> {
+  api.getAgentUser( { rentOrderI: query.rentOrderId } ).then(res=> {
+    agentUser.value = res.data || []
+    console.log(agentUser)
+  })
 }
-// 租借日切换 
-const dateChange = (arg1, arg2) => {
-  extraParams.value.startDateString = arg2[0] || ''
-  extraParams.value.endDateString = arg2[1] || ''
-}
+getAgentUser()
+
 
 const columns = [
-  { title: '预扣日期', key: 'nextPayTime', render(row) { return h('span', formatDate( row.nextPayTime))} },
-  { title: '支付日期', key: 'nextPayTime', render(row) { return h('span', formatDate( row.nextPayTime))} },
-  { title: '支付金额', key: 'rentUnitFee', render(row) { return h('span', formatFee( row.rentUnitFee, 'front'))} },
+  { title: '预扣日期', key: 'payTime', render(row) { return h('span', formatDate( row.payTime))} },
+  { title: '支付日期', key: 'realPayTime', render(row) { return h('span', formatDate( row.realPayTime))} },
+  { title: '支付金额', key: 'payFee', render(row) { return h('span', formatFee( row.payFee, 'front'))} },
   { title: '支付方式', key: 'payType', render(row) { return h('span', valueToName(row.payType, options.payType) )}  },
-  { title: '支付结果', key: 'status', render(row) { return h('span', valueToName(row.status, options.status) )} },
+  { title: '支付结果', key: 'refundStatus', render(row) { return h('span', valueToName(row.refundStatus, options.status) )} },
   {
     title: '操作',
     key: 'actions',
@@ -173,23 +270,7 @@ const valueToName = (value, options)=> {
 }
 
 const formatDate = (time) => {
-  if(time) {
-    return formatDateTime( time )
-  }else{
-    return '--'
-  }
-}
-
-// 导出数据
-const exportData = () => {
-  console.log( {...extraParams.value, ...queryItems.value})
-}
-
-// 重置
-const resetExtraParams = () => {
-  queryDate.value.create = null
-  queryDate.value.next = null
-  extraParams.value = {}
+  return time ? formatDateTime( time ) : '--'
 }
 
 const handleView = (row) => {

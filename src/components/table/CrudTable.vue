@@ -51,6 +51,11 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  /** 初始化table列表数据*/ 
+  initTableData: {
+    type: Array,
+    default: ()=> [],
+  },
   /** queryBar中的参数 */
   queryItems: {
     type: Object,
@@ -83,8 +88,15 @@ const props = defineProps({
 const emit = defineEmits(['update:queryItems', 'onChecked', 'onDataChange', 'resetExtraParams'])
 const loading = ref(false)
 const initQuery = { ...props.queryItems }
-const tableData = ref([])
+const tableData = ref([...props.initTableData])
 const pagination = reactive({ page: 1, pageSize: 10 })
+
+watch(
+  () => props.initTableData,
+  () => {
+    tableData.value = [ ...props.initTableData ]
+  }
+)
 
 async function handleQuery() {
   try {
