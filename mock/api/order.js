@@ -7,10 +7,10 @@ export default [
       return {
         code: 0,
         data: {
-          ...all.response.data,
-        },
+          ...all.response.data
+        }
       }
-    },
+    }
   },
   {
     url: '/api/order/detail',
@@ -19,10 +19,10 @@ export default [
       return {
         code: 0,
         data: {
-          ...detail.response.data,
-        },
+          ...detail.response.data
+        }
       }
-    },
+    }
   },
   {
     url: '/api/order/agent-user',
@@ -30,10 +30,8 @@ export default [
     response: () => {
       return {
         code: 0,
-        data: {
-          ...agentUserList.response.data,
-        },
+        data: [...agentUserList.response.data]
       }
-    },
-  },
+    }
+  }
 ]

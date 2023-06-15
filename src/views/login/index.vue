@@ -44,7 +44,7 @@
           <n-input-group v-else>
             <n-input
               v-model:value="loginInfo.code"
-              class="h-50 items-center pl-10 text-16 flex-1"
+              class="h-50 flex-1 items-center pl-10 text-16"
               show-password-on="mousedown"
               placeholder="请输入验证码"
               :maxlength="6"
@@ -55,7 +55,7 @@
           </n-input-group>
         </div>
 
-        <div mt-20 f-b-c h-24>
+        <div mt-20 h-24 f-b-c>
           <div v-if="isMessage"></div>
           <n-checkbox
             v-else
@@ -102,7 +102,7 @@ const loginInfo = ref({
   name: 'admin',
   password: '123456',
   phone: '',
-  code: '',
+  code: ''
 })
 
 const isMessage = ref(false)
@@ -144,7 +144,7 @@ async function handleLogin() {
       const path = query.redirect
       Reflect.deleteProperty(query, 'redirect')
       router.push({ path, query })
-    } else if(redirect) {
+    } else if (redirect) {
       router.push(redirect)
     } else {
       router.push('/')

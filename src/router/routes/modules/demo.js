@@ -10,7 +10,7 @@ export default {
     customIcon: 'logo',
     role: ['admin'],
     requireAuth: true,
-    order: 11,
+    order: 11
   },
   children: [
     {
@@ -22,8 +22,8 @@ export default {
         icon: 'ic:baseline-table-view',
         role: ['admin'],
         requireAuth: true,
-        keepAlive: true,
-      },
+        keepAlive: true
+      }
     },
     {
       name: 'MDEditor',
@@ -34,8 +34,8 @@ export default {
         icon: 'ri:markdown-line',
         role: ['admin'],
         requireAuth: true,
-        keepAlive: true,
-      },
+        keepAlive: true
+      }
     },
     {
       name: 'RichTextEditor',
@@ -46,8 +46,8 @@ export default {
         icon: 'ic:sharp-text-rotation-none',
         role: ['admin'],
         requireAuth: true,
-        keepAlive: true,
-      },
+        keepAlive: true
+      }
     },
     {
       name: 'Upload',
@@ -58,8 +58,8 @@ export default {
         icon: 'mdi:upload',
         role: ['admin'],
         requireAuth: true,
-        keepAlive: true,
-      },
-    },
-  ],
+        keepAlive: true
+      }
+    }
+  ]
 }

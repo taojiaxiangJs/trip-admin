@@ -5,7 +5,7 @@ export const basicRoutes = [
     name: '404',
     path: '/404',
     component: () => import('@/views/error-page/404.vue'),
-    isHidden: true,
+    isHidden: true
   },
 
   {
@@ -14,9 +14,9 @@ export const basicRoutes = [
     component: () => import('@/views/login/index.vue'),
     isHidden: true,
     meta: {
-      title: '登录页',
-    },
-  },
+      title: '登录页'
+    }
+  }
 
   // {
   //   name: 'ExternalLink',
@@ -60,13 +60,13 @@ export const NOT_FOUND_ROUTE = {
   name: 'NotFound',
   path: '/:pathMatch(.*)*',
   redirect: '/404',
-  isHidden: true,
+  isHidden: true
 }
 
 export const EMPTY_ROUTE = {
   name: 'Empty',
   path: '/:pathMatch(.*)*',
-  component: null,
+  component: null
 }
 
 const modules = import.meta.glob('./modules/*.js', { eager: true })

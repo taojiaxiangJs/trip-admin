@@ -48,7 +48,6 @@ pnpm preview
 pnpm cz
 ```
 
-
 ### 目录说明
 
 ```
@@ -61,10 +60,10 @@ Vue Naive Admin
 |-- build                               // 构建相关配置
 |   |-- constant.js                     // 构建相关的常量
 |   |-- utils.js                        // 构建相关的工具方法
-|   |-- config                          
+|   |-- config
 |   |   |-- define.js                   // 注入全局常量，启动或打包后将添加到window中
 |   |   |-- proxy.js                    // 代理配置
-|   |-- plugin                          
+|   |-- plugin
 |   |   |-- html.js                     // vite-plugin-html插件，用于注入变量或者html标签
 |   |   |-- mock.js                     // vite-plugin-mock插件，处理mock
 |   |   |-- unplugin.js                 // unplugin相关插件，包含DefineOptions和自动导入
@@ -114,7 +113,7 @@ Vue Naive Admin
 |   |   |-- demo                        // 示例
 |   |   |-- error-page                  // 错误页
 |   |   |-- login                       // 登录页
-|   |   |-- workbench                   // 首页  
+|   |   |-- workbench                   // 首页
 |   |-- App.vue
 |   |-- main.js
 |-- .cz-config.js                       // git提交配置
@@ -128,7 +127,7 @@ Vue Naive Admin
 |-- .gitignore                          // git忽略
 |-- .prettierignore                     // prettier格式化忽略
 |-- commitlint.config.js                // commitlint规范配置
-|-- index.html                          
+|-- index.html
 |-- jsconfig.json                       // js配置
 |-- LICENSE                             // 协议
 |-- package.json                        // 依赖描述文件
@@ -138,6 +137,3 @@ Vue Naive Admin
 |-- unocss.config.js                    // unocss配置
 |-- vite.config.js                      // vite配置
 ```
-
-
-

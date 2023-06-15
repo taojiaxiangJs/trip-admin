@@ -8,7 +8,7 @@ const isHash = import.meta.env.VITE_USE_HASH === 'true'
 export const router = createRouter({
   history: isHash ? createWebHashHistory('/') : createWebHistory('/'),
   routes: basicRoutes,
-  scrollBehavior: () => ({ left: 0, top: 0 }),
+  scrollBehavior: () => ({ left: 0, top: 0 })
 })
 
 export async function setupRouter(app) {
@@ -46,7 +46,9 @@ export async function addDynamicRoutes() {
     })
     router.hasRoute(EMPTY_ROUTE.name) && router.removeRoute(EMPTY_ROUTE.name)
     router.addRoute(NOT_FOUND_ROUTE)
-    return accessRoutes.length && accessRoutes.sort((a, b)=> a?.meta?.order - b?.meta?.order)[0].path
+    return (
+      accessRoutes.length && accessRoutes.sort((a, b) => a?.meta?.order - b?.meta?.order)[0].path
+    )
   } catch (error) {
     console.error(error)
   }
