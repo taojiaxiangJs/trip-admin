@@ -10,7 +10,7 @@ export const all = {
     newStatus: 21,
     storeId: 309,
     payType: 1,
-    productType: 3,
+    productType: 3
   },
   response: {
     status: 'S000',
@@ -53,7 +53,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -62,7 +62,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -71,7 +71,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -80,7 +80,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -89,7 +89,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -98,7 +98,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -107,7 +107,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -116,7 +116,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -125,7 +125,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -134,7 +134,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -143,7 +143,7 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
+              refundStatus: null
             },
             {
               payRuleId: null,
@@ -152,8 +152,8 @@ export const all = {
               payFee: 59900,
               payType: 1,
               status: 0,
-              refundStatus: null,
-            },
+              refundStatus: null
+            }
           ],
           productType: 3,
           nextPayTime: 1688969258254,
@@ -162,16 +162,16 @@ export const all = {
           operateUid: null,
           operator: null,
           adminRemark: null,
-          padFunded: 0,
-        },
-      ],
-    },
-  },
+          padFunded: 0
+        }
+      ]
+    }
+  }
 }
 
 export const detail = {
   params: {
-    rentOrderId: 'R2023061318342500198',
+    rentOrderId: 'R2023061318342500198'
   },
   response: {
     status: 'S000',
@@ -188,17 +188,15 @@ export const detail = {
         name: '尹智强',
         idCard: '220281199706198612',
         nickName: '未设置',
-        idCardImgFrontUrl:
-          'http://qncx-picture.oss-cn-beijing.aliyuncs.com/image/product/5b02ac33fd84cf16476521a9857a7568.jpg',
-        idCardImgBackUrl:
-          'http://qncx-picture.oss-cn-beijing.aliyuncs.com/image/product/a4448150b9637d64510223aa5c752635.jpg',
+        idCardImgFrontUrl: 'http://qncx-picture.oss-cn-beijing.aliyuncs.com/image/product/5b02ac33fd84cf16476521a9857a7568.jpg',
+        idCardImgBackUrl: 'http://qncx-picture.oss-cn-beijing.aliyuncs.com/image/product/a4448150b9637d64510223aa5c752635.jpg',
         emergencyContactVos: [
           {
             name: '刘涛',
             phone: '17854215659',
-            relation: '同事/亲戚/朋友',
-          },
-        ],
+            relation: '同事/亲戚/朋友'
+          }
+        ]
       },
       referrerUserInfoVo: null,
       equipmentInfoVo: {
@@ -215,7 +213,7 @@ export const detail = {
         id: 13845,
         gainsharingRuleId: null,
         deleted: 0,
-        modifyTime: 1686664225147,
+        modifyTime: 1686664225147
       },
       productInfoVo: {
         productId: 45,
@@ -227,8 +225,7 @@ export const detail = {
         price: 300000,
         overdueFine: null,
         allowPointDeductionFee: null,
-        imageUrl:
-          'http://qncx-picture.oss-cn-beijing.aliyuncs.com/image/product/d8aaa4621811d503dcd07c7dfd0118b7.jpg',
+        imageUrl: 'http://qncx-picture.oss-cn-beijing.aliyuncs.com/image/product/d8aaa4621811d503dcd07c7dfd0118b7.jpg'
       },
       payTypeInfoVo: {
         rentOrderId: 'R2023061318342500198',
@@ -239,7 +236,7 @@ export const detail = {
         totalDepositFee: 0,
         rentUnitNum: 12,
         rentUnitType: 1,
-        rentDays: 360,
+        rentDays: 360
       },
       productRentVo: {
         id: null,
@@ -267,7 +264,7 @@ export const detail = {
         agentName: null,
         storeName: null,
         sumUnitFee: 59900,
-        sumFee: 718800,
+        sumFee: 718800
       },
       payInfoVos: [
         {
@@ -277,7 +274,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394018,
@@ -286,7 +283,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394019,
@@ -295,7 +292,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394020,
@@ -304,7 +301,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394021,
@@ -313,7 +310,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394022,
@@ -322,7 +319,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394023,
@@ -331,7 +328,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394024,
@@ -340,7 +337,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394025,
@@ -349,7 +346,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394026,
@@ -358,7 +355,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394027,
@@ -367,7 +364,7 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
+          refundStatus: 0
         },
         {
           payRuleId: 394028,
@@ -376,13 +373,13 @@ export const detail = {
           payFee: 59900,
           payType: 1,
           status: 0,
-          refundStatus: 0,
-        },
+          refundStatus: 0
+        }
       ],
       changeRecordVos: [],
       lessorInfo: {
         storeName: '奕豹未来',
-        address: '余杭区文福路永福社区2号农居点45号',
+        address: '余杭区文福路永福社区2号农居点45号'
       },
       orderLogs: [
         {
@@ -396,7 +393,7 @@ export const detail = {
           modifyTime: 1686652465768,
           deleted: null,
           userName: '尹智强',
-          imageUrls: [],
+          imageUrls: []
         },
         {
           id: 68295,
@@ -409,7 +406,7 @@ export const detail = {
           modifyTime: 1686652622901,
           deleted: null,
           userName: '尹智强',
-          imageUrls: [],
+          imageUrls: []
         },
         {
           id: 68294,
@@ -422,7 +419,7 @@ export const detail = {
           modifyTime: 1686652599305,
           deleted: null,
           userName: '尹智强',
-          imageUrls: [],
+          imageUrls: []
         },
         {
           id: 68311,
@@ -435,8 +432,8 @@ export const detail = {
           modifyTime: 1686653518814,
           deleted: null,
           userName: '尹智强',
-          imageUrls: [],
-        },
+          imageUrls: []
+        }
       ],
       owe: false,
       agentId: 28,
@@ -460,13 +457,13 @@ export const detail = {
         status: 'SUCCESS',
         orderStatus: 'AUTHORIZED',
         showStatus: 'SUCCESS',
-        unfreeze: 59900,
+        unfreeze: 59900
       },
       adminRemark: null,
       operator: '',
-      orderLossDeductible: null,
-    },
-  },
+      orderLossDeductible: null
+    }
+  }
 }
 
 export const agentUserList = {
@@ -490,7 +487,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 20912,
@@ -507,7 +504,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 3424,
@@ -524,7 +521,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 12256,
@@ -541,7 +538,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 19249,
@@ -558,7 +555,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 19169,
@@ -575,7 +572,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 4297,
@@ -592,7 +589,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 21773,
@@ -609,7 +606,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 12253,
@@ -626,7 +623,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 19897,
@@ -643,7 +640,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 4234,
@@ -660,7 +657,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 25802,
@@ -677,7 +674,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 25278,
@@ -694,7 +691,7 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
+        isAgentOwner: null
       },
       {
         userId: 28759,
@@ -711,9 +708,23 @@ export const agentUserList = {
         status: 1,
         roleName: null,
         roleId: null,
-        isAgentOwner: null,
-      },
-    ],
-  },
+        isAgentOwner: null
+      }
+    ]
+  }
 }
 
+export const payUrl = {
+  params: {
+    payRuleId: 397965
+  },
+  response: {
+    status: 'S000',
+    msg: '操作成功',
+    data: {
+      outTradeNo: 'P2023061719075700120_2_397965_D23061708',
+      qrCode: 'https://qr.alipay.com/bax087601qmsplfhafuu0075',
+      payOrderId: 'P2023061719075700120_2_397965_D23061708'
+    }
+  }
+}
