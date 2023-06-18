@@ -3,7 +3,7 @@ import { isNullOrWhitespace } from '@/utils'
 const ACTIONS = {
   view: '查看',
   edit: '编辑',
-  add: '新增',
+  add: '新增'
 }
 
 export default function ({ name, initForm = {}, doCreate, doDelete, doUpdate, refresh }) {
@@ -46,12 +46,12 @@ export default function ({ name, initForm = {}, doCreate, doDelete, doUpdate, re
       const actions = {
         add: {
           api: () => doCreate(modalForm.value),
-          cb: () => $message.success('新增成功'),
+          cb: () => $message.success('新增成功')
         },
         edit: {
           api: () => doUpdate(modalForm.value),
-          cb: () => $message.success('编辑成功'),
-        },
+          cb: () => $message.success('编辑成功')
+        }
       }
       const action = actions[modalAction.value]
 
@@ -71,7 +71,8 @@ export default function ({ name, initForm = {}, doCreate, doDelete, doUpdate, re
   function handleDelete(id, confirmOptions) {
     if (isNullOrWhitespace(id)) return
     $dialog.confirm({
-      content: '确定删除？',
+      title: '提示',
+      content: '此操作将删除该该数据, 是否继续?',
       async confirm() {
         try {
           modalLoading.value = true
@@ -83,7 +84,7 @@ export default function ({ name, initForm = {}, doCreate, doDelete, doUpdate, re
           modalLoading.value = false
         }
       },
-      ...confirmOptions,
+      ...confirmOptions
     })
   }
 
@@ -98,6 +99,6 @@ export default function ({ name, initForm = {}, doCreate, doDelete, doUpdate, re
     handleView,
     handleSave,
     modalForm,
-    modalFormRef,
+    modalFormRef
   }
 }

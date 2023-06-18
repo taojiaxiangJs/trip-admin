@@ -1,4 +1,4 @@
-import { all, detail, agentUserList, payUrl } from '../1.api.module/order'
+import { all, detail, agentUserList, payUrl, overduelist, withholdList, advanceList } from '../api.module/order'
 export default [
   {
     url: '/api/order/all',
@@ -41,6 +41,36 @@ export default [
       return {
         code: 0,
         data: { ...payUrl.response.data }
+      }
+    }
+  },
+  {
+    url: '/api/order/overdue-list',
+    method: 'get',
+    response: () => {
+      return {
+        code: 0,
+        data: { ...overduelist.response.data }
+      }
+    }
+  },
+  {
+    url: '/api/order/withhold-list',
+    method: 'get',
+    response: () => {
+      return {
+        code: 0,
+        data: { ...withholdList.response.data }
+      }
+    }
+  },
+  {
+    url: '/api/order/advance-list',
+    method: 'get',
+    response: () => {
+      return {
+        code: 0,
+        data: { ...advanceList.response.data }
       }
     }
   }

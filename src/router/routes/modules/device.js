@@ -8,35 +8,35 @@ export default {
   meta: {
     title: '设备管理',
     icon: 'mingcute:ebike-fill',
-    order: 2,
+    order: 2
   },
   children: [
     {
       name: 'device-all',
       path: 'all',
-      component: () => import('@/views/device/index.vue'),
+      component: () => import('@/views/device/all/index.vue'),
       meta: {
         title: '设备管理',
-        icon: 'carbon:gui-management',
-      },
+        icon: 'carbon:gui-management'
+      }
     },
     {
       name: 'device-product',
       path: 'product',
-      component: () => import('@/views/device/index.vue'),
+      component: () => import('@/views/device/product/index.vue'),
       meta: {
         title: '设备型号',
-        icon: 'tabler:box-model-2',
-      },
+        icon: 'tabler:box-model-2'
+      }
     },
     {
       name: 'device-distribute',
       path: 'distribute',
-      component: () => import('@/views/device/index.vue'),
+      component: () => import('@/views/device/distribute/index.vue'),
       meta: {
         title: '设备分布',
-        icon: 'material-symbols:pin-drop-outline-rounded',
-      },
-    },
-  ],
+        icon: 'material-symbols:pin-drop-outline-rounded'
+      }
+    }
+  ]
 }

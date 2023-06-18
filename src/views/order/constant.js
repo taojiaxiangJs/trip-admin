@@ -22,6 +22,31 @@ export const options = {
   ],
   payType: [
     { label: '先付后用', value: '0' },
-    { label: '先用后付', value: '1' },
+    { label: '先用后付', value: '1' }
+  ],
+  dueStatus: [
+    { label: '出租中', value: '2' },
+    { label: '已退租', value: '5' }
+  ],
+  // 是否垫资
+  padFunded: [
+    { label: '是', value: '1' },
+    { label: '否', value: '0' }
+  ],
+  // 是否兜底
+  ensure: [
+    { label: '是', value: '1' },
+    { label: '否', value: '0' }
+  ],
+  // 代扣结果
+  withholdResult: [
+    { label: '未扣款', value: 'PAY_TOBE_TRIGGER' },
+    { label: '成功', value: 'TRADE_SUCCESS' },
+    { label: '失败', value: 'PAY_FAIL' },
+    { label: '代扣取消', value: 'TRADE_CANCEL' }
+  ],
+  applyStatus: [
+    { label: '是', value: '1' },
+    { label: '否', value: '0' }
   ]
 }

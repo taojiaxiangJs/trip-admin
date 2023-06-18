@@ -1,5 +1,5 @@
 <template>
-  <AppPage> 设备管理 </AppPage>
+  <AppPage> 2 </AppPage>
 </template>
 
 <script setup></script>

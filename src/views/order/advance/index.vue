@@ -1,152 +1,98 @@
 <template>
   <CommonPage>
-    <!-- <template #action>
-      <div>
-        <n-button type="primary" secondary @click="$table?.handleExport()">
-          <TheIcon icon="mdi:download" :size="18" class="mr-5" /> 导出
-        </n-button>
-        <n-button type="primary" class="ml-16" @click="handleAdd">
-          <TheIcon icon="material-symbols:add" :size="18" class="mr-5" /> 新建文章
-        </n-button>
-      </div>
-    </template> -->
-
     <CrudTable
       ref="$table"
       v-model:query-items="queryItems"
-      :extra-params="extraParams"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.getPosts"
-      @on-checked="onChecked"
+      :get-data="api.getAdvanceList"
       @on-data-change="(data) => (tableData = data)"
     >
       <template #queryBar>
-        <QueryBarItem label="标题" :label-width="50">
-          <n-input
-            v-model:value="queryItems.title"
-            type="text"
-            placeholder="请输入标题"
-            @keydown.enter="$table?.handleSearch"
-          />
+        <QueryBarItem :content-width="290">
+          <n-input v-model:value="queryItems.searchString" type="text" placeholder="订单编号/租借人/手机号码" @keydown.enter="$table?.handleSearch" />
+        </QueryBarItem>
+        <QueryBarItem label="申请状态" :label-width="70">
+          <n-select v-model:value="queryItems.applyPadFunded" :options="options.applyStatus" />
+        </QueryBarItem>
+        <QueryBarItem label="店铺" :label-width="40">
+          <n-select v-model:value="queryItems.storeId" filterable placeholder="选择店铺" :options="storeList" />
         </QueryBarItem>
       </template>
+      <template #extrabox>
+        <p mb-20 text-red-400>逾期5天或5天内不申请垫资的订单，系统将做不垫资处理，商户自行选择继续或关闭。</p>
+      </template>
     </CrudTable>
-    <!-- 新增/编辑/查看 -->
-    <CrudModal
-      v-model:visible="modalVisible"
-      :title="modalTitle"
-      :loading="modalLoading"
-      :show-footer="modalAction !== 'view'"
-      @on-save="handleSave"
-    >
-      <n-form
-        ref="modalFormRef"
-        label-placement="left"
-        label-align="left"
-        :label-width="80"
-        :model="modalForm"
-        :disabled="modalAction === 'view'"
-      >
-        <n-form-item label="作者" path="author">
-          <n-input v-model:value="modalForm.author" disabled />
-        </n-form-item>
-        <n-form-item
-          label="文章标题"
-          path="title"
-          :rule="{
-            required: true,
-            message: '请输入文章标题',
-            trigger: ['input', 'blur'],
-          }"
-        >
-          <n-input v-model:value="modalForm.title" placeholder="请输入文章标题" />
-        </n-form-item>
-        <n-form-item
-          label="文章内容"
-          path="content"
-          :rule="{
-            required: true,
-            message: '请输入文章内容',
-            trigger: ['input', 'blur'],
-          }"
-        >
-          <n-input
-            v-model:value="modalForm.content"
-            placeholder="请输入文章内容"
-            type="textarea"
-            :autosize="{
-              minRows: 3,
-              maxRows: 5,
-            }"
-          />
-        </n-form-item>
-      </n-form>
-    </CrudModal>
   </CommonPage>
 </template>
 
 <script setup>
-import { NButton, NSwitch } from 'naive-ui'
-import { formatDateTime, renderIcon, isNullOrUndef } from '@/utils'
+import { NButton } from 'naive-ui'
+import { formatDateTime } from '@/utils'
 import { useCRUD } from '@/composables'
+import { options } from '../constant'
+import globalApi from '@/api'
 import api from '../api'
 
 defineOptions({ name: 'Crud' })
+
+const router = useRouter()
 
 const $table = ref(null)
 /** 表格数据，触发搜索的时候会更新这个值 */
 const tableData = ref([])
 /** QueryBar筛选参数（可选） */
 const queryItems = ref({})
-/** 补充参数（可选） */
-const extraParams = ref({})
 
 onActivated(() => {
   $table.value?.handleSearch()
 })
 
+// 店铺
+const storeList = ref([])
+const getStoreList = () => {
+  globalApi.getStore().then((res) => {
+    storeList.value = res.data?.list.map((e) => ({ label: e.storeName, value: e.storeId }))
+  })
+}
+getStoreList()
+
 const columns = [
-  { type: 'selection', fixed: 'left' },
+  { title: '订单编号', key: 'rentOrderId', width: 190 },
+  { title: '租借人', key: 'rentUserName', width: 80 },
+  { title: '手机号', key: 'rentUserPhone', width: 120 },
+  { title: '商户', key: 'agentName', width: 80 },
   {
-    title: '发布',
-    key: 'isPublish',
-    width: 60,
-    align: 'center',
-    fixed: 'left',
+    title: '订单类型',
+    key: 'productType',
+    width: 90,
     render(row) {
-      return h(NSwitch, {
-        size: 'small',
-        rubberBand: false,
-        value: row['isPublish'],
-        loading: !!row.publishing,
-        onUpdateValue: () => handlePublish(row),
-      })
-    },
+      return h('span', valueToName(row.productType, options.orderType))
+    }
   },
-  { title: '标题', key: 'title', width: 150, ellipsis: { tooltip: true } },
-  { title: '分类', key: 'category', width: 80, ellipsis: { tooltip: true } },
-  { title: '创建人', key: 'author', width: 80 },
+  { title: '垫资次数', key: '', width: 80 },
   {
-    title: '创建时间',
-    key: 'createDate',
-    width: 150,
+    title: '新垫资日',
+    key: 'createTime',
+    width: 180,
     render(row) {
-      return h('span', formatDateTime(row['createDate']))
-    },
+      return h('span', formatDate(row.createTime))
+    }
   },
   {
-    title: '最后更新时间',
-    key: 'updateDate',
-    width: 150,
+    title: '关闭倒计时',
+    key: 'payDate',
+    width: 180,
     render(row) {
-      return h('span', formatDateTime(row['updateDate']))
-    },
+      return h('span', formatDate(row.payDate))
+    }
   },
+  { title: '上期扣款状态', key: '', width: 90 },
+  { title: '状态', key: '', width: 90 },
   {
     title: '操作',
     key: 'actions',
-    width: 240,
+    width: 140,
     align: 'center',
     fixed: 'right',
     hideInExcel: true,
@@ -157,76 +103,33 @@ const columns = [
           {
             size: 'small',
             type: 'primary',
-            secondary: true,
-            onClick: () => handleView(row),
-          },
-          { default: () => '查看', icon: renderIcon('majesticons:eye-line', { size: 14 }) }
-        ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'primary',
             style: 'margin-left: 15px;',
-            onClick: () => handleEdit(row),
+            onClick: () => handleView(row)
           },
-          { default: () => '编辑', icon: renderIcon('material-symbols:edit-outline', { size: 14 }) }
-        ),
-
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'error',
-            style: 'margin-left: 15px;',
-            onClick: () => handleDelete(row.id),
-          },
-          {
-            default: () => '删除',
-            icon: renderIcon('material-symbols:delete-outline', { size: 14 }),
-          }
-        ),
+          { default: () => '详情' }
+        )
       ]
-    },
-  },
+    }
+  }
 ]
 
-// 选中事件
-function onChecked(rowKeys) {
-  if (rowKeys.length) $message.info(`选中${rowKeys.join(' ')}`)
+const valueToName = (value, options) => {
+  return options.filter((e) => e.value === value + '')[0]?.label || ''
 }
 
-// 发布
-function handlePublish(row) {
-  if (isNullOrUndef(row.id)) return
-
-  row.publishing = true
-  setTimeout(() => {
-    row.isPublish = !row.isPublish
-    row.publishing = false
-    $message?.success(row.isPublish ? '已发布' : '已取消发布')
-  }, 1000)
+const formatDate = (time) => {
+  return time ? formatDateTime(time) : '--'
 }
 
-const {
-  modalVisible,
-  modalAction,
-  modalTitle,
-  modalLoading,
-  handleAdd,
-  handleDelete,
-  handleEdit,
-  handleView,
-  handleSave,
-  modalForm,
-  modalFormRef,
-} = useCRUD({
-  name: '文章',
-  initForm: { author: '大脸怪' },
+const handleView = (row) => {
+  console.log(row)
+  router.push({ path: 'detail', query: { rentOrderId: row.rentOrderId } })
+}
+
+useCRUD({
   doCreate: api.addPost,
   doDelete: api.deletePost,
   doUpdate: api.updatePost,
-  refresh: () => $table.value?.handleSearch(),
+  refresh: () => $table.value?.handleSearch()
 })
 </script>
-

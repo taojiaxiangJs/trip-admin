@@ -1,98 +1,58 @@
 <template>
   <CommonPage>
-    <!-- <template #action>
-      <div>
-        <n-button type="primary" secondary @click="$table?.handleExport()">
-          <TheIcon icon="mdi:download" :size="18" class="mr-5" /> 导出
-        </n-button>
-        <n-button type="primary" class="ml-16" @click="handleAdd">
-          <TheIcon icon="material-symbols:add" :size="18" class="mr-5" /> 新建文章
-        </n-button>
-      </div>
-    </template> -->
-
     <CrudTable
       ref="$table"
       v-model:query-items="queryItems"
       :extra-params="extraParams"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.getPosts"
-      @on-checked="onChecked"
+      :get-data="api.getWithholdList"
       @on-data-change="(data) => (tableData = data)"
+      @reset-extra-params="resetExtraParams"
     >
       <template #queryBar>
-        <QueryBarItem label="标题" :label-width="50">
+        <QueryBarItem :content-width="290">
           <n-input
-            v-model:value="queryItems.title"
+            v-model:value="queryItems.searchString"
             type="text"
-            placeholder="请输入标题"
+            placeholder="订单号/租借人/联系方式/店铺/推荐人"
             @keydown.enter="$table?.handleSearch"
           />
         </QueryBarItem>
+        <QueryBarItem label="代扣结果" :label-width="70">
+          <n-select v-model:value="queryItems.status" :options="options.withholdResult" />
+        </QueryBarItem>
+        <QueryBarItem label="是否垫资" :label-width="70">
+          <n-select v-model:value="queryItems.padFunded" :options="options.padFunded" />
+        </QueryBarItem>
+        <QueryBarItem label="是否兜底" :label-width="70">
+          <n-select v-model:value="queryItems.ensure" :options="options.ensure" />
+        </QueryBarItem>
+        <QueryBarItem label="店铺" :label-width="40">
+          <n-select v-model:value="queryItems.storeId" filterable placeholder="选择店铺" :options="storeList" />
+        </QueryBarItem>
+        <QueryBarItem label="预扣日期" :label-width="70" :content-width="300">
+          <n-date-picker v-model:value="queryDate.payDate" type="daterange" clearable value-format="yyyy-MM-dd" @update:value="dateChange" />
+        </QueryBarItem>
+      </template>
+      <template #extraHandle>
+        <n-button ml-20 type="primary" @click="exportData">导出数据</n-button>
       </template>
     </CrudTable>
-    <!-- 新增/编辑/查看 -->
-    <CrudModal
-      v-model:visible="modalVisible"
-      :title="modalTitle"
-      :loading="modalLoading"
-      :show-footer="modalAction !== 'view'"
-      @on-save="handleSave"
-    >
-      <n-form
-        ref="modalFormRef"
-        label-placement="left"
-        label-align="left"
-        :label-width="80"
-        :model="modalForm"
-        :disabled="modalAction === 'view'"
-      >
-        <n-form-item label="作者" path="author">
-          <n-input v-model:value="modalForm.author" disabled />
-        </n-form-item>
-        <n-form-item
-          label="文章标题"
-          path="title"
-          :rule="{
-            required: true,
-            message: '请输入文章标题',
-            trigger: ['input', 'blur'],
-          }"
-        >
-          <n-input v-model:value="modalForm.title" placeholder="请输入文章标题" />
-        </n-form-item>
-        <n-form-item
-          label="文章内容"
-          path="content"
-          :rule="{
-            required: true,
-            message: '请输入文章内容',
-            trigger: ['input', 'blur'],
-          }"
-        >
-          <n-input
-            v-model:value="modalForm.content"
-            placeholder="请输入文章内容"
-            type="textarea"
-            :autosize="{
-              minRows: 3,
-              maxRows: 5,
-            }"
-          />
-        </n-form-item>
-      </n-form>
-    </CrudModal>
   </CommonPage>
 </template>
 
 <script setup>
-import { NButton, NSwitch } from 'naive-ui'
-import { formatDateTime, renderIcon, isNullOrUndef } from '@/utils'
+import { NButton } from 'naive-ui'
+import { formatDateTime, formatFee } from '@/utils'
 import { useCRUD } from '@/composables'
+import { options } from '../constant'
+import globalApi from '@/api'
 import api from '../api'
 
 defineOptions({ name: 'Crud' })
+
+const router = useRouter()
 
 const $table = ref(null)
 /** 表格数据，触发搜索的时候会更新这个值 */
@@ -102,51 +62,104 @@ const queryItems = ref({})
 /** 补充参数（可选） */
 const extraParams = ref({})
 
+const queryDate = ref({
+  payDate: null
+})
+
 onActivated(() => {
   $table.value?.handleSearch()
 })
 
+// 店铺
+const storeList = ref([])
+const getStoreList = () => {
+  globalApi.getStore().then((res) => {
+    storeList.value = res.data?.list.map((e) => ({ label: e.storeName, value: e.storeId }))
+  })
+}
+getStoreList()
+
+// 租借日切换
+const dateChange = (arg1, arg2) => {
+  extraParams.value.startDateString = arg2[0] || ''
+  extraParams.value.endDateString = arg2[1] || ''
+}
+
 const columns = [
-  { type: 'selection', fixed: 'left' },
+  { title: '订单编号', key: 'rentOrderId', width: 190 },
   {
-    title: '发布',
-    key: 'isPublish',
-    width: 60,
-    align: 'center',
-    fixed: 'left',
+    title: '订单类型',
+    key: 'productType',
+    width: 90,
     render(row) {
-      return h(NSwitch, {
-        size: 'small',
-        rubberBand: false,
-        value: row['isPublish'],
-        loading: !!row.publishing,
-        onUpdateValue: () => handlePublish(row),
-      })
-    },
+      return h('span', valueToName(row.productType, options.orderType))
+    }
   },
-  { title: '标题', key: 'title', width: 150, ellipsis: { tooltip: true } },
-  { title: '分类', key: 'category', width: 80, ellipsis: { tooltip: true } },
-  { title: '创建人', key: 'author', width: 80 },
+  { title: '代扣次数', key: 'phase', width: 80 },
+  { title: '店铺', key: 'storeName', width: 100 },
+  { title: '代理商', key: 'agentName', width: 80 },
   {
-    title: '创建时间',
-    key: 'createDate',
-    width: 150,
+    title: '租借日期',
+    key: 'createTime',
+    width: 180,
     render(row) {
-      return h('span', formatDateTime(row['createDate']))
-    },
+      return h('span', formatDate(row.createTime))
+    }
   },
   {
-    title: '最后更新时间',
-    key: 'updateDate',
-    width: 150,
+    title: '预扣日期',
+    key: 'payDate',
+    width: 180,
     render(row) {
-      return h('span', formatDateTime(row['updateDate']))
-    },
+      return h('span', formatDate(row.payDate))
+    }
   },
+  {
+    title: '最后代扣时间',
+    key: 'realPayDate',
+    width: 180,
+    render(row) {
+      return h('span', formatDate(row.realPayDate))
+    }
+  },
+  {
+    title: '已支付金额',
+    key: 'payMoney',
+    width: 100,
+    render(row) {
+      return h('span', formatFee(row.payMoney, 'front'))
+    }
+  },
+  { title: '租借人', key: 'userName', width: 80 },
+  {
+    title: '是否垫资',
+    key: 'padFunded',
+    width: 80,
+    render(row) {
+      return h('span', valueToName(row.padFunded, options.padFunded))
+    }
+  },
+  {
+    title: '是否兜底',
+    key: 'ensure',
+    width: 80,
+    render(row) {
+      return h('span', valueToName(row.ensure, options.ensure))
+    }
+  },
+  {
+    title: '代扣结果',
+    key: 'status',
+    width: 90,
+    render(row) {
+      return h('span', valueToName(row.status, options.withholdResult))
+    }
+  },
+  { title: '状态', key: '', width: 90 },
   {
     title: '操作',
     key: 'actions',
-    width: 240,
+    width: 140,
     align: 'center',
     fixed: 'right',
     hideInExcel: true,
@@ -157,76 +170,39 @@ const columns = [
           {
             size: 'small',
             type: 'primary',
-            secondary: true,
-            onClick: () => handleView(row),
-          },
-          { default: () => '查看', icon: renderIcon('majesticons:eye-line', { size: 14 }) }
-        ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'primary',
             style: 'margin-left: 15px;',
-            onClick: () => handleEdit(row),
+            onClick: () => handleView(row)
           },
-          { default: () => '编辑', icon: renderIcon('material-symbols:edit-outline', { size: 14 }) }
-        ),
-
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'error',
-            style: 'margin-left: 15px;',
-            onClick: () => handleDelete(row.id),
-          },
-          {
-            default: () => '删除',
-            icon: renderIcon('material-symbols:delete-outline', { size: 14 }),
-          }
-        ),
+          { default: () => '详情' }
+        )
       ]
-    },
-  },
+    }
+  }
 ]
 
-// 选中事件
-function onChecked(rowKeys) {
-  if (rowKeys.length) $message.info(`选中${rowKeys.join(' ')}`)
+const valueToName = (value, options) => {
+  return options.filter((e) => e.value === value + '')[0]?.label || ''
 }
 
-// 发布
-function handlePublish(row) {
-  if (isNullOrUndef(row.id)) return
-
-  row.publishing = true
-  setTimeout(() => {
-    row.isPublish = !row.isPublish
-    row.publishing = false
-    $message?.success(row.isPublish ? '已发布' : '已取消发布')
-  }, 1000)
+const formatDate = (time) => {
+  return time ? formatDateTime(time) : '--'
 }
 
-const {
-  modalVisible,
-  modalAction,
-  modalTitle,
-  modalLoading,
-  handleAdd,
-  handleDelete,
-  handleEdit,
-  handleView,
-  handleSave,
-  modalForm,
-  modalFormRef,
-} = useCRUD({
-  name: '文章',
-  initForm: { author: '大脸怪' },
-  doCreate: api.addPost,
-  doDelete: api.deletePost,
-  doUpdate: api.updatePost,
-  refresh: () => $table.value?.handleSearch(),
-})
+// 导出数据
+const exportData = () => {
+  console.log({ ...extraParams.value, ...queryItems.value })
+}
+
+// 重置
+const resetExtraParams = () => {
+  queryDate.value.payDate = null
+  extraParams.value = {}
+}
+
+const handleView = (row) => {
+  console.log(row)
+  router.push({ path: 'detail', query: { rentOrderId: row.rentOrderId } })
+}
+
+useCRUD({ refresh: () => $table.value?.handleSearch() })
 </script>
-

@@ -7,7 +7,7 @@
       <slot name="extraHandle" />
     </template>
   </QueryBar>
-
+  <slot name="extrabox" />
   <n-data-table
     :remote="remote"
     :loading="loading"
@@ -30,45 +30,45 @@ const props = defineProps({
    */
   remote: {
     type: Boolean,
-    default: true,
+    default: true
   },
   /**
    * @remote 是否分页
    */
   isPagination: {
     type: Boolean,
-    default: true,
+    default: true
   },
   scrollX: {
     type: Number,
-    default: 1200,
+    default: 1200
   },
   rowKey: {
     type: String,
-    default: 'id',
+    default: 'id'
   },
   columns: {
     type: Array,
-    required: true,
+    required: true
   },
-  /** 初始化table列表数据*/ 
+  /** 初始化table列表数据*/
   initTableData: {
     type: Array,
-    default: ()=> [],
+    default: () => []
   },
   /** queryBar中的参数 */
   queryItems: {
     type: Object,
     default() {
       return {}
-    },
+    }
   },
   /** 补充参数（可选） */
   extraParams: {
     type: Object,
     default() {
       return {}
-    },
+    }
   },
   /**
    * ! 约定接口入参出参
@@ -81,8 +81,8 @@ const props = defineProps({
    */
   getData: {
     type: Function,
-    required: true,
-  },
+    required: true
+  }
 })
 
 const emit = defineEmits(['update:queryItems', 'onChecked', 'onDataChange', 'resetExtraParams'])
@@ -94,7 +94,7 @@ const pagination = reactive({ page: 1, pageSize: 10 })
 watch(
   () => props.initTableData,
   () => {
-    tableData.value = [ ...props.initTableData ]
+    tableData.value = [...props.initTableData]
   }
 )
 
@@ -109,9 +109,9 @@ async function handleQuery() {
     const { data } = await props.getData({
       ...props.queryItems,
       ...props.extraParams,
-      ...paginationParams,
+      ...paginationParams
     })
-    tableData.value = data?.list || data
+    tableData.value = data?.list || []
     pagination.itemCount = data.total ?? data.length
   } catch (error) {
     tableData.value = []
@@ -166,6 +166,6 @@ function handleExport(columns = props.columns, data = tableData.value) {
 defineExpose({
   handleSearch,
   handleReset,
-  handleExport,
+  handleExport
 })
 </script>

@@ -163,6 +163,13 @@
       </div>
     </div>
     <CrudTable ref="$table" :scroll-x="1200" :columns="columns" :init-table-data="tableData"> </CrudTable>
+    <n-space>
+      <n-button type="primary" @click="handleModal('overLease')">确认退租</n-button>
+      <n-button type="primary" @click="handleModal('changeDevice')">更换车辆</n-button>
+      <n-button type="primary" @click="handleDeviceCard('deviceCard')">车辆存证</n-button>
+      <n-button type="primary" @click="handleMultipCancel('multipCancel')">批量取消代扣</n-button>
+      <n-button type="primary" @click="handleOverOrder('overOrder')">结束订单</n-button>
+    </n-space>
   </CommonPage>
   <n-modal v-model:show="modalVisible" :title="modalTitleMap[modalType]" preset="card" :style="{ width: '600px' }" :bordered="false">
     <n-form ref="$modalForm" label-placement="left" label-align="right" :label-width="80" :rules="rules" :model="modalForm">
@@ -184,7 +191,14 @@
       <n-form-item v-if="modalType === 'editRent'" path="editRent" label="改租金">
         <n-input v-model:value="modalForm.editRent" placeholder="小于原租金"><template #suffix>元/月</template></n-input>
       </n-form-item>
+      <n-form-item v-if="modalType === 'overLease'" path="overLease" label="退到店铺">
+        <n-select v-model:value="modalForm.overLease" filterable placeholder="选择店铺" :options="storeList" />
+      </n-form-item>
+      <n-form-item v-if="modalType === 'changeDevice'" path="changeDevice" label="更换车辆">
+        <n-input v-model:value="modalForm.changeDevice" placeholder="请输入关键字" />
+      </n-form-item>
     </n-form>
+
     <div v-if="modalType === 'payOther'" text-center>
       <img :src="aliPayQrcodeUrl" />
       <p>请扫码支付或者找人代付！</p>
@@ -205,11 +219,13 @@ import { formatDateTime, formatFee } from '@/utils'
 import { useCRUD } from '@/composables'
 import { options } from '../constant'
 import api from '../api'
+import globalApi from '@/api'
 
 defineOptions({ name: 'Crud' })
 const message = useMessage()
 const dialog = useDialog()
 const { query } = useRoute()
+const rentOrderId = query.rentOrderId
 
 const $table = ref(null)
 const $modalForm = ref(null)
@@ -222,28 +238,34 @@ const modalTitleMap = reactive({
   remark: '编辑备注',
   referrer: '添加推荐人',
   payOther: '代付',
-  editRent: '修改租金'
+  editRent: '修改租金',
+  overLease: '确认退租',
+  changeDevice: '更换车辆'
 })
 const modalForm = ref({
   freeze: '',
   operator: null,
   remark: '',
   referrer: null,
-  editRent: ''
+  editRent: '',
+  overLease: null,
+  changeDevice: ''
 })
 const rules = ref({
   operator: { required: true, message: '请选择办单人', trigger: ['change'] },
   referrer: { required: false, message: '请选择推荐人', trigger: ['change'] },
   freeze: { required: true, message: '请输入金额', trigger: ['input', 'blur'] },
   remark: { required: true, message: '请输入备注', trigger: ['input', 'blur'] },
-  editRent: { required: true, message: '请输入金额', trigger: ['input', 'blur'] }
+  editRent: { required: true, message: '请输入金额', trigger: ['input', 'blur'] },
+  overLease: { required: true, message: '请择办店铺', trigger: ['blur', 'change'] },
+  changeDevice: { required: true, message: '请择输入关键字', trigger: ['input', 'blur'] }
 })
 
 /** 表格数据，触发搜索的时候会更新这个值 */
 const tableData = ref([])
 const orderDetail = ref({})
 const getDetail = () => {
-  api.getOrderDetail({ rentOrderI: query.rentOrderId }).then((res) => {
+  api.getOrderDetail({ rentOrderI: rentOrderId }).then((res) => {
     tableData.value = res.data?.payInfoVos || []
     orderDetail.value = res.data
   })
@@ -252,7 +274,7 @@ getDetail()
 
 const agentUser = ref([])
 const getAgentUser = () => {
-  api.getAgentUser({ rentOrderI: query.rentOrderId }).then((res) => {
+  api.getAgentUser({ rentOrderI: rentOrderId }).then((res) => {
     agentUser.value =
       res.data.map((e) => {
         return {
@@ -364,6 +386,15 @@ const columns = [
   }
 ]
 
+// 店铺
+const storeList = ref([])
+const getStoreList = () => {
+  globalApi.getStore().then((res) => {
+    storeList.value = res.data?.list.map((e) => ({ label: e.storeName, value: e.storeId + '' }))
+  })
+}
+getStoreList()
+
 const valueToName = (value, options) => {
   return options.filter((e) => e.value === value + '')[0]?.label || ''
 }
@@ -451,6 +482,8 @@ const handleCancel = () => {
   modalForm.value.remark = ''
   modalForm.value.referrer = null
   modalForm.value.editRent = ''
+  modalForm.value.overLease = null
+  modalForm.value.changeDevice = ''
 }
 // modal保存
 const handleSave = () => {
@@ -463,10 +496,28 @@ const handleSave = () => {
   })
 }
 
-useCRUD({
-  doCreate: api.addPost,
-  doDelete: api.deletePost,
-  doUpdate: api.updatePost,
-  refresh: () => $table.value?.handleSearch()
-})
+const handleOverOrder = () => {
+  message.error('暂无权限')
+}
+
+const handleDeviceCard = () => {
+  message.info('暂无车辆存证')
+}
+
+const handleMultipCancel = () => {
+  dialog.warning({
+    title: '批量取消代扣',
+    content: '执行后，将取消所有未欠费的代扣，且无法恢复，确定要取消吗？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      message.success('确定')
+    },
+    onNegativeClick: () => {
+      message.error('取消')
+    }
+  })
+}
+
+useCRUD({ refresh: () => $table.value?.handleSearch() })
 </script>
