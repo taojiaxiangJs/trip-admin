@@ -13,14 +13,13 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd())
   const viteEnv = convertEnv(env)
   const { VITE_PORT, VITE_PUBLIC_PATH, VITE_USE_PROXY, VITE_PROXY_TYPE } = viteEnv
-
   return {
     base: VITE_PUBLIC_PATH || '/',
     resolve: {
       alias: {
         '~': rootPath,
-        '@': srcPath,
-      },
+        '@': srcPath
+      }
     },
     define: viteDefine,
     plugins: createVitePlugins(viteEnv, isBuild),
@@ -28,13 +27,13 @@ export default defineConfig(({ command, mode }) => {
       host: '0.0.0.0',
       port: VITE_PORT,
       open: false,
-      proxy: createViteProxy(VITE_USE_PROXY, VITE_PROXY_TYPE),
+      proxy: createViteProxy(VITE_USE_PROXY, VITE_PROXY_TYPE)
     },
     build: {
       target: 'es2015',
       outDir: OUTPUT_DIR,
       reportCompressedSize: false, // 启用/禁用 gzip 压缩大小报告
-      chunkSizeWarningLimit: 1024, // chunk 大小警告的限制（单位kb）
-    },
+      chunkSizeWarningLimit: 1024 // chunk 大小警告的限制（单位kb）
+    }
   }
 })

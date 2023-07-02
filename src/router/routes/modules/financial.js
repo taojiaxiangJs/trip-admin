@@ -8,7 +8,7 @@ export default {
   meta: {
     title: '财务管理',
     icon: 'streamline:money-cash-bag-dollar-bag-payment-cash-money-finance',
-    order: 5,
+    order: 5
   },
   children: [
     {
@@ -16,18 +16,18 @@ export default {
       path: 'profit',
       component: () => import('@/views/financial/index.vue'),
       meta: {
-        title: '分润明细',
-        icon: 'simple-icons:microsoftsharepoint',
-      },
+        title: '分润明细'
+        // icon: 'simple-icons:microsoftsharepoint',
+      }
     },
     {
       name: 'financial-advance',
       path: 'advance',
       component: () => import('@/views/financial/index.vue'),
       meta: {
-        title: '垫资记录',
-        icon: 'material-symbols:export-notes-outline',
-      },
-    },
-  ],
+        title: '垫资记录'
+        // icon: 'material-symbols:export-notes-outline',
+      }
+    }
+  ]
 }

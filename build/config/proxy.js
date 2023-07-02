@@ -8,8 +8,9 @@ export function createViteProxy(isUseProxy = true, proxyType) {
     [proxyConfig.prefix]: {
       target: proxyConfig.target,
       changeOrigin: true,
-      rewrite: (path) => path.replace(new RegExp(`^${proxyConfig.prefix}`), ''),
-    },
+      rewrite: (path) => path.replace(new RegExp(`^${proxyConfig.prefix}`), '')
+    }
   }
+  console.log(proxy)
   return proxy
 }

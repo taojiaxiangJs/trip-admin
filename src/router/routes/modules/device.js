@@ -16,8 +16,8 @@ export default {
       path: 'all',
       component: () => import('@/views/device/all/index.vue'),
       meta: {
-        title: '设备管理',
-        icon: 'carbon:gui-management'
+        title: '设备管理'
+        // icon: 'carbon:gui-management'
       }
     },
     {
@@ -25,8 +25,8 @@ export default {
       path: 'product',
       component: () => import('@/views/device/product/index.vue'),
       meta: {
-        title: '设备型号',
-        icon: 'tabler:box-model-2'
+        title: '设备型号'
+        // icon: 'tabler:box-model-2'
       }
     },
     {
@@ -34,8 +34,8 @@ export default {
       path: 'distribute',
       component: () => import('@/views/device/distribute/index.vue'),
       meta: {
-        title: '设备分布',
-        icon: 'material-symbols:pin-drop-outline-rounded'
+        title: '设备分布'
+        // icon: 'material-symbols:pin-drop-outline-rounded'
       }
     }
   ]

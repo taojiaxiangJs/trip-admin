@@ -22,20 +22,23 @@ export function formatDate(date = undefined, format = 'YYYY-MM-DD') {
  */
 export function formatFee(fee, type) {
   let feeStr = fee + ''
-  if(feeStr === '0') {
+  if (feeStr === 'null' || feeStr === '') {
+    return '--'
+  }
+  if (feeStr === '0') {
     return '0'
   }
-  if(type === 'front') {
-    if(feeStr.length < 3) {
+  if (type === 'front') {
+    if (feeStr.length < 3) {
       feeStr = '000'.slice(0, -feeStr.length) + feeStr
     }
-    return feeStr.slice(0,-2) + '.' + feeStr.slice(-2)
+    return feeStr.slice(0, -2) + '.' + feeStr.slice(-2)
   }
-  if(type === 'server') {
-    if(feeStr.includes('.')) {
+  if (type === 'server') {
+    if (feeStr.includes('.')) {
       let arr = feeStr.split('.')
       return arr[0] + (arr[1] + '00').slice(0, 2)
-    }else{
+    } else {
       return feeStr + '00'
     }
   }

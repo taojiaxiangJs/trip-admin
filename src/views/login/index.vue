@@ -1,18 +1,12 @@
 <template>
   <AppPage :show-footer="true" bg-cover :style="{ backgroundImage: `url(${bgImg})` }">
-    <div
-      style="transform: translateY(25px)"
-      class="m-auto max-w-700 min-w-345 f-c-c rounded-10 bg-white bg-opacity-60 p-15 card-shadow"
-      dark:bg-dark
-    >
+    <div style="transform: translateY(25px)" class="m-auto max-w-700 min-w-345 f-c-c rounded-10 bg-white bg-opacity-60 p-15 card-shadow" dark:bg-dark>
       <div hidden w-380 px-20 py-35 md:block>
         <img src="@/assets/images/login_banner.webp" w-full alt="login_banner" />
       </div>
 
       <div w-320 flex-col px-20 py-35>
-        <h5 f-c-c text-24 font-normal color="#6a6a6a">
-          <icon-custom-logo mr-10 text-50 color-primary />{{ title }}
-        </h5>
+        <h5 f-c-c text-24 font-normal color="#6a6a6a"><icon-custom-logo mr-10 text-50 color-primary />{{ title }}</h5>
         <div mt-30>
           <n-input
             v-if="!isMessage"
@@ -49,37 +43,18 @@
               placeholder="请输入验证码"
               :maxlength="6"
             />
-            <n-button type="primary" ghost size="large" class="h-50 items-center pl-10 text-16">
-              获取验证码
-            </n-button>
+            <n-button type="primary" ghost size="large" class="h-50 items-center pl-10 text-16"> 获取验证码 </n-button>
           </n-input-group>
         </div>
 
         <div mt-20 h-24 f-b-c>
           <div v-if="isMessage"></div>
-          <n-checkbox
-            v-else
-            :checked="isRemember"
-            label="记住我"
-            :on-update:checked="(val) => (isRemember = val)"
-          />
-          <n-button text type="primary" @click="toMessage">{{
-            isMessage ? '账号登录' : '短信登录'
-          }}</n-button>
+          <n-checkbox v-else :checked="isRemember" label="记住我" :on-update:checked="(val) => (isRemember = val)" />
+          <n-button text type="primary" @click="toMessage">{{ isMessage ? '账号登录' : '短信登录' }}</n-button>
         </div>
 
         <div mt-20>
-          <n-button
-            h-50
-            w-full
-            rounded-5
-            text-16
-            type="primary"
-            :loading="loading"
-            @click="handleLogin"
-          >
-            登录
-          </n-button>
+          <n-button h-50 w-full rounded-5 text-16 type="primary" :loading="loading" @click="handleLogin"> 登录 </n-button>
         </div>
       </div>
     </div>
@@ -131,7 +106,14 @@ async function handleLogin() {
   try {
     loading.value = true
     $message.loading('正在验证...')
-    const res = await api.login({ name, password: password.toString() })
+    const data = {
+      phone: 15501673636,
+      password: 'riding',
+      verifyCode: '',
+      verifyId: ''
+    }
+    // const res = await api.login({ name, password: password.toString() })
+    const res = await api.login(data)
     $message.success('登录成功')
     setToken(res.data.token)
     if (isRemember.value) {
