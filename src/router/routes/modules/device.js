@@ -21,22 +21,22 @@ export default {
       }
     },
     {
-      name: 'device-product',
-      path: 'product',
-      component: () => import('@/views/device/product/index.vue'),
+      name: 'device-model',
+      path: 'model',
+      component: () => import('@/views/device/model/index.vue'),
       meta: {
         title: '设备型号'
         // icon: 'tabler:box-model-2'
       }
-    },
-    {
-      name: 'device-distribute',
-      path: 'distribute',
-      component: () => import('@/views/device/distribute/index.vue'),
-      meta: {
-        title: '设备分布'
-        // icon: 'material-symbols:pin-drop-outline-rounded'
-      }
     }
+    // {
+    //   name: 'device-distribute',
+    //   path: 'distribute',
+    //   component: () => import('@/views/device/distribute/index.vue'),
+    //   meta: {
+    //     title: '设备分布'
+    //     // icon: 'material-symbols:pin-drop-outline-rounded'
+    //   }
+    // }
   ]
 }

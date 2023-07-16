@@ -5,14 +5,14 @@ const users = {
     id: 1,
     name: '超级管理员(admin)',
     avatar: 'https://assets.qszone.com/images/avatar.jpg',
-    email: 'Ronnie@123.com',
+    email: 'taojiaxiang_work@163.com',
     role: ['admin']
   },
   editor: {
     id: 2,
     name: '管理员(editor)',
     avatar: 'https://assets.qszone.com/images/avatar.jpg',
-    email: 'Ronnie@123.com',
+    email: 'taojiaxiang_work@163.com',
     role: ['editor']
   },
   guest: {

@@ -20,7 +20,7 @@ function filterAsyncRoutes(routes = [], role) {
     if (hasPermission(route, role)) {
       const curRoute = {
         ...route,
-        children: [],
+        children: []
       }
       if (route.children && route.children.length) {
         curRoute.children = filterAsyncRoutes(route.children, role)
@@ -36,7 +36,7 @@ function filterAsyncRoutes(routes = [], role) {
 export const usePermissionStore = defineStore('permission', {
   state() {
     return {
-      accessRoutes: [],
+      accessRoutes: []
     }
   },
   getters: {
@@ -45,16 +45,17 @@ export const usePermissionStore = defineStore('permission', {
     },
     menus() {
       return this.routes.filter((route) => route.name && !route.isHidden)
-    },
+    }
   },
   actions: {
     generateRoutes(role = []) {
       const accessRoutes = filterAsyncRoutes(asyncRoutes, role)
+      console.log(accessRoutes)
       this.accessRoutes = accessRoutes
       return accessRoutes
     },
     resetPermission() {
       this.$reset()
-    },
-  },
+    }
+  }
 })

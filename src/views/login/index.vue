@@ -106,14 +106,14 @@ async function handleLogin() {
   try {
     loading.value = true
     $message.loading('正在验证...')
-    const data = {
-      phone: 15501673636,
-      password: 'riding',
-      verifyCode: '',
-      verifyId: ''
-    }
-    // const res = await api.login({ name, password: password.toString() })
-    const res = await api.login(data)
+    // const data = {
+    //   phone: 15501673636,
+    //   password: 'riding',
+    //   verifyCode: '',
+    //   verifyId: ''
+    // }
+    const res = await api.login({ name, password: password.toString() })
+    // const res = await api.login(data)
     $message.success('登录成功')
     setToken(res.data.token)
     if (isRemember.value) {

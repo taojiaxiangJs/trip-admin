@@ -20,33 +20,33 @@ export default {
         // icon: 'ion:reorder-four',
       }
     },
-    {
-      name: 'order-overdue',
-      path: 'overdue',
-      component: () => import('@/views/order/overdue/index.vue'),
-      meta: {
-        title: '逾期订单'
-        // icon: 'fluent:calendar-overdue-24-regular',
-      }
-    },
+    // {
+    //   name: 'order-overdue',
+    //   path: 'overdue',
+    //   component: () => import('@/views/order/overdue/index.vue'),
+    //   meta: {
+    //     title: '逾期订单'
+    //     // icon: 'fluent:calendar-overdue-24-regular',
+    //   }
+    // },
     {
       name: 'order-withhold',
       path: 'withhold',
       component: () => import('@/views/order/withhold/index.vue'),
       meta: {
-        title: '代扣明细'
+        title: '代扣管理'
         // icon: 'tabler:list-details',
       }
     },
-    {
-      name: 'order-advance',
-      path: 'advance',
-      component: () => import('@/views/order/advance/index.vue'),
-      meta: {
-        title: '垫资订单'
-        // icon: 'game-icons:level-four-advanced',
-      }
-    },
+    // {
+    //   name: 'order-advance',
+    //   path: 'advance',
+    //   component: () => import('@/views/order/advance/index.vue'),
+    //   meta: {
+    //     title: '垫资订单'
+    //     // icon: 'game-icons:level-four-advanced',
+    //   }
+    // },
     {
       name: 'order-detail',
       path: 'detail',

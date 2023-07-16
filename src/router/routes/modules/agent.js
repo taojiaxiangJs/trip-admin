@@ -28,15 +28,15 @@ export default {
         title: '租金设置'
         // icon: 'icon-park-outline:parenting-book',
       }
-    },
-    {
-      name: 'agent-rule',
-      path: 'rule',
-      component: () => import('@/views/agent/rule/index.vue'),
-      meta: {
-        title: '分润规则'
-        // icon: 'bi:file-earmark-ruled',
-      }
     }
+    // {
+    //   name: 'agent-rule',
+    //   path: 'rule',
+    //   component: () => import('@/views/agent/rule/index.vue'),
+    //   meta: {
+    //     title: '分润规则'
+    //     // icon: 'bi:file-earmark-ruled',
+    //   }
+    // }
   ]
 }
