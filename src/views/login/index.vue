@@ -67,6 +67,7 @@ import { useStorage } from '@vueuse/core'
 import bgImg from '@/assets/images/login_bg.webp'
 import api from './api'
 import { addDynamicRoutes } from '@/router'
+import { usePermissionStore } from '@/store'
 
 const title = import.meta.env.VITE_TITLE
 
@@ -96,6 +97,7 @@ function initLoginInfo() {
 }
 
 const isRemember = useStorage('isRemember', false)
+const permissionStore = usePermissionStore()
 const loading = ref(false)
 async function handleLogin() {
   const { name, password } = loginInfo.value
@@ -112,10 +114,10 @@ async function handleLogin() {
     //   verifyCode: '',
     //   verifyId: ''
     // }
-    const res = await api.login({ name, password: password.toString() })
-    // const res = await api.login(data)
+    const res = await api.login({ phone: name, password: password.toString() })
     $message.success('登录成功')
     setToken(res.data.token)
+    permissionStore.setAllPermission(res.data.menus)
     if (isRemember.value) {
       lStorage.set('loginInfo', { name, password })
     } else {

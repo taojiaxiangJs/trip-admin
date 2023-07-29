@@ -6,7 +6,8 @@ export default {
   component: Layout,
   redirect: '/property',
   meta: {
-    order: 6,
+    order: 4,
+    roleKey: 'tenant:statistics'
   },
   children: [
     {
@@ -16,8 +17,9 @@ export default {
       meta: {
         title: '资产统计',
         icon: 'iconoir:dashboard-dots',
-        order: 6,
-      },
-    },
-  ],
+        order: 1,
+        roleKey: 'tenant:statistics:assets'
+      }
+    }
+  ]
 }

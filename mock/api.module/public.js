@@ -1007,3 +1007,89 @@ export const brand = {
     }
   }
 }
+
+export const allUser = {
+  params: {
+    pageNum: 1,
+    pageSize: 10,
+    searchString: ''
+  },
+  response: {
+    status: 'S000',
+    msg: '操作成功',
+    data: [
+      {
+        id: 0,
+        lockStatus: 0,
+        lockTime: '2023-07-18T15:36:17.862Z',
+        phone: '15299663432',
+        realName: '张三',
+        status: 0,
+        username: 'zhangsan'
+      },
+      {
+        id: 0,
+        lockStatus: 0,
+        lockTime: '2023-07-18T15:36:17.862Z',
+        phone: '15299623322',
+        realName: '张四',
+        status: 0,
+        username: 'zhangsi'
+      },
+      {
+        id: 0,
+        lockStatus: 0,
+        lockTime: '2023-07-18T15:36:17.862Z',
+        phone: '15295663322',
+        realName: '李二',
+        status: 0,
+        username: 'lier'
+      },
+      {
+        id: 0,
+        lockStatus: 0,
+        lockTime: '2023-07-18T15:36:17.862Z',
+        phone: '15299343322',
+        realName: '刘六',
+        status: 0,
+        username: 'liuliu'
+      },
+      {
+        id: 0,
+        lockStatus: 0,
+        lockTime: '2023-07-18T15:36:17.862Z',
+        phone: '15299665672',
+        realName: '汉王',
+        status: 0,
+        username: 'hanwan'
+      },
+      {
+        id: 0,
+        lockStatus: 0,
+        lockTime: '2023-07-18T15:36:17.862Z',
+        phone: '15299663354',
+        realName: '赵看',
+        status: 0,
+        username: 'zhaokan'
+      },
+      {
+        id: 0,
+        lockStatus: 0,
+        lockTime: '2023-07-18T15:36:17.862Z',
+        phone: '15299663389',
+        realName: '睿哈',
+        status: 0,
+        username: 'ruiha'
+      },
+      {
+        id: 0,
+        lockStatus: 0,
+        lockTime: '2023-07-18T15:36:17.862Z',
+        phone: '15299663092',
+        realName: '伍佰',
+        status: 0,
+        username: 'wubai'
+      }
+    ]
+  }
+}

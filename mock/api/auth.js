@@ -7,7 +7,7 @@ const token = {
 
 export default [
   {
-    url: '/api/admin/phone/login',
+    url: '/api/admin/union/login',
     method: 'post',
     response: ({ body }) => {
       if (['admin', 'editor'].includes(body?.name)) {
@@ -26,7 +26,7 @@ export default [
     }
   },
   {
-    url: '/api/admin/phone/refreshToken',
+    url: '/api/admin/refreshToken',
     method: 'post',
     response: ({ headers }) => {
       return {

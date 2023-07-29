@@ -111,7 +111,7 @@ async function handleQuery() {
       ...props.extraParams,
       ...paginationParams
     })
-    tableData.value = data?.list || []
+    tableData.value = (Array.isArray(data) ? data : data.records) || []
     pagination.itemCount = data.total ?? data.length
   } catch (error) {
     tableData.value = []

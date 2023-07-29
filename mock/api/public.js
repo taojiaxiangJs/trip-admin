@@ -1,4 +1,4 @@
-import { store, brand } from '../api.module/public'
+import { store, brand, allUser } from '../api.module/public'
 export default [
   {
     url: '/api/store',
@@ -21,6 +21,16 @@ export default [
         data: {
           ...brand.response.data
         }
+      }
+    }
+  },
+  {
+    url: '/api/admin/system/user/all',
+    method: 'get',
+    response: () => {
+      return {
+        code: 0,
+        data: [...allUser.response.data]
       }
     }
   }

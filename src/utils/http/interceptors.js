@@ -28,7 +28,7 @@ export function reqReject(error) {
 export function resResolve(response) {
   // TODO: 处理不同的 response.headers
   const { data, status, config, statusText } = response
-  if (data?.code !== 0) {
+  if (data?.code !== 20000) {
     const code = data?.code ?? status
 
     /** 根据code处理对应的操作，并返回处理后的message */

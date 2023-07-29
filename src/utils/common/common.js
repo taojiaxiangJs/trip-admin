@@ -104,3 +104,34 @@ export function debounce(method, wait, immediate) {
     }
   }
 }
+
+/**
+ * list to  tree
+ * @desc 就是不停的获取当前节点的父节点，并把当前节点的加入到父节点的children中
+ * @param array
+ * @param id 主键名称
+ * @param pid 对应node 的 parentId
+ * @param rootValue array里根节点的 parentId value
+ * @returns {[]}
+ */
+export function array2tree(array, id, pid, rootValue) {
+  const newList = []
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][pid] === rootValue) {
+      newList.push(array[i]) // 把根节点放入新的list中
+    } else {
+      // Parent
+      const parent = array.find((item) => item[id] === array[i][pid]) // 获取 当前节点的父节点
+      if (parent) {
+        // 如果当前节点的父节点不为空，就把当前节点放入父节点的 children 数组属性中
+        if (parent.children) {
+          // 更改原数组就相当于给新数组里面添加了children，因为新数组里面元素的地址和原数组是一个、
+          parent.children.push(array[i])
+        } else {
+          parent.children = [array[i]]
+        }
+      }
+    }
+  }
+  return newList
+}

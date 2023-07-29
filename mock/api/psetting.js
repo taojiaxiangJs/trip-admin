@@ -1,4 +1,4 @@
-import { role, user, lessee } from '../api.module/psetting'
+import { role, dataRole, user, lessee } from '../api.module/psetting'
 export default [
   {
     url: '/api/admin/role',
@@ -38,6 +38,54 @@ export default [
   },
   {
     url: '/api/admin/role',
+    method: 'delete',
+    response: () => {
+      return {
+        code: 0,
+        data: {
+          message: '删除成功'
+        }
+      }
+    }
+  },
+  {
+    url: '/api/admin/data/role',
+    method: 'get',
+    response: () => {
+      return {
+        code: 0,
+        data: {
+          ...dataRole.response.data
+        }
+      }
+    }
+  },
+  {
+    url: '/api/admin/data/role',
+    method: 'post',
+    response: () => {
+      return {
+        code: 0,
+        data: {
+          message: '新增成功'
+        }
+      }
+    }
+  },
+  {
+    url: '/api/admin/data/role',
+    method: 'put',
+    response: () => {
+      return {
+        code: 0,
+        data: {
+          message: '更新成功'
+        }
+      }
+    }
+  },
+  {
+    url: '/api/admin/data/role',
     method: 'delete',
     response: () => {
       return {

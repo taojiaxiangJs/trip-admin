@@ -8,6 +8,7 @@ export default {
   meta: {
     title: '设备管理',
     icon: 'mingcute:ebike-fill',
+    roleKey: 'tenant:device',
     order: 2
   },
   children: [
@@ -16,7 +17,8 @@ export default {
       path: 'all',
       component: () => import('@/views/device/all/index.vue'),
       meta: {
-        title: '设备管理'
+        title: '设备管理',
+        roleKey: 'tenant:device:device'
         // icon: 'carbon:gui-management'
       }
     },
@@ -25,7 +27,8 @@ export default {
       path: 'model',
       component: () => import('@/views/device/model/index.vue'),
       meta: {
-        title: '设备型号'
+        title: '设备型号',
+        roleKey: 'tenant:device:device-type'
         // icon: 'tabler:box-model-2'
       }
     }

@@ -5,8 +5,7 @@
       v-model:query-items="queryItems"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.getAllUser"
-      :is-pagination="false"
+      :get-data="api.getAllLessee"
       @on-data-change="(data) => (tableData = data)"
     >
       <template #queryBar>
@@ -31,14 +30,35 @@
       <n-form-item path="username" label="用户名" :rule="[{ required: true, message: '请输入用户名', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.username" placeholder="请输入用户名" />
       </n-form-item>
-      <n-form-item path="realName" label="姓名" :rule="[{ required: true, message: '请输入姓名', trigger: ['input', 'blur'] }]">
+      <n-form-item
+        v-if="modalType === 'add'"
+        path="name"
+        label="租户名"
+        :rule="[{ required: true, message: '请输入租户名', trigger: ['input', 'blur'] }]"
+      >
+        <n-input v-model:value="modalForm.name" placeholder="请输入租户名" />
+      </n-form-item>
+      <n-form-item
+        v-if="modalType === 'add'"
+        path="realName"
+        label="姓名"
+        :rule="[{ required: true, message: '请输入姓名', trigger: ['input', 'blur'] }]"
+      >
         <n-input v-model:value="modalForm.realName" placeholder="请输入姓名" />
       </n-form-item>
       <n-form-item path="phone" label="手机号" :rule="[{ required: true, message: '请输入手机号', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.phone" placeholder="请输入手机号" />
       </n-form-item>
-      <n-form-item path="enable" label="状态" :rule="[{ required: true, message: '请选择状态', trigger: ['change'] }]">
-        <n-radio-group v-model:value="modalForm.enable" name="radiogroup">
+      <n-form-item
+        v-if="modalType === 'add'"
+        path="times"
+        label="有效期"
+        :rule="[{ type: 'array', required: true, message: '请选择有效期', trigger: ['change'] }]"
+      >
+        <n-date-picker v-model:formatted-value="modalForm.times" type="daterange" clearable value-format="yyyy-MM-dd" />
+      </n-form-item>
+      <n-form-item v-if="modalType === 'add'" path="status" label="状态" :rule="[{ required: true, message: '请选择状态', trigger: ['change'] }]">
+        <n-radio-group v-model:value="modalForm.status" name="radiogroup">
           <n-space>
             <n-radio value="1">启用</n-radio>
             <n-radio value="0">禁用</n-radio>
@@ -49,49 +69,35 @@
     <template #footer>
       <div flex justify-end>
         <n-button @click="handleCancel()">取消</n-button>
-        <n-button :loading="modalLoading" ml-20 type="primary" @click="handleSave()">确定</n-button>
+        <n-popconfirm @positive-click="handleSave">
+          <template #trigger>
+            <n-button :loading="modalLoading" ml-20 type="primary">确定</n-button>
+          </template>
+          确定提交？
+        </n-popconfirm>
       </div>
     </template>
   </n-modal>
   <n-modal
-    v-model:show="modalEditRoleVisible"
+    v-model:show="modalEditMenusRoleVisible"
     title="编辑权限"
     preset="card"
-    :style="{ width: '600px' }"
+    :style="{ width: '500px' }"
     :bordered="false"
     @close="handlePutRoleCancel"
   >
-    <div flex>
-      <div flex-1 text-center>菜单角色</div>
-      <div flex-1 text-center>数据角色</div>
-    </div>
-    <div flex>
-      <div h-300 flex-1 overflow-auto p-16>
-        <n-tree
-          block-line
-          cascade
-          :data="allRoleList"
-          checkable
-          default-expand-all
-          expand-on-click
-          selectable
-          :default-checked-keys="roleMenusList"
-          @update:checked-keys="checkedMenusRole"
-        />
-      </div>
-      <div h-300 flex-1 overflow-auto p-16 style="border-left: 1px solid #eee">
-        <n-tree
-          block-line
-          cascade
-          :data="allDataRoleList"
-          checkable
-          default-expand-all
-          expand-on-click
-          selectable
-          :default-checked-keys="roleStoreList"
-          @update:checked-keys="checkedDataRole"
-        />
-      </div>
+    <div h-400 flex-1 overflow-auto p-16>
+      <n-tree
+        :data="allMenuRoleList"
+        cascade
+        checkable
+        defaultexpandall
+        expand-on-click
+        selectable
+        block-line
+        :default-checked-keys="roleMenusList"
+        @update:checked-keys="checkedMenusRole"
+      />
     </div>
 
     <template #footer>
@@ -111,6 +117,7 @@
 <script setup>
 import { NButton, useDialog, useMessage } from 'naive-ui'
 import { useCRUD } from '@/composables'
+import { array2tree } from '@/utils'
 import api from '../api'
 
 defineOptions({ name: 'Crud' })
@@ -133,30 +140,31 @@ const modalTitleMap = reactive({
 })
 const modalForm = ref({
   id: '',
+  tenantId: '',
+  name: '',
   username: '',
   realName: '',
   phone: '',
-  enable: '1'
+  times: null,
+  menus: [],
+  status: '1'
 })
 
 onMounted(() => {
   $table.value?.handleSearch()
-
-  getAllRoles()
-  getAllDataRoles()
+  getAllMenuRoles()
 })
 
-const allRoleList = ref([])
-const getAllRoles = () => {
-  api.getAllRole().then((res) => {
-    allRoleList.value = res.data.map((e) => ({ ...e, label: e.name, key: e.id })) || []
-  })
-}
-
-const allDataRoleList = ref([])
-const getAllDataRoles = () => {
-  api.getAllDataRole().then((res) => {
-    allDataRoleList.value = res.data.map((e) => ({ ...e, label: e.name, key: e.id })) || []
+const allMenuRoleList = ref([])
+const getAllMenuRoles = () => {
+  api.getPlatFormAllMenu().then((res) => {
+    allMenuRoleList.value =
+      array2tree(
+        res.data.map((e) => ({ ...e, label: e.name, key: e.id })),
+        'id',
+        'parentId',
+        -1
+      ) || []
   })
 }
 
@@ -166,12 +174,23 @@ const columns = [
     key: 'username'
   },
   {
+    title: '租户名',
+    key: 'name'
+  },
+  {
     title: '姓名',
     key: 'realName'
   },
   {
     title: '手机号',
     key: 'phone'
+  },
+  {
+    title: '有效期',
+    key: 'startTime',
+    render(row) {
+      return h('span', `${row.startTime} ~ ${row.endTime}`)
+    }
   },
   {
     title: '状态',
@@ -207,7 +226,7 @@ const columns = [
             style: 'margin-left: 15px;',
             onClick: () => handleRole(row)
           },
-          { default: () => '编辑角色' }
+          { default: () => '编辑权限' }
         ),
         h(
           NButton,
@@ -239,19 +258,7 @@ const columns = [
                 onClick: () => handleEnable(row)
               },
               { default: () => '启用' }
-            ),
-        row.status === 0
-          ? h(
-              NButton,
-              {
-                size: 'small',
-                type: 'error',
-                style: 'margin-left: 15px;',
-                onClick: () => handleDelete(row.id || row.gainsharingRuleId)
-              },
-              { default: () => '删除' }
             )
-          : ''
       ]
     }
   }
@@ -263,11 +270,16 @@ const handleModal = (type) => {
 }
 
 const handleTable = (row) => {
-  modalForm.value.id = row.id || ''
+  const startTime = row.startTime.split(' ')[0]
+  const endTime = row.endTime.split(' ')[0]
+  modalForm.value.tenantId = row.id || ''
+  modalForm.value.id = row.userId || ''
+  modalForm.value.name = row.name || ''
   modalForm.value.username = row.username || ''
   modalForm.value.realName = row.realName || ''
   modalForm.value.phone = row.phone || ''
-  modalForm.value.enable = row.status + '' || '1'
+  modalForm.value.times = [startTime, endTime]
+  modalForm.value.status = row.status + '' || '1'
   handleModal('edit')
 }
 
@@ -276,22 +288,32 @@ const handleCancel = () => {
   $modalForm.value?.restoreValidation()
   modalVisible.value = false
   modalForm.value.id = ''
+  modalForm.value.name = ''
   modalForm.value.username = ''
   modalForm.value.realName = ''
   modalForm.value.phone = ''
-  modalForm.value.enable = '1'
+  modalForm.value.times = null
+  modalForm.value.status = '1'
 }
 // modal保存
 const handleSave = () => {
+  console.log({ ...modalForm.value })
   $modalForm.value?.validate((errors) => {
     if (!errors) {
-      let reqApi = modalType.value === 'edit' ? api.putEditUser : api.postAddUser
-      modalForm.value.enable = Number(modalForm.value.enable)
-      reqApi({ ...modalForm.value }).then(() => {
-        message.success('操作成功')
-        $table.value?.handleSearch()
-        handleCancel()
-      })
+      let reqApi = modalType.value === 'edit' ? api.putLesseeDetail : api.postAddLessee
+      modalForm.value.status = Number(modalForm.value.status)
+      modalForm.value.startTime = modalForm.value.times[0]
+      modalForm.value.endTime = modalForm.value.times[1]
+      modalLoading.value = true
+      reqApi({ ...modalForm.value })
+        .then(() => {
+          message.success('操作成功')
+          $table.value?.handleSearch()
+          handleCancel()
+        })
+        .finally(() => {
+          modalLoading.value = false
+        })
     } else {
       console.log(errors)
     }
@@ -301,11 +323,11 @@ const handleSave = () => {
 const handleEnable = (row) => {
   dialog.warning({
     title: '提示',
-    content: `确定${row.status === 1 ? '禁用' : '启用'}该账号`,
+    content: `确定${row.status === 1 ? '禁用' : '启用'}该租户`,
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
-      let reqApi = row.status === 1 ? api.putUserDisable : api.putUserEnable
+      let reqApi = row.status === 1 ? api.putLesseeDisable : api.putLesseeEnable
       reqApi(row.id).then(() => {
         message.success('操作成功')
         $table.value?.handleSearch()
@@ -324,7 +346,7 @@ const handleReset = (row) => {
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: () => {
-      api.putUserResetPassword(row.id).then(() => {
+      api.putLesseeResetPassword(row.id).then(() => {
         message.success('操作成功')
       })
     },
@@ -334,17 +356,17 @@ const handleReset = (row) => {
   })
 }
 
-const modalEditRoleVisible = ref(false)
+const modalEditMenusRoleVisible = ref(false)
 let editUserId = ''
 const handleRole = ({ id }) => {
   editUserId = id
-  Promise.all([api.getUserMenusRole(id), api.getUserDataRole(id)])
+  api
+    .getLesseeMenuRole(id)
     .then((res) => {
-      roleMenusList.value = res[0].data || []
-      roleStoreList.value = res[1].data || []
+      roleMenusList.value = res.data || []
     })
     .finally(() => {
-      modalEditRoleVisible.value = true
+      modalEditMenusRoleVisible.value = true
     })
 }
 
@@ -353,23 +375,17 @@ const checkedMenusRole = (keys) => {
   roleMenusList.value = keys
 }
 
-const roleStoreList = ref([])
-const checkedDataRole = (keys) => {
-  roleStoreList.value = keys
-}
-
 const handlePutRoleCancel = () => {
   roleMenusList.value = []
-  roleStoreList.value = []
-  modalEditRoleVisible.value = false
+  modalEditMenusRoleVisible.value = false
 }
 
 const modalRoleLoading = ref(false)
 const handlePutRoleSave = () => {
   modalRoleLoading.value = true
-  const dataRole = { id: editUserId, dataRoleIds: [...roleStoreList.value] }
-  const menusRole = { id: editUserId, roleIds: [...roleMenusList.value] }
-  Promise.all([api.putUserDataRole(dataRole), api.putUserMenusRole(menusRole)])
+  const menusRole = { tenantId: editUserId, menus: [...roleMenusList.value] }
+  api
+    .putLesseeMenuRole(menusRole)
     .then(() => {
       message.success('编辑成功')
     })
@@ -379,8 +395,7 @@ const handlePutRoleSave = () => {
     })
 }
 
-const { handleDelete } = useCRUD({
-  doDelete: api.deleteUser,
+useCRUD({
   refresh: () => $table.value?.handleSearch()
 })
 </script>

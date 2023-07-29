@@ -10,15 +10,48 @@ export const role = {
       list: [
         {
           id: 'asdfuir23egnsie2r4442u',
-          name: '超级管理员'
+          name: '超级管理员',
+          num: 2
         },
         {
           id: '3453uir23egnsie2r4442u',
-          name: '管理员'
+          name: '管理员',
+          num: 3
         },
         {
           id: 'kgf2wir23egnsie2r4442u',
-          name: '运营'
+          name: '运营',
+          num: 6
+        }
+      ]
+    }
+  }
+}
+
+export const dataRole = {
+  params: {
+    key: ''
+  },
+  response: {
+    status: 'S000',
+    msg: '操作成功',
+    data: {
+      total: 3,
+      list: [
+        {
+          id: 'asdfuir23egnsie2r4442u',
+          name: '超级管理员',
+          num: 2
+        },
+        {
+          id: '3453uir23egnsie2r4442u',
+          name: '管理员',
+          num: 2
+        },
+        {
+          id: 'kgf2wir23egnsie2r4442u',
+          name: '运营',
+          num: 4
         }
       ]
     }

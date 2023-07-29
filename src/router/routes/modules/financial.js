@@ -8,6 +8,7 @@ export default {
   meta: {
     title: '财务管理',
     icon: 'streamline:money-cash-bag-dollar-bag-payment-cash-money-finance',
+    roleKey: 'tenant:finance',
     order: 5
   },
   children: [
@@ -16,7 +17,8 @@ export default {
       path: 'profit',
       component: () => import('@/views/financial/index.vue'),
       meta: {
-        title: '分润明细'
+        title: '分润明细',
+        roleKey: 'tenant:finance:profit-distribution'
         // icon: 'simple-icons:microsoftsharepoint',
       }
     },
@@ -25,7 +27,8 @@ export default {
       path: 'advance',
       component: () => import('@/views/financial/index.vue'),
       meta: {
-        title: '垫资记录'
+        title: '垫资记录',
+        roleKey: 'tenant:finance:profit-distribution-detail'
         // icon: 'material-symbols:export-notes-outline',
       }
     }

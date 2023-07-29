@@ -8,6 +8,7 @@ export default {
   meta: {
     title: '订单管理',
     icon: 'material-symbols:inactive-order-outline',
+    roleKey: 'tenant:order',
     order: 1
   },
   children: [
@@ -16,25 +17,28 @@ export default {
       path: 'all',
       component: () => import('@/views/order/all/index.vue'),
       meta: {
-        title: '全部订单'
+        title: '全部订单',
+        roleKey: 'tenant:order:all'
         // icon: 'ion:reorder-four',
       }
     },
-    // {
-    //   name: 'order-overdue',
-    //   path: 'overdue',
-    //   component: () => import('@/views/order/overdue/index.vue'),
-    //   meta: {
-    //     title: '逾期订单'
-    //     // icon: 'fluent:calendar-overdue-24-regular',
-    //   }
-    // },
+    {
+      name: 'order-overdue',
+      path: 'overdue',
+      component: () => import('@/views/order/overdue/index.vue'),
+      meta: {
+        title: '逾期订单',
+        roleKey: 'tenant:order:overtime-order'
+        // icon: 'fluent:calendar-overdue-24-regular',
+      }
+    },
     {
       name: 'order-withhold',
       path: 'withhold',
       component: () => import('@/views/order/withhold/index.vue'),
       meta: {
-        title: '代扣管理'
+        title: '代扣管理',
+        roleKey: 'tenant:order:bill'
         // icon: 'tabler:list-details',
       }
     },
@@ -53,7 +57,8 @@ export default {
       isHidden: true,
       component: () => import('@/views/order/common-page/detail.vue'),
       meta: {
-        title: '订单详情'
+        title: '订单详情',
+        roleKey: ''
       }
     }
   ]
