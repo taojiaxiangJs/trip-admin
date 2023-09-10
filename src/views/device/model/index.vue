@@ -5,7 +5,7 @@
       v-model:query-items="queryItems"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.getDeviceModel"
+      :get-data="api.getAllDeviceType"
       @on-data-change="(data) => (tableData = data)"
     >
       <template #queryBar>
@@ -25,32 +25,24 @@
   </CommonPage>
   <n-modal v-model:show="modalVisible" :title="modalTitleMap[modalType]" preset="card" :style="{ width: '600px' }" :bordered="false">
     <n-form ref="$modalForm" label-placement="left" label-align="right" :label-width="80" :rules="rules" :model="modalForm">
-      <n-form-item path="productName" label="名称" :rule="[{ required: true, message: '请输入名称', trigger: ['input', 'blur'] }]">
-        <n-input v-model:value="modalForm.productName" :disabled="!!modalForm.productId" placeholder="请输入名称" />
+      <n-form-item path="name" label="名称" :rule="[{ required: true, message: '请输入名称', trigger: ['input', 'blur'] }]">
+        <n-input v-model:value="modalForm.name" :disabled="!!modalForm.id" placeholder="请输入名称" />
       </n-form-item>
       <n-form-item path="brand" label="品牌" :rule="[{ required: true, message: '请输入品牌', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.brand" placeholder="请输入品牌" />
       </n-form-item>
-      <n-form-item path="voltage" label="电池">
-        <n-input v-model:value="modalForm.voltage" placeholder="请输入电池规格"><template #suffix>伏</template></n-input>
+      <n-form-item path="battery" label="电池" :rule="[{ type: 'number', required: true, message: '请输入电池规格', trigger: ['input', 'blur'] }]">
+        <n-input v-model:value="modalForm.battery" placeholder="请输入电池规格"><template #suffix>伏</template></n-input>
       </n-form-item>
-      <n-form-item path="speed" label="速度">
+      <n-form-item path="speed" label="速度" :rule="[{ type: 'number', required: true, message: '请输入速度', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.speed" placeholder="请输入速度"><template #suffix>km/h</template></n-input>
       </n-form-item>
-      <n-form-item path="price" label="价格" :rule="[{ required: true, message: '请输入价格', trigger: ['input', 'blur'] }]">
+      <n-form-item path="price" label="价格" :rule="[{ type: 'number', required: true, message: '请输入价格', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.price" placeholder="请输入价格"><template #suffix>元</template></n-input>
       </n-form-item>
-      <n-form-item path="imageUrl" label="图片">
-        <n-input v-show="false" v-model:value="modalForm.imageUrl" />
-        <n-upload
-          action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-          :default-file-list="fileList"
-          :max="1"
-          list-type="image-card"
-          @finish="handleUploadFinish"
-        >
-          点击上传
-        </n-upload>
+      <n-form-item path="attachmentId" label="图片">
+        <n-input v-show="false" v-model:value="modalForm.attachmentId" />
+        <n-upload list-type="image-card" :max="1" :custom-request="uploadImage">上传文件</n-upload>
       </n-form-item>
     </n-form>
     <template #footer>
@@ -63,13 +55,14 @@
 </template>
 
 <script setup>
-import { NButton, NImage } from 'naive-ui'
-import { formatFee } from '@/utils'
+import { NButton, NImage, useMessage } from 'naive-ui'
+// import { formatFee } from '@/utils'
 import { useCRUD } from '@/composables'
 import api from '../api'
+import globalApi from '@/api'
 
 defineOptions({ name: 'Crud' })
-
+const message = useMessage()
 const $table = ref(null)
 /** 表格数据，触发搜索的时候会更新这个值 */
 const tableData = ref([])
@@ -85,36 +78,36 @@ const modalTitleMap = reactive({
   edit: '编辑型号'
 })
 const modalForm = ref({
-  productId: '',
-  productName: '',
+  id: '',
+  name: '',
   brand: '',
-  voltage: '',
+  battery: '',
   speed: '',
   price: '',
-  imageUrl: ''
+  attachmentId: ''
 })
 
-onActivated(() => {
+onMounted(() => {
   $table.value?.handleSearch()
 })
 
 const columns = [
-  { title: '产品名称', key: 'productName' },
+  { title: '产品名称', key: 'name' },
   { title: '品牌', key: 'brand' },
-  { title: '电池(V)', key: 'voltage' },
+  { title: '电池(V)', key: 'battery' },
   { title: '车速(km/h)', key: 'speed' },
   {
     title: '价格(元)',
-    key: 'price',
-    render(row) {
-      return h('span', formatFee(row.price, 'front'))
-    }
+    key: 'price'
+    // render(row) {
+    //   return h('span', formatFee(row.price, 'front'))
+    // }
   },
   {
     title: '图片',
-    key: 'imageUrl',
+    key: 'picUrl',
     render(row) {
-      return h(NImage, { width: '30', height: '30', src: row.imageUrl })
+      return h(NImage, { width: '30', height: '30', src: row.picUrl })
     }
   },
   {
@@ -142,7 +135,7 @@ const columns = [
             size: 'small',
             type: 'error',
             style: 'margin-left: 15px;',
-            onClick: () => handleDelete(row.productId)
+            onClick: () => handleDelete(row.id)
           },
           { default: () => '删除' }
         )
@@ -157,60 +150,64 @@ const handleModal = (type) => {
 }
 
 const handleTable = (row) => {
-  modalForm.value.productId = row.productId || ''
-  modalForm.value.productName = row.productName || ''
-  modalForm.value.brand = row.brand || ''
-  modalForm.value.voltage = row.voltage || ''
-  modalForm.value.speed = row.speed || ''
-  modalForm.value.price = row.price || ''
-  modalForm.value.imageUrl = row.imageUrl || ''
-  fileList.value = [
-    {
-      status: 'finished',
-      url: row.imageUrl
-    }
-  ]
+  modalForm.value.id = row.id
+  modalForm.value.name = row.name
+  modalForm.value.brand = row.brand
+  modalForm.value.battery = row.battery
+  modalForm.value.speed = row.speed
+  modalForm.value.price = row.price
+  modalForm.value.attachmentId = row.attachmentId
   handleModal('edit')
 }
-const fileList = ref([])
-const handleUploadFinish = ({ file }) => {
-  /**
-   * fullPath :  "/11.png"
-   * name :  "11.png"
-   * percentage :  100
-   * status :  "finished"
-   * thumbnailUrl :  null
-   * type :  "image/png"
-   * */
-  console.log(file)
-  modalForm.imageUrl = `前缀${file.fullPath}`
-  fileList.value = [
-    {
-      status: 'finished',
-      // url: 前缀 + file.fullPath
-      url: 'http://caiyu365.oss-cn-hangzhou.aliyuncs.com/image/product/44472933a2621168b539504f3f1cb542.jpg'
-    }
-  ]
+
+const uploadImage = ({ file, data, onFinish, onError }) => {
+  const formData = new FormData()
+  if (data) {
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key])
+    })
+  }
+  formData.append('file', file.file)
+  globalApi
+    .uploadFile(formData)
+    .then(({ data }) => {
+      console.log(data)
+      modalForm.value.attachmentId = data.id
+      onFinish()
+    })
+    .catch((error) => {
+      message.error(error.msg)
+      onError()
+    })
 }
 
 // modal取消
 const handleCancel = () => {
   $modalForm.value?.restoreValidation()
   modalVisible.value = false
-  modalForm.value.productId = ''
-  modalForm.value.productName = ''
+  modalForm.value.id = ''
+  modalForm.value.name = ''
   modalForm.value.brand = ''
-  modalForm.value.voltage = ''
+  modalForm.value.battery = ''
   modalForm.value.speed = ''
   modalForm.value.price = ''
-  modalForm.value.imageUrl = ''
-  fileList.value = []
+  modalForm.value.attachmentId = ''
 }
 // modal保存
 const handleSave = () => {
   $modalForm.value?.validate((errors) => {
     if (!errors) {
       console.log({ ...modalForm.value })
+      let ajax = null
+      if (modalType.value === 'add') {
+        ajax = api.postAddDeviceType
+      } else {
+        ajax = api.putEditDeviceType
+      }
+      ajax({ ...modalForm.value }).then(() => {
+        $table.value?.handleSearch()
+        handleCancel()
+      })
     } else {
       console.log(errors)
     }
@@ -218,7 +215,7 @@ const handleSave = () => {
 }
 
 const { handleDelete } = useCRUD({
-  doDelete: api.deletePost,
+  doDelete: api.deleteDeviceType,
   refresh: () => $table.value?.handleSearch()
 })
 </script>

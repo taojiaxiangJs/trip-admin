@@ -75,7 +75,7 @@ onActivated(() => {
 // 店铺
 const storeList = ref([])
 const getStoreList = () => {
-  globalApi.getStore().then((res) => {
+  globalApi.getAllStoreAvailabel().then((res) => {
     storeList.value = res.data?.list.map((e) => ({ label: e.storeName, value: e.storeId }))
   })
 }

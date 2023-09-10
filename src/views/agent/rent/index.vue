@@ -146,21 +146,22 @@ const modalForm = ref({
   productImageUrl: ''
 })
 
-onActivated(() => {
+onMounted(() => {
   $table.value?.handleSearch()
 })
 // 店铺
 const storeList = ref([])
 const getStoreList = () => {
-  globalApi.getStore().then((res) => {
-    storeList.value = res.data?.list.map((e) => ({ label: e.storeName, value: e.storeId }))
+  globalApi.getAllStoreAvailabel().then((res) => {
+    storeList.value = res.data?.map((e) => ({ label: e.name, value: e.id }))
+    console.log(storeList.value)
   })
 }
 getStoreList()
 
 const columns = [
-  { title: '租金套餐名称', key: 'rentName' },
-  { title: '展示名称', key: 'name' },
+  { title: '租金套餐名称', key: 'name' },
+  { title: '展示名称', key: 'showName' },
   {
     title: '产品类型',
     key: 'productType',
@@ -177,30 +178,30 @@ const columns = [
   },
   {
     title: '价格',
-    key: 'rentUnitFee',
+    key: 'price',
     render(row) {
-      return h('span', formatFee(row.rentUnitFee, 'front'))
+      return h('span', formatFee(row.price, 'front'))
     }
   },
   {
     title: '租期',
-    key: 'rentUnitNum',
+    key: 'terms',
     render(row) {
-      return h('span', row.rentUnitNum + '个月')
+      return h('span', row.terms + '个月')
     }
   },
   {
     title: '起租期',
-    key: 'minUnitNum',
+    key: 'minTerms',
     render(row) {
-      return h('span', row.minUnitNum + '个月')
+      return h('span', row.minTerms + '个月')
     }
   },
   {
     title: '押金（元）',
-    key: 'depositFee',
+    key: 'deposit',
     render(row) {
-      return h('span', formatFee(row.depositFee, 'front'))
+      return h('span', formatFee(row.deposit, 'front'))
     }
   },
   {
@@ -210,7 +211,13 @@ const columns = [
       return h('span', formatFee(row.overdueFine, 'front'))
     }
   },
-  { title: '店铺', key: 'storeName' },
+  {
+    title: '店铺',
+    key: 'storeId',
+    render(row) {
+      return h('span', storeList.value.filter((e) => e.value == row.storeId)[0]?.label)
+    }
+  },
   { title: '租金审核状态', key: 'status' },
   {
     title: '操作',

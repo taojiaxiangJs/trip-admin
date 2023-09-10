@@ -1,7 +1,12 @@
 import { request } from '@/utils'
 
 export default {
-  getAllShop: (params = {}) => request.get('agent/shop', { params }), // 获取店铺列表
-  getAllRent: (params = {}) => request.get('agent/rent', { params }), // 获取店铺列表
-  getAllRule: (params = {}) => request.get('agent/rule', { params }) // 获取店铺列表
+  getAllStore: (params = {}) => request.get('admin/store/page', { params }), // 获取店铺列表
+  postAddStore: (data) => request.post('admin/store', { ...data }), // 新增店铺
+  putEditStore: (data) => request.put('admin/store', { ...data }), // 更新店铺
+  deleteStore: (id) => request.delete(`admin/store/${id}`), // 删除店铺
+  putOfflineStore: (id) => request.post(`admin/store/offline/${id}`), // 店铺上线
+  putOnlineStore: (id) => request.post(`admin/store/online/${id}`), // 店铺下线
+
+  getAllRent: (params = {}) => request.get('admin/rent/type/page', { params }) // 租金设置列表
 }

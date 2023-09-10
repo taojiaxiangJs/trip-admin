@@ -32,8 +32,7 @@ export function resResolve(response) {
     const code = data?.code ?? status
 
     /** 根据code处理对应的操作，并返回处理后的message */
-    const message = resolveResError(code, data?.message ?? statusText)
-
+    const message = resolveResError(code, data?.msg ?? statusText)
     /** 需要错误提醒 */
     !config.noNeedTip && window.$message?.error(message)
     return Promise.reject({ code, message, error: data || response })
@@ -45,13 +44,13 @@ export function resReject(error) {
   if (!error || !error.response) {
     const code = error?.code
     /** 根据code处理对应的操作，并返回处理后的message */
-    const message = resolveResError(code, error.message)
+    const message = resolveResError(code, error.msg)
     window.$message?.error(message)
     return Promise.reject({ code, message, error })
   }
   const { data, status, config } = error.response
   const code = data?.code ?? status
-  const message = resolveResError(code, data?.message ?? error.message)
+  const message = resolveResError(code, data?.msg ?? error.message)
   /** 需要错误提醒 */
   !config?.noNeedTip && window.$message?.error(message)
   return Promise.reject({ code, message, error: error.response?.data || error.response })

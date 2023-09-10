@@ -5,12 +5,12 @@
       v-model:query-items="queryItems"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.getAllShop"
+      :get-data="api.getAllStore"
       @on-data-change="(data) => (tableData = data)"
     >
       <template #queryBar>
         <QueryBarItem :content-width="290">
-          <n-input v-model:value="queryItems.searchString" type="text" placeholder="输入要搜索的内容" @keydown.enter="$table?.handleSearch" />
+          <n-input v-model:value="queryItems.keyWord" type="text" placeholder="输入要搜索的内容" @keydown.enter="$table?.handleSearch" />
         </QueryBarItem>
       </template>
       <template #extraHandle>
@@ -27,49 +27,60 @@
     @close="handleCancel"
   >
     <n-form ref="$modalForm" label-placement="left" label-align="right" :label-width="80" :rules="rules" :model="modalForm">
-      <n-form-item path="storeName" label="店铺名称" :rule="[{ required: true, message: '请输入店铺名称', trigger: ['input', 'blur'] }]">
-        <n-input v-model:value="modalForm.storeName" :disabled="!!modalForm.storeId" placeholder="请输入店铺名称" />
+      <n-form-item path="name" label="店铺名称" :rule="[{ required: true, message: '请输入店铺名称', trigger: ['input', 'blur'] }]">
+        <n-input v-model:value="modalForm.name" :disabled="!!modalForm.storeId" placeholder="请输入店铺名称" />
       </n-form-item>
       <n-form-item path="contactName" label="联系人" :rule="[{ required: true, message: '请输入联系人', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.contactName" placeholder="请输入联系人" />
       </n-form-item>
-      <n-form-item path="contactPhone" label="电话">
-        <n-input v-model:value="modalForm.contactPhone" placeholder="请输入电话" />
+      <n-form-item path="contact" label="电话" :rule="[{ required: true, message: '请输入请输入电话', trigger: ['input', 'blur'] }]">
+        <n-input v-model:value="modalForm.contact" placeholder="请输入电话" />
       </n-form-item>
       <div flex>
-        <n-form-item path="businessStartTime" label="营业时间">
+        <n-form-item path="businessStartTime" label="营业时间" :rule="[{ required: true, message: '请选择开始时间', trigger: ['change', 'blur'] }]">
           <n-time-picker v-model:formatted-value="modalForm.businessStartTime" value-format="HH:mm" format="HH:mm" placeholder="开始时间" />
         </n-form-item>
-        <n-form-item path="businessEndTime" label="" ml-12>
+        <n-form-item path="businessEndTime" label="" ml-12 :rule="[{ required: true, message: '请选择结束时间', trigger: ['change', 'blur'] }]">
           <n-time-picker v-model:formatted-value="modalForm.businessEndTime" value-format="HH:mm" format="HH:mm" placeholder="结束时间" />
         </n-form-item>
       </div>
 
-      <n-form-item path="city" label="省市区">
-        <n-tree-select v-model:value="modalForm.city" :options="[]" placeholder="请选择省市区" />
+      <n-form-item
+        v-if="modalType === 'add'"
+        path="county"
+        label="省市区"
+        :rule="[{ required: true, message: '请选择省市区', trigger: ['input', 'blur'] }]"
+      >
+        <n-cascader
+          v-model:value="modalForm.county"
+          placeholder="请选择省市区"
+          :options="chinaOptions"
+          check-strategy="child"
+          label-field="name"
+          value-field="code"
+          remote
+          :on-load="formatChinaData"
+        />
       </n-form-item>
 
-      <n-form-item path="address" label="店铺地址">
+      <n-form-item
+        v-if="modalType === 'add'"
+        path="address"
+        label="店铺地址"
+        :rule="[{ required: true, message: '请输入店铺地址', trigger: ['input', 'blur'] }]"
+      >
         <n-input v-model:value="modalForm.address" placeholder="请输入店铺地址" />
       </n-form-item>
-      <n-form-item path="scope" label="经营范围">
-        <n-checkbox-group v-model:value="modalForm.scope">
+      <n-form-item path="businessType" label="经营范围" :rule="[{ type: 'array', required: true, message: '请选择经营范围', trigger: ['change'] }]">
+        <n-checkbox-group v-model:value="modalForm.businessType">
           <n-space item-style="display: flex;">
             <n-checkbox v-for="item in options.scope" :key="item.value" :value="item.value" :label="item.label" />
           </n-space>
         </n-checkbox-group>
       </n-form-item>
-      <n-form-item path="storeImageUrl" label="店铺图片">
-        <n-input v-show="false" v-model:value="modalForm.storeImageUrl" />
-        <n-upload
-          action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-          :default-file-list="fileList"
-          :max="1"
-          list-type="image-card"
-          @finish="handleUploadFinish"
-        >
-          点击上传
-        </n-upload>
+      <n-form-item path="picUrl" label="店铺图片">
+        <n-input v-show="false" v-model:value="modalForm.picUrl" />
+        <n-upload list-type="image-card" :max="1" :custom-request="uploadImage">上传文件</n-upload>
       </n-form-item>
     </n-form>
     <template #footer>
@@ -82,19 +93,22 @@
 </template>
 
 <script setup>
-import { NButton, NImage } from 'naive-ui'
+import { NButton, NImage, useMessage, useDialog } from 'naive-ui'
 import { useCRUD } from '@/composables'
 import { options } from '../constant'
 import api from '../api'
+import globalApi from '@/api'
+import { getChinaData } from '@/utils'
 
 defineOptions({ name: 'Crud' })
+const message = useMessage()
+const dialog = useDialog()
 
 const $table = ref(null)
 /** 表格数据，触发搜索的时候会更新这个值 */
 const tableData = ref([])
 /** QueryBar筛选参数（可选） */
 const queryItems = ref({})
-
 const $modalForm = ref(null)
 const modalVisible = ref(false)
 const modalLoading = ref(false)
@@ -104,26 +118,28 @@ const modalTitleMap = reactive({
   edit: '编辑店铺'
 })
 const modalForm = ref({
-  storeId: '',
-  storeName: '',
-  contactName: '',
-  contactPhone: '',
+  id: undefined,
+  storeId: undefined,
+  name: undefined,
+  contactName: undefined,
+  contact: undefined,
   businessStartTime: undefined,
   businessEndTime: undefined,
-  city: [],
-  address: '',
-  scope: null,
-  storeImageUrl: ''
+  county: undefined,
+  address: undefined,
+  businessType: null,
+  picUrl: undefined,
+  attachmentId: undefined
 })
 
-onActivated(() => {
+onMounted(() => {
   $table.value?.handleSearch()
 })
 
 const columns = [
-  { title: '店铺名称', key: 'storeName' },
+  { title: '店铺名称', key: 'name' },
   { title: '联系人', key: 'contactName' },
-  { title: '电话', key: 'contactPhone' },
+  { title: '电话', key: 'contact' },
   { title: '地址', key: 'address' },
   {
     title: '营业时间',
@@ -133,17 +149,24 @@ const columns = [
     }
   },
   {
-    title: '店铺图片',
-    key: 'storeImageUrl',
+    title: '状态',
+    key: 'status',
     render(row) {
-      return h(NImage, { width: '30', height: '30', src: row.storeImageUrl })
+      return h('span', row.status === 1 ? '上线中' : '已下线')
+    }
+  },
+  {
+    title: '店铺图片',
+    key: 'picUrl',
+    render(row) {
+      return row.attachmentAccessUrl ? h(NImage, { width: '30', height: '30', src: row.attachmentAccessUrl }) : h('span', '--')
     }
   },
   {
     title: '店铺二维码',
-    key: 'qrCodeUrl',
+    key: 'qrCode',
     render(row) {
-      return h(NImage, { width: '30', height: '30', src: row.qrCodeUrl })
+      return row.qrCode ? h(NImage, { width: '30', height: '30', src: row.qrCode }) : h('span', '--')
     }
   },
   {
@@ -165,16 +188,39 @@ const columns = [
           },
           { default: () => '编辑' }
         ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'error',
-            style: 'margin-left: 15px;',
-            onClick: () => handleDelete(row.storeId)
-          },
-          { default: () => '删除' }
-        )
+        row.status === 1
+          ? h(
+              NButton,
+              {
+                size: 'small',
+                type: 'tertiary',
+                style: 'margin-left: 15px;',
+                onClick: () => handleEnable(row)
+              },
+              { default: () => '下线' }
+            )
+          : h(
+              NButton,
+              {
+                size: 'small',
+                type: 'success',
+                style: 'margin-left: 15px;',
+                onClick: () => handleEnable(row)
+              },
+              { default: () => '上线' }
+            ),
+        row.status === 0
+          ? h(
+              NButton,
+              {
+                size: 'small',
+                type: 'error',
+                style: 'margin-left: 15px;',
+                onClick: () => handleDelete(row.id)
+              },
+              { default: () => '删除' }
+            )
+          : ''
       ]
     }
   }
@@ -186,83 +232,131 @@ const handleModal = (type) => {
 }
 
 const handleTable = (row) => {
-  modalForm.value.storeId = row.storeId || ''
-  modalForm.value.storeName = row.storeName || ''
-  modalForm.value.contactName = row.contactName || ''
-  modalForm.value.contactPhone = row.contactPhone || ''
-  modalForm.value.address = row.address || ''
-  modalForm.value.storeImageUrl = row.storeImageUrl || ''
+  modalForm.value.id = row.id
+  modalForm.value.storeId = row.storeId
+  modalForm.value.name = row.name
+  modalForm.value.contactName = row.contactName
+  modalForm.value.contact = row.contact
+  modalForm.value.address = row.address
+  modalForm.value.picUrl = row.picUrl
+  modalForm.value.businessStartTime = row.businessStartTime
+  modalForm.value.businessEndTime = row.businessEndTime
+  modalForm.value.province = row.province
+  modalForm.value.city = row.city
+  modalForm.value.county = row.county
+  modalForm.value.status = row.status
+  modalForm.value.attachmentGroupId = row.attachmentGroupId
+  modalForm.value.attachmentId = row.attachmentId
+  modalForm.value.businessType = getScopeValue(row.businessType) || []
 
-  modalForm.value.businessStartTime = row.businessStartTime || ''
-  modalForm.value.businessEndTime = row.businessEndTime || ''
-  modalForm.value.city = (row.city && JSON.parse(row.city)) || []
-  modalForm.value.scope = getScopeValue(row.scopeList) || null
-
-  fileList.value = [
-    {
-      status: 'finished',
-      url: row.storeImageUrl
-    }
-  ]
-
-  console.log(modalForm.value)
   handleModal('edit')
 }
 
 const getScopeValue = (value) => {
-  return value.map((e) => e.scopeCode)
+  return value.includes(',') ? value.split(',') : value.split('')
 }
-const fileList = ref([])
-const handleUploadFinish = ({ file }) => {
-  /**
-   * fullPath :  "/11.png"
-   * name :  "11.png"
-   * percentage :  100
-   * status :  "finished"
-   * thumbnailUrl :  null
-   * type :  "image/png"
-   * */
-  console.log(file)
-  modalForm.storeImageUrl = `前缀${file.fullPath}`
-  fileList.value = [
-    {
-      status: 'finished',
-      // url: 前缀 + file.fullPath
-      url: 'http://caiyu365.oss-cn-hangzhou.aliyuncs.com/image/product/44472933a2621168b539504f3f1cb542.jpg'
-    }
-  ]
+
+const uploadImage = ({ file, data, onFinish, onError }) => {
+  const formData = new FormData()
+  if (data) {
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key])
+    })
+  }
+  formData.append('file', file.file)
+  globalApi
+    .uploadFile(formData)
+    .then(({ data }) => {
+      console.log(data)
+      modalForm.value.attachmentId = data.id
+      onFinish()
+    })
+    .catch((error) => {
+      message.error(error.msg)
+      onError()
+    })
 }
 
 // modal取消
 const handleCancel = () => {
   $modalForm.value?.restoreValidation()
   modalVisible.value = false
-  modalForm.value.storeId = ''
-  modalForm.value.storeName = ''
-  modalForm.value.contactName = ''
-  modalForm.value.contactPhone = ''
-  modalForm.value.address = ''
-  modalForm.value.storeImageUrl = ''
+  modalForm.value.id = undefined
+  modalForm.value.storeId = undefined
+  modalForm.value.name = undefined
+  modalForm.value.contactName = undefined
+  modalForm.value.contact = undefined
+  modalForm.value.address = undefined
+  modalForm.value.picUrl = undefined
+  modalForm.value.attachmentId = undefined
   modalForm.value.businessStartTime = undefined
   modalForm.value.businessEndTime = undefined
-  modalForm.value.city = []
-  modalForm.value.scope = null
-  fileList.value = []
+  modalForm.value.county = undefined
+  modalForm.value.businessType = []
 }
 // modal保存
 const handleSave = () => {
   console.log({ ...modalForm.value })
   $modalForm.value?.validate((errors) => {
     if (!errors) {
-      console.log({ ...modalForm.value })
+      let ajax = null
+      if (modalType.value === 'add') {
+        modalForm.value.province = modalForm.value.county.substr(0, 2)
+        modalForm.value.city = modalForm.value.county.substr(0, 4)
+        modalForm.value.status = 0
+        ajax = api.postAddStore
+      } else {
+        ajax = api.putEditStore
+      }
+      modalForm.value.businessType = modalForm.value.businessType.toString()
+      ajax({ ...modalForm.value }).then(() => {
+        message.success('操作成功！')
+        handleCancel()
+        $table.value?.handleSearch()
+      })
     } else {
       console.log(errors)
     }
   })
 }
 
+const chinaData = getChinaData()
+const chinaOptions = ref(chinaData.provinces.map((e) => ({ ...e, isLeaf: false })))
+const formatChinaData = (option) => {
+  return new Promise((resolve) => {
+    switch (option.code.length) {
+      case 2:
+        option.children = chinaData.cities.filter((e) => e.provinceCode === option.code).map((e) => ({ ...e, isLeaf: false }))
+        break
+      case 4:
+        option.children = chinaData.areas.filter((e) => e.cityCode === option.code)
+        break
+    }
+    resolve()
+  })
+}
+
+const handleEnable = (row) => {
+  dialog.warning({
+    title: '提示',
+    content: `确定${row.status === 1 ? '下线' : '上线'}该店铺`,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      let reqApi = row.status === 1 ? api.putOnlineStore : api.putOfflineStore
+      reqApi(row.id).then(() => {
+        message.success('操作成功')
+        $table.value?.handleSearch()
+      })
+    },
+    onNegativeClick: () => {
+      message.info('已取消')
+    }
+  })
+}
+
 const { handleDelete } = useCRUD({
-  doDelete: api.deletePost,
+  doDelete: api.deleteStore,
   refresh: () => $table.value?.handleSearch()
 })
 </script>

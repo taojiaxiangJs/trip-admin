@@ -1,4 +1,8 @@
 import dayjs from 'dayjs'
+import provinces from '@/assets/china/provinces.json'
+import cities from '@/assets/china/cities.json'
+import areas from '@/assets/china/areas.json'
+console.log(provinces)
 
 /**
  * @desc  格式化时间
@@ -134,4 +138,12 @@ export function array2tree(array, id, pid, rootValue) {
     }
   }
   return newList
+}
+
+export function getChinaData() {
+  return {
+    provinces,
+    cities,
+    areas
+  }
 }
