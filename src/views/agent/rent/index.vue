@@ -10,7 +10,13 @@
     >
       <template #queryBar>
         <QueryBarItem :content-width="290">
-          <n-input v-model:value="queryItems.searchString" type="text" placeholder="输入要搜索的内容" @keydown.enter="$table?.handleSearch" />
+          <n-input v-model:value="queryItems.key" type="text" placeholder="输入要搜索的内容" />
+        </QueryBarItem>
+        <QueryBarItem :content-width="290">
+          <n-select v-model:value="queryItems.approved" :options="options.approveType" placeholder="审核状态" />
+        </QueryBarItem>
+        <QueryBarItem :content-width="290">
+          <n-select v-model:value="queryItems.status" :options="options.rentStatusOptions" placeholder="上线状态" />
         </QueryBarItem>
       </template>
       <template #extraHandle>
@@ -26,32 +32,35 @@
     :bordered="false"
     @close="handleCancel"
   >
-    <n-form ref="$modalForm" label-placement="left" label-align="right" :label-width="80" :rules="rules" :model="modalForm">
-      <n-form-item path="productType" label="租用物" :rule="[{ required: true, message: '请选择租用物', trigger: ['change'] }]">
+    <n-form ref="$modalForm" label-placement="left" label-align="right" :label-width="120" :rules="rules" :model="modalForm">
+      <n-form-item path="productType" label="产品类型" :rule="[{ required: true, message: '请选择产品类型', trigger: ['change'] }]">
         <n-radio-group v-model:value="modalForm.productType" name="radiogroup">
           <n-space>
             <n-radio v-for="item in options.orderType" :key="item.value" :value="item.value">{{ item.label }}</n-radio>
           </n-space>
         </n-radio-group>
       </n-form-item>
-      <n-form-item path="name" label="展示名" :rule="[{ required: true, message: '请输入展示名', trigger: ['input', 'input', 'blur'] }]">
-        <n-input v-model:value="modalForm.name" placeholder="请输入展示名" />
+      <n-form-item path="name" label="租金套餐名称" :rule="[{ required: true, message: '请输入租金套餐名称', trigger: ['input', 'input', 'blur'] }]">
+        <n-input v-model:value="modalForm.name" placeholder="请输入租金套餐名称" />
       </n-form-item>
-      <n-form-item path="minUnitNum" label="起租期" :rule="[{ required: true, message: '请输入起租期', trigger: ['change', 'input', 'blur'] }]">
-        <n-input v-model:value="modalForm.minUnitNum" placeholder="请输入起租期"><template #suffix>月</template></n-input>
+      <n-form-item path="showName" label="展示名" :rule="[{ required: true, message: '请输入展示名', trigger: ['input', 'input', 'blur'] }]">
+        <n-input v-model:value="modalForm.showName" placeholder="请输入展示名" />
       </n-form-item>
-      <n-form-item path="rentUnitNum" label="租期" :rule="[{ required: true, message: '请输入租期', trigger: ['input', 'blur'] }]">
-        <n-input v-model:value="modalForm.rentUnitNum" placeholder="请输入租期"><template #suffix>月</template></n-input>
+      <n-form-item path="minTerms" label="起租期" :rule="[{ required: true, message: '请输入起租期', trigger: ['change', 'input', 'blur'] }]">
+        <n-input v-model:value="modalForm.minTerms" placeholder="请输入起租期"><template #suffix>月</template></n-input>
+      </n-form-item>
+      <n-form-item path="terms" label="租期" :rule="[{ required: true, message: '请输入租期', trigger: ['input', 'blur'] }]">
+        <n-input v-model:value="modalForm.terms" placeholder="请输入租期"><template #suffix>月</template></n-input>
       </n-form-item>
       <n-form-item path="payType" label="支付方式">
         <n-select v-model:value="modalForm.payType" :options="options.payType" placeholder="请选择支付方式" />
       </n-form-item>
-      <n-form-item path="rentUnitFee" label="价格">
-        <n-input v-model:value="modalForm.rentUnitFee" placeholder="请输入价格"><template #suffix>元/月</template></n-input>
-        <n-button ml-20 type="success" @click="handle2Modal(modalForm.unitFee)">高级设置</n-button>
+      <n-form-item path="price" label="价格">
+        <n-input v-model:value="modalForm.price" placeholder="请输入价格"><template #suffix>元/月</template></n-input>
+        <!-- <n-button ml-20 type="success" @click="handle2Modal(modalForm.unitFee)">高级设置</n-button> -->
       </n-form-item>
-      <n-form-item path="depositFee" label="押金">
-        <n-input v-model:value="modalForm.depositFee" placeholder="请输入押金"><template #suffix>元</template></n-input>
+      <n-form-item path="deposit" label="押金">
+        <n-input v-model:value="modalForm.deposit" placeholder="请输入押金"><template #suffix>元</template></n-input>
       </n-form-item>
       <n-form-item path="overdueFine" label="滞纳金">
         <n-input v-model:value="modalForm.overdueFine" placeholder="请输入滞纳金"><template #suffix>元/日</template></n-input>
@@ -59,18 +68,17 @@
       <n-form-item path="storeId" label="店铺">
         <n-select v-model:value="modalForm.storeId" filterable placeholder="选择店铺" :options="storeList" />
       </n-form-item>
-
-      <n-form-item path="productImageUrl" label="产品图片">
-        <n-input v-show="false" v-model:value="modalForm.productImageUrl" />
-        <n-upload
-          action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-          :default-file-list="fileList"
-          :max="1"
-          list-type="image-card"
-          @finish="handleUploadFinish"
-        >
-          点击上传
-        </n-upload>
+      <n-form-item path="status" label="状态" :rule="[{ required: true, message: '请选择状态', trigger: ['change'] }]">
+        <n-radio-group v-model:value="modalForm.status" name="status">
+          <n-space>
+            <n-radio :value="'1'">上线</n-radio>
+            <n-radio :value="'0'">下线</n-radio>
+          </n-space>
+        </n-radio-group>
+      </n-form-item>
+      <n-form-item path="attachmentId" label="产品图片">
+        <n-input v-show="false" v-model:value="modalForm.attachmentId" />
+        <n-upload list-type="image-card" :max="1" :custom-request="uploadImage">上传文件</n-upload>
       </n-form-item>
     </n-form>
     <template #footer>
@@ -107,7 +115,7 @@
 </template>
 
 <script setup>
-import { NButton, useMessage } from 'naive-ui'
+import { NButton, useMessage, useDialog } from 'naive-ui'
 import { formatFee, debounce } from '@/utils'
 import { useCRUD } from '@/composables'
 import globalApi from '@/api'
@@ -116,6 +124,7 @@ import api from '../api'
 
 defineOptions({ name: 'Crud' })
 const message = useMessage()
+const dialog = useDialog()
 
 const $table = ref(null)
 /** 表格数据，触发搜索的时候会更新这个值 */
@@ -135,15 +144,17 @@ const modalForm = ref({
   id: '',
   productType: null,
   name: '',
-  minUnitNum: '',
-  rentUnitNum: '',
+  showName: '',
+  minTerms: '',
+  terms: '',
   payType: null,
   unitFee: [{ value: null }],
-  rentUnitFee: '',
-  depositFee: '',
+  price: '',
+  deposit: '',
   overdueFine: '',
   storeId: null,
-  productImageUrl: ''
+  status: null,
+  attachmentId: ''
 })
 
 onMounted(() => {
@@ -212,13 +223,30 @@ const columns = [
     }
   },
   {
+    title: '应用中订单数',
+    key: 'num'
+  },
+  {
     title: '店铺',
     key: 'storeId',
     render(row) {
       return h('span', storeList.value.filter((e) => e.value == row.storeId)[0]?.label)
     }
   },
-  { title: '租金审核状态', key: 'status' },
+  {
+    title: '上下线状态',
+    key: 'status',
+    render(row) {
+      return h('span', row.status == 1 ? '已上线' : '下线中')
+    }
+  },
+  {
+    title: '审核状态',
+    key: 'approved',
+    render(row) {
+      return h('span', row.approved == 1 ? '通过' : row.approved == -1 ? '未审核' : '未通过')
+    }
+  },
   {
     title: '操作',
     key: 'actions',
@@ -228,36 +256,50 @@ const columns = [
     hideInExcel: true,
     render(row) {
       return [
+        // h(
+        //   NButton,
+        //   {
+        //     size: 'small',
+        //     type: 'primary',
+        //     style: 'margin-left: 15px;',
+        //     onClick: () => handleDetail(row)
+        //   },
+        //   { default: () => '租金明细' }
+        // ),
         h(
           NButton,
           {
             size: 'small',
             type: 'primary',
             style: 'margin-left: 15px;',
-            onClick: () => handleDetail(row)
+            onClick: () => handleOnline(row)
           },
-          { default: () => '租金明细' }
+          { default: () => (row.status == 1 ? '下线' : '上线') }
         ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'primary',
-            style: 'margin-left: 15px;',
-            onClick: () => handleTable(row)
-          },
-          { default: () => '编辑' }
-        ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'error',
-            style: 'margin-left: 15px;',
-            onClick: () => handleDelete(row.storeId)
-          },
-          { default: () => '删除' }
-        )
+        row.approved != 1
+          ? h(
+              NButton,
+              {
+                size: 'small',
+                type: 'primary',
+                style: 'margin-left: 15px;',
+                onClick: () => handleTable(row)
+              },
+              { default: () => '编辑' }
+            )
+          : '',
+        row.approved === 0
+          ? h(
+              NButton,
+              {
+                size: 'small',
+                type: 'error',
+                style: 'margin-left: 15px;',
+                onClick: () => handleDelete(row.storeId)
+              },
+              { default: () => '删除' }
+            )
+          : ''
       ]
     }
   }
@@ -272,44 +314,39 @@ const handleTable = (row) => {
   modalForm.value.id = row.id || ''
   modalForm.value.productType = `${row.productType}` || ''
   modalForm.value.name = row.name || ''
-  modalForm.value.minUnitNum = `${row.minUnitNum}` || ''
-  modalForm.value.rentUnitNum = `${row.rentUnitNum}` || ''
+  modalForm.value.showName = row.showName || ''
+  modalForm.value.minTerms = `${row.minTerms}` || ''
+  modalForm.value.terms = `${row.terms}` || ''
   modalForm.value.payType = `${row.payType}` || null
   modalForm.value.unitFee = row.unitFee || [{ value: null }]
-  modalForm.value.rentUnitFee = `${row.rentUnitFee}`.slice(0, -2) || ''
-  modalForm.value.depositFee = `${row.depositFee}`.slice(0, -2) || ''
+  modalForm.value.price = `${row.price}`.slice(0, -2) || ''
+  modalForm.value.deposit = `${row.deposit}`.slice(0, -2) || ''
   modalForm.value.overdueFine = `${row.overdueFine}`.slice(0, -2) || ''
   modalForm.value.storeId = row.storeId || null
-
-  modalForm.value.productImageUrl = row.productImageUrl || ''
-  fileList.value = [
-    {
-      status: 'finished',
-      url: row.productImageUrl
-    }
-  ]
+  modalForm.value.status = row.status || null
+  modalForm.value.attachmentId = row.attachmentId || ''
   handleModal('edit')
 }
 
-const fileList = ref([])
-const handleUploadFinish = ({ file }) => {
-  /**
-   * fullPath :  "/11.png"
-   * name :  "11.png"
-   * percentage :  100
-   * status :  "finished"
-   * thumbnailUrl :  null
-   * type :  "image/png"
-   * */
-  console.log(file)
-  modalForm.productImageUrl = `前缀${file.fullPath}`
-  fileList.value = [
-    {
-      status: 'finished',
-      // url: 前缀 + file.fullPath
-      url: 'http://caiyu365.oss-cn-hangzhou.aliyuncs.com/image/product/44472933a2621168b539504f3f1cb542.jpg'
-    }
-  ]
+const uploadImage = ({ file, data, onFinish, onError }) => {
+  const formData = new FormData()
+  if (data) {
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key])
+    })
+  }
+  formData.append('file', file.file)
+  globalApi
+    .uploadFile(formData)
+    .then(({ data }) => {
+      console.log(data)
+      modalForm.value.attachmentId = data.id
+      onFinish()
+    })
+    .catch((error) => {
+      message.error(error.msg)
+      onError()
+    })
 }
 
 // modal取消
@@ -319,15 +356,16 @@ const handleCancel = () => {
   modalForm.value.id = ''
   modalForm.value.productType = ''
   modalForm.value.name = ''
-  modalForm.value.minUnitNum = ''
-  modalForm.value.rentUnitNum = ''
+  modalForm.value.showName = ''
+  modalForm.value.minTerms = ''
+  modalForm.value.terms = ''
   modalForm.value.payType = null
-  modalForm.value.rentUnitFee = ''
-  modalForm.value.depositFee = ''
+  modalForm.value.price = ''
+  modalForm.value.deposit = ''
   modalForm.value.overdueFine = ''
   modalForm.value.storeId = null
-  modalForm.value.productImageUrl = ''
-  fileList.value = []
+  modalForm.value.status = null
+  modalForm.value.attachmentId = ''
 }
 // modal保存
 const handleSave = () => {
@@ -335,6 +373,16 @@ const handleSave = () => {
   $modalForm.value?.validate((errors) => {
     if (!errors) {
       console.log({ ...modalForm.value })
+      let ajax = null
+      if (modalType.value === 'add') {
+        ajax = api.postAddRent
+      } else {
+        ajax = api.putEditRent
+      }
+      ajax({ ...modalForm.value }).then(() => {
+        $table.value?.handleSearch()
+        handleCancel()
+      })
     } else {
       console.log(errors)
     }
@@ -342,7 +390,7 @@ const handleSave = () => {
 }
 
 watch(
-  () => modalForm.value.rentUnitNum,
+  () => modalForm.value.terms,
   debounce((val) => {
     if (val > 0) {
       if (modalForm.value.unitFee.length > val) {
@@ -354,6 +402,25 @@ watch(
   }, 200)
 )
 
+const handleOnline = (row) => {
+  dialog.warning({
+    title: '提示',
+    content: `确定${row.status === 1 ? '下线' : '上线'}该套餐`,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      let reqApi = row.status === 1 ? api.putOfflineRent : api.putOnlineRent
+      reqApi(row.id).then(() => {
+        message.success('操作成功')
+        $table.value?.handleSearch()
+      })
+    },
+    onNegativeClick: () => {
+      message.info('已取消')
+    }
+  })
+}
+
 const $modal2Form = ref(null)
 const modal2Visible = ref(false)
 const modal2Type = ref('edit')
@@ -363,19 +430,19 @@ const modal2Form = ref({
   unitFee: [{ value: null }]
 })
 
-const handleDetail = (row) => {
-  modal2Form.value.id = row.id || ''
-  handle2Modal(row.unitFee || [{ value: null }], 'detail')
-}
+// const handleDetail = (row) => {
+//   modal2Form.value.id = row.id || ''
+//   handle2Modal(row.unitFee || [{ value: null }], 'detail')
+// }
 
-const handle2Modal = (unitFee, type = 'edit') => {
-  modal2Form.value.unitFee = unitFee
-  modal2Type.value = type
-  modal2Visible.value = true
-}
+// const handle2Modal = (unitFee, type = 'edit') => {
+//   modal2Form.value.unitFee = unitFee
+//   modal2Type.value = type
+//   modal2Visible.value = true
+// }
 
 const handle2Add = () => {
-  if (modalForm.value.unitFee.length >= Number(modalForm.value.rentUnitNum)) {
+  if (modalForm.value.unitFee.length >= Number(modalForm.value.terms)) {
     message.warning('对不起，设置期数不能超过设定值')
   } else {
     modalForm.value.unitFee.push({ value: null })
@@ -397,7 +464,7 @@ const handle2Save = () => {
 }
 
 const { handleDelete } = useCRUD({
-  doDelete: api.deletePost,
+  doDelete: api.deleteRent,
   refresh: () => $table.value?.handleSearch()
 })
 </script>

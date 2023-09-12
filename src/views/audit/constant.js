@@ -35,10 +35,6 @@ export const options = {
       value: -1
     }
   ],
-  rentStatusOptions: [
-    { label: '上线', value: '1' },
-    { label: '下线', value: '0' }
-  ],
   orderType: [
     { label: '租车', value: '0' },
     { label: '换电', value: '1' },

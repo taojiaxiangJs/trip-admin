@@ -15,7 +15,7 @@ export default {
     {
       name: 'audit-rent',
       path: 'rent',
-      component: () => import('@/views/audit/index.vue'),
+      component: () => import('@/views/audit/rent.vue'),
       meta: {
         title: '租金审核',
         roleKey: 'tenant:approve:rent-price',
