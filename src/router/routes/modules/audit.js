@@ -23,9 +23,9 @@ export default {
       }
     },
     {
-      name: 'audit-discount',
-      path: 'discount',
-      component: () => import('@/views/audit/index.vue'),
+      name: 'audit-deposit',
+      path: 'deposit',
+      component: () => import('@/views/audit/deposit.vue'),
       meta: {
         title: '减押申请',
         roleKey: 'tenant:approve:deposit-reduce',
@@ -33,9 +33,9 @@ export default {
       }
     },
     {
-      name: 'audit-detain',
-      path: 'detain',
-      component: () => import('@/views/audit/index.vue'),
+      name: 'audit-deduct',
+      path: 'deduct',
+      component: () => import('@/views/audit/deduct.vue'),
       meta: {
         title: '扣押申请',
         roleKey: 'tenant:approve:deduct-deposit',
@@ -43,9 +43,9 @@ export default {
       }
     },
     {
-      name: 'audit-lease',
-      path: 'lease',
-      component: () => import('@/views/audit/index.vue'),
+      name: 'audit-withdraw',
+      path: 'withdraw',
+      component: () => import('@/views/audit/withdraw.vue'),
       meta: {
         title: '退租申请',
         roleKey: 'tenant:approve:withdraw-rent',

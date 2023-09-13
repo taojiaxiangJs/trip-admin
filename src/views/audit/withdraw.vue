@@ -5,7 +5,7 @@
       v-model:query-items="queryItems"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.getBeReviewedRent"
+      :get-data="api.getBeReviewedWithdraw"
       @on-data-change="(data) => (tableData = data)"
     >
       <template #queryBar>
