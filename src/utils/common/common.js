@@ -140,6 +140,39 @@ export function array2tree(array, id, pid, rootValue) {
   return newList
 }
 
+export function filterParentChildIds(tree, leafId) {
+  const result = []
+  let found = false
+
+  function findParentIds(node, path) {
+    if (node.id === leafId) {
+      result.push(...path, node.id)
+      found = true
+      return
+    }
+
+    const newPath = [...path, node.id]
+
+    if (node.children) {
+      for (const childNode of node.children) {
+        findParentIds(childNode, newPath)
+        if (found) {
+          break
+        }
+      }
+    }
+  }
+
+  for (const rootNode of tree) {
+    if (found) {
+      break
+    }
+    findParentIds(rootNode, [])
+  }
+
+  return result
+}
+
 export function getChinaData() {
   return {
     provinces,
