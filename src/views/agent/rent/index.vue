@@ -116,7 +116,7 @@
 
 <script setup>
 import { NButton, useMessage, useDialog } from 'naive-ui'
-import { formatFee, debounce } from '@/utils'
+import { debounce } from '@/utils'
 import { useCRUD } from '@/composables'
 import globalApi from '@/api'
 import { options } from '../constant'
@@ -191,7 +191,8 @@ const columns = [
     title: '价格',
     key: 'price',
     render(row) {
-      return h('span', formatFee(row.price, 'front'))
+      // return h('span', formatFee(row.price, 'front'))
+      return h('span', row.price)
     }
   },
   {
@@ -212,14 +213,16 @@ const columns = [
     title: '押金（元）',
     key: 'deposit',
     render(row) {
-      return h('span', formatFee(row.deposit, 'front'))
+      // return h('span', formatFee(row.deposit, 'front'))
+      return h('span', row.deposit)
     }
   },
   {
     title: '滞纳金（元）',
     key: 'overdueFine',
     render(row) {
-      return h('span', formatFee(row.overdueFine, 'front'))
+      // return h('span', formatFee(row.overdueFine, 'front'))
+      return h('span', row.overdueFine)
     }
   },
   {
