@@ -137,3 +137,7 @@ Vue Naive Admin
 |-- unocss.config.js                    // unocss配置
 |-- vite.config.js                      // vite配置
 ```
+
+## 账号
+
+租户 18888888888/888888

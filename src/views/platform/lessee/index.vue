@@ -160,11 +160,13 @@ const getAllMenuRoles = () => {
   api.getPlatFormAllMenu().then((res) => {
     allMenuRoleList.value =
       array2tree(
-        res.data.map((e) => ({ ...e, label: e.name, key: e.id })),
+        res.data.map((e) => ({ ...e, label: e.name, key: e.id, checked: false })),
         'id',
         'parentId',
         -1
       ) || []
+
+    console.log(allMenuRoleList.value)
   })
 }
 
@@ -383,7 +385,15 @@ const handlePutRoleCancel = () => {
 const modalRoleLoading = ref(false)
 const handlePutRoleSave = () => {
   modalRoleLoading.value = true
-  const menusRole = { tenantId: editUserId, menus: [...roleMenusList.value] }
+  // let roles = []
+  // roleMenusList.value.forEach((e) => {
+  //   let ids = filterParentChildIds(allMenuRoleList.value, e)
+  //   roles = [...roles, ...ids]
+  // })
+  // const roleIds = [...new Set(roles)]
+  // console.log(roleIds)
+  // const menusRole = { tenantId: editUserId, menus: roleIds }
+  const menusRole = { tenantId: editUserId, menus: [...roleMenusList] }
   api
     .putLesseeMenuRole(menusRole)
     .then(() => {
