@@ -5,7 +5,7 @@
       v-model:query-items="queryItems"
       :scroll-x="1200"
       :columns="columns"
-      :get-data="api.getBeReviewedDeposit"
+      :get-data="api.getDepositList"
       @on-data-change="(data) => (tableData = data)"
     >
       <template #queryBar>
@@ -13,23 +13,43 @@
           <n-input v-model:value="queryItems.key" type="text" placeholder="输入要搜索的内容" />
         </QueryBarItem>
         <QueryBarItem :content-width="290">
-          <n-select v-model:value="queryItems.approved" :options="options.approveType" placeholder="审核状态" />
+          <n-select v-model:value="queryItems.status" :options="options.approveType" placeholder="审核状态" />
         </QueryBarItem>
       </template>
     </CrudTable>
   </CommonPage>
+  <n-modal v-model:show="agreeData.showAgreeModal" preset="dialog" title="Dialog">
+    <template #header>
+      <div>提示</div>
+    </template>
+    <n-input v-model:value="agreeData.amount" type="text" mt-6 placeholder="需要支付的金额" />
+    <template #action>
+      <n-button type="tertiary" @click="agreeCancel">取消</n-button>
+      <n-button type="primary" @click="agreeSubmit">确定</n-button>
+    </template>
+  </n-modal>
+  <n-modal v-model:show="rejectData.showRejectModal" preset="dialog" title="Dialog">
+    <template #header>
+      <div>提示</div>
+    </template>
+    <n-input v-model:value="rejectData.rejectReason" mt-6 type="textarea" placeholder="拒绝原因" />
+    <template #action>
+      <n-button type="tertiary" @click="rejectCancel">取消</n-button>
+      <n-button type="primary" @click="rejectSubmit">确定</n-button>
+    </template>
+  </n-modal>
 </template>
 
 <script setup>
-import { NButton, useDialog, useMessage } from 'naive-ui'
+import { NButton, useMessage } from 'naive-ui'
 import { useCRUD } from '@/composables'
 // import { formatFee } from '@/utils'
 import { options } from './constant'
 import api from './api'
 import globalApi from '@/api'
+import { ref } from 'vue'
 
 defineOptions({ name: 'Crud' })
-const dialog = useDialog()
 const message = useMessage()
 
 const $table = ref(null)
@@ -52,63 +72,21 @@ const getStoreList = () => {
 getStoreList()
 
 const columns = [
-  { title: '租金套餐名称', key: 'name' },
-  { title: '展示名称', key: 'showName' },
+  { title: '订单号', key: 'orderNo', width: 180 },
+  { title: '用户', key: 'username' },
+  { title: '手机号', key: 'phone' },
+  { title: '套餐名称', key: 'showName' },
   {
-    title: '产品类型',
-    key: 'productType',
-    render(row) {
-      return h('span', options.orderType.filter((e) => e.value == row.productType)[0]?.label)
-    }
-  },
-  {
-    title: '支付类型',
-    key: 'payType',
-    render(row) {
-      return h('span', options.payType.filter((e) => e.value == row.payType + '')[0]?.label)
-    }
-  },
-  {
-    title: '价格',
-    key: 'price',
-    render(row) {
-      // return h('span', formatFee(row.price, 'front'))
-      return h('span', row.price)
-    }
-  },
-  {
-    title: '租期',
-    key: 'terms',
-    render(row) {
-      return h('span', row.terms + '个月')
-    }
-  },
-  {
-    title: '起租期',
-    key: 'minTerms',
-    render(row) {
-      return h('span', row.minTerms + '个月')
-    }
+    title: '租金（元/月）',
+    key: 'price'
   },
   {
     title: '押金（元）',
-    key: 'deposit',
-    render(row) {
-      // return h('span', formatFee(row.deposit, 'front'))
-      return h('span', row.deposit)
-    }
+    key: 'sourceDeposit'
   },
   {
-    title: '滞纳金（元）',
-    key: 'overdueFine',
-    render(row) {
-      // return h('span', formatFee(row.overdueFine, 'front'))
-      return h('span', row.overdueFine)
-    }
-  },
-  {
-    title: '应用中订单数',
-    key: 'num'
+    title: '申请金额（元）',
+    key: 'applyDeposit'
   },
   {
     title: '店铺',
@@ -118,20 +96,21 @@ const columns = [
     }
   },
   {
-    title: '上下线状态',
-    key: 'status',
+    title: '申请时间',
+    key: 'applyTime',
     render(row) {
-      return h('span', row.status == 1 ? '已上线' : '下线中')
+      return h('span', row.applyTime.replace('T', ' '))
     }
   },
   {
     title: '审核状态',
-    key: 'approved',
+    key: 'status',
     render(row) {
-      let classType = row.approved === 0 ? 'text-rose-500' : row.approved == 1 ? 'text-green-500' : 'text-yellow-500'
-      return h('span', { class: classType }, row.approved == 1 ? '通过' : row.approved == -1 ? '未审核' : '未通过')
+      let classType = row.status === 0 ? 'text-rose-500' : row.status == 1 ? 'text-green-500' : 'text-yellow-500'
+      return h('span', { class: classType }, row.status == 1 ? '通过' : row.status == -1 ? '未审核' : '未通过')
     }
   },
+  { title: '备注', key: 'rejectReason' },
   {
     title: '操作',
     key: 'actions',
@@ -141,7 +120,7 @@ const columns = [
     hideInExcel: true,
     render(row) {
       let arr = []
-      if (row.approved === -1) {
+      if (row.status === -1) {
         arr = [
           h(
             NButton,
@@ -149,7 +128,7 @@ const columns = [
               size: 'small',
               type: 'primary',
               style: 'margin-left: 15px;',
-              onClick: () => handleTable(row, 1)
+              onClick: () => handleAgree(row, 1)
             },
             { default: () => '通过' }
           ),
@@ -159,7 +138,7 @@ const columns = [
               size: 'small',
               type: 'error',
               style: 'margin-left: 15px;',
-              onClick: () => handleTable(row, 0)
+              onClick: () => handleReject(row, 0)
             },
             { default: () => '拒绝' }
           )
@@ -170,23 +149,66 @@ const columns = [
   }
 ]
 
-const handleTable = (row, type) => {
-  dialog.warning({
-    title: '警告',
-    content: `确定${type ? '同意' : '拒绝'}吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: () => {
-      let reqApi = type ? api.putPassRent : api.putRejectRent
-      reqApi(row.id).then(() => {
-        message.success('操作成功')
-        $table.value?.handleSearch()
-      })
-    },
-    onNegativeClick: () => {
-      message.error('取消')
-    }
+const agreeData = ref({
+  showAgreeModal: false,
+  id: '',
+  amount: ''
+})
+const handleAgree = (row) => {
+  agreeData.value.id = row.id
+  agreeData.value.amount = ''
+  agreeData.value.sourceDeposit = row.sourceDeposit
+  agreeData.value.showAgreeModal = true
+}
+const agreeCancel = () => {
+  agreeData.value.id = ''
+  agreeData.value.amount = ''
+  agreeData.value.sourceDeposit = ''
+  agreeData.value.showAgreeModal = false
+}
+const agreeSubmit = () => {
+  if (!agreeData.value.amount) {
+    message.error('请输入需要支付的押金金额')
+    return
+  } else if (Number(agreeData.value.amount) > Number(agreeData.value.sourceDeposit)) {
+    message.error('实际支付金额不能大于原始押金金额')
+    return
+  }
+  api.putPassDeposit({ id: agreeData.value.id, amount: agreeData.value.amount }).then(() => {
+    message.success('操作成功')
+    agreeCancel()
+    $table.value?.handleSearch()
   })
 }
+
+const rejectData = ref({
+  showRejectModal: false,
+  id: '',
+  rejectReason: ''
+})
+const handleReject = (row) => {
+  rejectData.value.id = row.id
+  rejectData.value.rejectReason = ''
+  rejectData.value.showRejectModal = true
+}
+
+const rejectCancel = () => {
+  rejectData.value.id = ''
+  rejectData.value.rejectReason = ''
+  rejectData.value.showRejectModal = false
+}
+
+const rejectSubmit = () => {
+  if (!rejectData.value.rejectReason) {
+    message.error('请输入拒绝原因')
+    return
+  }
+  api.putRejectDeposit({ id: rejectData.value.id, rejectReason: rejectData.value.rejectReason }).then(() => {
+    message.success('操作成功')
+    rejectCancel()
+    $table.value?.handleSearch()
+  })
+}
+
 useCRUD({ refresh: () => $table.value?.handleSearch() })
 </script>
