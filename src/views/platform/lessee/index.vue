@@ -393,7 +393,7 @@ const handlePutRoleSave = () => {
   // const roleIds = [...new Set(roles)]
   // console.log(roleIds)
   // const menusRole = { tenantId: editUserId, menus: roleIds }
-  const menusRole = { tenantId: editUserId, menus: [...roleMenusList] }
+  const menusRole = { tenantId: editUserId, menus: [...roleMenusList.value] }
   api
     .putLesseeMenuRole(menusRole)
     .then(() => {

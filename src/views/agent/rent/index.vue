@@ -62,8 +62,8 @@
       <n-form-item path="deposit" label="押金">
         <n-input v-model:value="modalForm.deposit" placeholder="请输入押金"><template #suffix>元</template></n-input>
       </n-form-item>
-      <n-form-item path="overdueFine" label="滞纳金">
-        <n-input v-model:value="modalForm.overdueFine" placeholder="请输入滞纳金"><template #suffix>元/日</template></n-input>
+      <n-form-item path="overdueFee" label="滞纳金">
+        <n-input v-model:value="modalForm.overdueFee" placeholder="请输入滞纳金"><template #suffix>元/日</template></n-input>
       </n-form-item>
       <n-form-item path="storeId" label="店铺">
         <n-select v-model:value="modalForm.storeId" filterable placeholder="选择店铺" :options="storeList" />
@@ -151,7 +151,7 @@ const modalForm = ref({
   unitFee: [{ value: null }],
   price: '',
   deposit: '',
-  overdueFine: '',
+  overdueFee: '',
   storeId: null,
   status: null,
   attachmentId: ''
@@ -219,10 +219,10 @@ const columns = [
   },
   {
     title: '滞纳金（元）',
-    key: 'overdueFine',
+    key: 'overdueFee',
     render(row) {
-      // return h('span', formatFee(row.overdueFine, 'front'))
-      return h('span', row.overdueFine)
+      // return h('span', formatFee(row.overdueFee, 'front'))
+      return h('span', row.overdueFee)
     }
   },
   {
@@ -324,7 +324,7 @@ const handleTable = (row) => {
   modalForm.value.unitFee = row.unitFee || [{ value: null }]
   modalForm.value.price = `${row.price}`.slice(0, -2) || ''
   modalForm.value.deposit = `${row.deposit}`.slice(0, -2) || ''
-  modalForm.value.overdueFine = `${row.overdueFine}`.slice(0, -2) || ''
+  modalForm.value.overdueFee = `${row.overdueFee}`.slice(0, -2) || ''
   modalForm.value.storeId = row.storeId || null
   modalForm.value.status = row.status || null
   modalForm.value.attachmentId = row.attachmentId || ''
@@ -365,7 +365,7 @@ const handleCancel = () => {
   modalForm.value.payType = null
   modalForm.value.price = ''
   modalForm.value.deposit = ''
-  modalForm.value.overdueFine = ''
+  modalForm.value.overdueFee = ''
   modalForm.value.storeId = null
   modalForm.value.status = null
   modalForm.value.attachmentId = ''
