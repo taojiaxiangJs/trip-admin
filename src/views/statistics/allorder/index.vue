@@ -13,20 +13,20 @@
       <template #queryBar>
         <QueryBarItem :content-width="290">
           <n-input
-            v-model:value="queryItems.searchString"
+            v-model:value="queryItems.key"
             type="text"
             placeholder="订单号/租借人/联系方式/店铺/推荐人"
             @keydown.enter="$table?.handleSearch"
           />
         </QueryBarItem>
         <QueryBarItem label="状态" :label-width="40">
-          <n-select v-model:value="queryItems.newStatus" :options="options.status" />
+          <n-select v-model:value="queryItems.status" :options="orderStatusList" />
         </QueryBarItem>
         <QueryBarItem label="订单类型" :label-width="70">
-          <n-select v-model:value="queryItems.productType" :options="options.orderType" />
+          <n-select v-model:value="queryItems.type" :options="orderTypeList" />
         </QueryBarItem>
         <QueryBarItem label="支付方式" :label-width="70">
-          <n-select v-model:value="queryItems.payType" :options="options.payType" />
+          <n-select v-model:value="queryItems.payType" :options="payTypeList" />
         </QueryBarItem>
         <QueryBarItem label="店铺" :label-width="40">
           <n-select v-model:value="queryItems.storeId" filterable placeholder="选择店铺" :options="storeList" />
@@ -70,32 +70,59 @@ const queryDate = ref({
   next: null
 })
 
-onActivated(() => {
-  $table.value?.handleSearch()
+onMounted(() => {
+  getOrderStatusList()
 })
 
 // 店铺
 const storeList = ref([])
 const getStoreList = () => {
   globalApi.getAllStoreAvailabel().then((res) => {
-    storeList.value = res.data?.list.map((e) => ({ label: e.storeName, value: e.storeId }))
+    storeList.value = res.data.map((e) => ({ label: e.name, value: e.id }))
   })
 }
 getStoreList()
 
+// 支付类型
+const payTypeList = ref([])
+const getPayTypeList = () => {
+  globalApi.getPayType().then((res) => {
+    payTypeList.value = res.data.map((e) => ({ label: e.name, value: e.code }))
+  })
+}
+getPayTypeList()
+
+// 订单类型
+const orderTypeList = ref([])
+const getOrderTypeList = () => {
+  globalApi.getOrderType().then((res) => {
+    orderTypeList.value = res.data.map((e) => ({ label: e.name, value: e.code }))
+  })
+}
+getOrderTypeList()
+
+// 订单状态
+const orderStatusList = ref([])
+const getOrderStatusList = () => {
+  globalApi.getOrderStatus().then((res) => {
+    orderStatusList.value = res.data.map((e) => ({ label: e.name, value: e.code }))
+    $table.value?.handleSearch()
+  })
+}
+
 // 预扣日切换
 const nextDateChange = (arg1, arg2) => {
-  extraParams.value.nextPayStartDateString = arg2[0] || ''
-  extraParams.value.nextPayEndDateString = arg2[1] || ''
+  extraParams.value.planPayStartDate = arg2[0] || ''
+  extraParams.value.planPayEndDate = arg2[1] || ''
 }
 // 租借日切换
 const dateChange = (arg1, arg2) => {
-  extraParams.value.startDateString = arg2[0] || ''
-  extraParams.value.endDateString = arg2[1] || ''
+  extraParams.value.rentStartDate = arg2[0] || ''
+  extraParams.value.rentEndDate = arg2[1] || ''
 }
 
 const columns = [
-  { title: '订单编号', key: 'rentOrderId', width: 190 },
+  { title: '订单编号', key: 'orderNo', width: 200 },
   {
     title: '订单类型',
     key: 'productType',
@@ -104,8 +131,8 @@ const columns = [
       return h('span', valueToName(row.productType, options.orderType))
     }
   },
-  { title: '租借人', key: 'rentUserName', width: 80 },
-  { title: '联系方式', key: 'rentUserPhone', width: 120 },
+  { title: '租借人', key: 'username', width: 80 },
+  { title: '联系方式', key: 'phone', width: 130 },
   { title: '租用设备', key: 'qrCode', width: 150 },
   { title: '代理商', key: 'agentName', width: 80 },
   { title: '店铺', key: 'storeName', width: 100 },
@@ -119,11 +146,11 @@ const columns = [
   },
   {
     title: '租金',
-    key: 'rentUnitFee',
-    width: 100,
-    render(row) {
-      return h('span', formatFee(row.rentUnitFee, 'front'))
-    }
+    key: 'price',
+    width: 100
+    // render(row) {
+    //   return h('span', formatFee(row.rentUnitFee, 'front'))
+    // }
   },
   {
     title: '租借日期',
@@ -154,7 +181,7 @@ const columns = [
     key: 'status',
     width: 90,
     render(row) {
-      return h('span', valueToName(row.status, options.status))
+      return h('span', valueToName(row.status, orderStatusList.value))
     }
   },
   {
@@ -222,7 +249,7 @@ const resetExtraParams = () => {
 
 const handleView = (row) => {
   console.log(row)
-  router.push({ path: 'detail', query: { rentOrderId: row.rentOrderId } })
+  router.push({ path: 'detail', query: { orderNo: row.orderNo } })
 }
 
 useCRUD({ refresh: () => $table.value?.handleSearch() })

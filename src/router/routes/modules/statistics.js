@@ -43,6 +43,16 @@ export default {
       }
     },
     {
+      name: 'statistics-allorder-detail',
+      path: 'detail',
+      isHidden: true,
+      component: () => import('@/views/statistics/allorder/detail.vue'),
+      meta: {
+        title: '订单详情',
+        roleKey: ''
+      }
+    },
+    {
       name: 'statistics-overorder',
       path: 'overorder',
       component: () => import('@/views/statistics/overorder/index.vue'),
