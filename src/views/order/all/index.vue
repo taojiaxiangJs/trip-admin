@@ -47,9 +47,9 @@
 
 <script setup>
 import { NButton } from 'naive-ui'
-import { formatDateTime, formatFee } from '@/utils'
+// import { formatDateTime, formatFee } from '@/utils'
+import { formatDateTime } from '@/utils'
 import { useCRUD } from '@/composables'
-import { options } from '../constant'
 import globalApi from '@/api'
 import api from '../api'
 
@@ -71,44 +71,27 @@ const queryDate = ref({
 })
 
 onMounted(() => {
-  $table.value?.handleSearch()
+  Promise.all([globalApi.getOrderStatus(), globalApi.getOrderType(), globalApi.getPayType(), globalApi.getAllStoreAvailabel()]).then((res) => {
+    orderStatusList.value = res[0].data.map((e) => ({ label: e.name, value: e.code }))
+    orderTypeList.value = res[1].data.map((e) => ({ label: e.name, value: e.code }))
+    payTypeList.value = res[2].data.map((e) => ({ label: e.name, value: e.code }))
+    storeList.value = res[3].data.map((e) => ({ label: e.name, value: e.id }))
+    $table.value?.handleSearch()
+  })
+  // getOrderStatusList()
 })
 
 // 店铺
 const storeList = ref([])
-const getStoreList = () => {
-  globalApi.getAllStoreAvailabel().then((res) => {
-    storeList.value = res.data.map((e) => ({ label: e.name, value: e.id }))
-  })
-}
-getStoreList()
 
 // 支付类型
 const payTypeList = ref([])
-const getPayTypeList = () => {
-  globalApi.getPayType().then((res) => {
-    payTypeList.value = res.data.map((e) => ({ label: e.name, value: e.code }))
-  })
-}
-getPayTypeList()
 
 // 订单类型
 const orderTypeList = ref([])
-const getOrderTypeList = () => {
-  globalApi.getOrderType().then((res) => {
-    orderTypeList.value = res.data.map((e) => ({ label: e.name, value: e.code }))
-  })
-}
-getOrderTypeList()
 
 // 订单状态
 const orderStatusList = ref([])
-const getOrderStatusList = () => {
-  globalApi.getOrderStatus().then((res) => {
-    orderStatusList.value = res.data.map((e) => ({ label: e.name, value: e.code }))
-  })
-}
-getOrderStatusList()
 
 // 预扣日切换
 const nextDateChange = (arg1, arg2) => {
@@ -128,24 +111,24 @@ const columns = [
     key: 'bizSuitProductType',
     width: 90,
     render(row) {
-      return h('span', valueToName(row.bizSuitProductType, orderTypeList))
+      return h('span', valueToName(row.bizSuitProductType, orderTypeList.value))
     }
   },
   { title: '租借人', key: 'username', width: 80 },
   { title: '联系方式', key: 'phone', width: 130 },
-  { title: '租用设备', key: 'qrCode', width: 150 },
-  { title: '代理商', key: 'agentName', width: 80 },
+  { title: '设备(框架号)', key: 'deviceFrameNo', width: 120 },
+  { title: '代理商', key: 'tenantName', width: 80 },
   { title: '店铺', key: 'storeName', width: 100 },
   {
     title: '支付方式',
-    key: 'payType',
+    key: 'bizSuitPayType',
     width: 80,
     render(row) {
-      return h('span', valueToName(row.payType, options.payType))
+      return h('span', valueToName(row.bizSuitPayType, payTypeList.value))
     }
   },
   {
-    title: '租金',
+    title: '租金(元)',
     key: 'price',
     width: 100
     // render(row) {
@@ -154,26 +137,26 @@ const columns = [
   },
   {
     title: '租借日期',
-    key: 'createTime',
-    width: 180,
+    key: 'rentTime',
+    width: 170,
     render(row) {
-      return h('span', formatDate(row.createTime))
+      return h('span', formatDate(row.rentTime))
     }
   },
   {
     title: '预扣日',
-    key: 'nextPayTime',
-    width: 180,
+    key: 'planPayTime',
+    width: 170,
     render(row) {
-      return h('span', formatDate(row.nextPayTime))
+      return h('span', formatDate(row.planPayTime))
     }
   },
   {
     title: '退租时间',
-    key: 'returnTime',
-    width: 180,
+    key: 'withdrawTime',
+    width: 170,
     render(row) {
-      return h('span', formatDate(row.returnTime))
+      return h('span', formatDate(row.withdrawTime))
     }
   },
   {
@@ -185,24 +168,26 @@ const columns = [
     }
   },
   {
-    title: '已付租金',
+    title: '已付租金(元)',
     key: 'paidFee',
     width: 100,
-    render(row) {
-      return h('span', formatFee(row.paidFee, 'front'))
+    render() {
+      // return h('span', formatFee(row.paidFee, 'front'))
+      return h('span', '--')
     }
   },
   {
-    title: '欠费金额',
+    title: '欠费金额(元)',
     key: 'unpaidFee',
     width: 100,
-    render(row) {
-      return h('span', formatFee(row.unpaidFee, 'front'))
+    render() {
+      // return h('span', formatFee(row.unpaidFee, 'front'))
+      return h('span', '--')
     }
   },
-  { title: '推荐人', key: 'referrerName', width: 80 },
-  { title: '办单人', key: '', width: 80 },
-  { title: '备注', key: '', width: 180, ellipsis: { tooltip: true } },
+  // { title: '推荐人', key: 'recommender', width: 80 },
+  { title: '办单人', key: 'operator', width: 80 },
+  { title: '备注', key: 'remarks', width: 180, ellipsis: { tooltip: true } },
   {
     title: '操作',
     key: 'actions',
@@ -228,7 +213,7 @@ const columns = [
 ]
 
 const valueToName = (value, options) => {
-  return options.filter((e) => e.value === value + '')[0]?.label || ''
+  return options.filter((e) => e.value + '' === value + '')[0]?.label || ''
 }
 
 const formatDate = (time) => {

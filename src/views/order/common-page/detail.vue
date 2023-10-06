@@ -4,7 +4,7 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借人：</div>
-        <div ml-8 flex-1>{{ orderDetail.rentUserInfoVo?.name || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail.username || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>支付宝账号：</div>
@@ -52,7 +52,7 @@
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>车牌号：</div>
-        <div ml-8 flex-1>{{ orderDetail.equipmentInfoVo?.licensePlateNumber || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail.carNo || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>中控号：</div>
@@ -88,7 +88,7 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>支付方式：</div>
-        <div ml-8 flex-1>{{ orderDetail.payTypeInfoVo?.payType }}</div>
+        <div ml-8 flex-1>{{ orderDetail.bizSuitPayType }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借合同：</div>
@@ -96,19 +96,19 @@
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借时间：</div>
-        <div ml-8 flex-1>{{ formatDate(orderDetail.payTypeInfoVo?.createTime) }}</div>
+        <div ml-8 flex-1>{{ orderDetail.rentTime }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>到期时间：</div>
-        <div ml-8 flex-1>{{ formatDate(orderDetail.payTypeInfoVo?.expireTime) }}</div>
+        <div ml-8 flex-1>{{ '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借期限：</div>
-        <div ml-8 flex-1>{{ orderDetail.payTypeInfoVo?.rentDays }} 天</div>
+        <div ml-8 flex-1>{{ '--' }} 天</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>退租时间：</div>
-        <div ml-8 flex-1>{{ formatDate(orderDetail.payTypeInfoVo?.returnTime) }}</div>
+        <div ml-8 flex-1>{{ orderDetail.withdrawTime }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>免押押金：</div>
@@ -121,7 +121,7 @@
     </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">其他信息</n-text></n-h6>
     <div flex flex-wrap p-4 text-16>
-      <div class="w-1/4" mb-8 flex>
+      <!-- <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>办单人：</div>
         <div ml-8 flex-1>
           <span>{{ '--' }}</span>
@@ -134,7 +134,7 @@
           <span>{{ '--' }}</span>
           <n-button type="primary" size="small" ml-16 @click="handleModal('referrer')">添加推荐人</n-button>
         </div>
-      </div>
+      </div> -->
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>备注：</div>
         <div ml-8 flex-1>
@@ -147,20 +147,20 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租车单价：</div>
-        <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.rentUnitFee, 'front') }} 元/月</div>
+        <div ml-8 flex-1>{{ orderDetail.price }} 元/月</div>
       </div>
-      <div class="w-1/4" mb-8 flex>
+      <!-- <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>换电单价：</div>
         <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.depositFee, 'front') }} 元/月</div>
-      </div>
-      <div class="w-1/4" mb-8 flex>
+      </div> -->
+      <!-- <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>合计月租金：</div>
         <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.sumUnitFee, 'front') }} 元/月</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>总租金：</div>
         <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.sumFee, 'front') }} 元</div>
-      </div>
+      </div> -->
     </div>
     <CrudTable ref="$table" :scroll-x="1200" :columns="columns" :init-table-data="tableData"> </CrudTable>
     <n-space>
@@ -227,6 +227,17 @@ const dialog = useDialog()
 const { query } = useRoute()
 const orderNo = query.orderNo
 
+/** 表格数据，触发搜索的时候会更新这个值 */
+const tableData = ref([])
+const orderDetail = ref({})
+const getOrderDetailFn = () => {
+  api.getOrderDetail(orderNo).then((res) => {
+    tableData.value = res.data?.payInfoVos || []
+    orderDetail.value = res.data
+  })
+}
+getOrderDetailFn()
+
 const $table = ref(null)
 const $modalForm = ref(null)
 const modalVisible = ref(false)
@@ -261,28 +272,18 @@ const rules = ref({
   changeDevice: { required: true, message: '请择输入关键字', trigger: ['input', 'blur'] }
 })
 
-/** 表格数据，触发搜索的时候会更新这个值 */
-const tableData = ref([])
-const orderDetail = ref({})
-const getDetail = () => {
-  api.getOrderDetail({ rentOrderI: orderNo }).then((res) => {
-    tableData.value = res.data?.payInfoVos || []
-    orderDetail.value = res.data
-  })
-}
-getDetail()
-
+// 推荐人
 const agentUser = ref([])
 const getAgentUser = () => {
-  api.getAgentUser({ rentOrderI: orderNo }).then((res) => {
-    agentUser.value =
-      res.data.map((e) => {
-        return {
-          value: e.userId + '',
-          label: e.userName
-        }
-      }) || []
-  })
+  // api.getAgentUser({ rentOrderI: orderNo }).then((res) => {
+  //   agentUser.value =
+  //     res.data.map((e) => {
+  //       return {
+  //         value: e.userId + '',
+  //         label: e.userName
+  //       }
+  //     }) || []
+  // })
 }
 getAgentUser()
 
@@ -390,13 +391,13 @@ const columns = [
 const storeList = ref([])
 const getStoreList = () => {
   globalApi.getAllStoreAvailabel().then((res) => {
-    storeList.value = res.data?.list.map((e) => ({ label: e.storeName, value: e.storeId + '' }))
+    storeList.value = res.data.map((e) => ({ label: e.name, value: e.id }))
   })
 }
 getStoreList()
 
 const valueToName = (value, options) => {
-  return options.filter((e) => e.value === value + '')[0]?.label || ''
+  return options.filter((e) => e.value + '' === value + '')[0]?.label || ''
 }
 
 const formatDate = (time) => {

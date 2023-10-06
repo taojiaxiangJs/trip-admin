@@ -4,7 +4,7 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借人：</div>
-        <div ml-8 flex-1>{{ orderDetail.rentUserInfoVo?.name || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail.username || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>支付宝账号：</div>
@@ -52,7 +52,7 @@
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>车牌号：</div>
-        <div ml-8 flex-1>{{ orderDetail.equipmentInfoVo?.licensePlateNumber || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail.carNo || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>中控号：</div>
@@ -88,7 +88,7 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>支付方式：</div>
-        <div ml-8 flex-1>{{ orderDetail.payTypeInfoVo?.payType }}</div>
+        <div ml-8 flex-1>{{ orderDetail.bizSuitPayType }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借合同：</div>
@@ -96,19 +96,19 @@
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借时间：</div>
-        <div ml-8 flex-1>{{ formatDate(orderDetail.payTypeInfoVo?.createTime) }}</div>
+        <div ml-8 flex-1>{{ orderDetail.rentTime }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>到期时间：</div>
-        <div ml-8 flex-1>{{ formatDate(orderDetail.payTypeInfoVo?.expireTime) }}</div>
+        <div ml-8 flex-1>{{ '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借期限：</div>
-        <div ml-8 flex-1>{{ orderDetail.payTypeInfoVo?.rentDays }} 天</div>
+        <div ml-8 flex-1>{{ '--' }} 天</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>退租时间：</div>
-        <div ml-8 flex-1>{{ formatDate(orderDetail.payTypeInfoVo?.returnTime) }}</div>
+        <div ml-8 flex-1>{{ orderDetail.withdrawTime }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>免押押金：</div>
@@ -147,20 +147,20 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租车单价：</div>
-        <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.rentUnitFee, 'front') }} 元/月</div>
+        <div ml-8 flex-1>{{ orderDetail.price }} 元/月</div>
       </div>
-      <div class="w-1/4" mb-8 flex>
+      <!-- <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>换电单价：</div>
         <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.depositFee, 'front') }} 元/月</div>
-      </div>
-      <div class="w-1/4" mb-8 flex>
+      </div> -->
+      <!-- <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>合计月租金：</div>
         <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.sumUnitFee, 'front') }} 元/月</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>总租金：</div>
         <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.sumFee, 'front') }} 元</div>
-      </div>
+      </div> -->
     </div>
     <CrudTable ref="$table" :scroll-x="1200" :columns="columns" :init-table-data="tableData"> </CrudTable>
     <n-space>
