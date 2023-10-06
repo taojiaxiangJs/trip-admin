@@ -7,6 +7,7 @@ export default {
   redirect: '/platform/lessee',
   meta: {
     title: '平台管理',
+    requireAuth: true,
     icon: 'game-icons:platform',
     roleKey: 'platform:tenant',
     order: 8
@@ -18,6 +19,7 @@ export default {
       component: () => import('@/views/platform/lessee/index.vue'),
       meta: {
         title: '租户管理',
+        requireAuth: true,
         roleKey: 'platform:tenant:tenant',
         order: 1
       }
@@ -28,6 +30,7 @@ export default {
       component: () => import('@/views/platform/menus/index.vue'),
       meta: {
         title: '菜单管理',
+        requireAuth: true,
         roleKey: 'platform:tenant:menu',
         order: 2
       }

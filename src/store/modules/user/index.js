@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 import { resetRouter } from '@/router'
 import { useTagsStore, usePermissionStore } from '@/store'
-import { removeToken, toLogin } from '@/utils'
+import { removeToken, toLogin, removeMenusPermission } from '@/utils'
 import api from '@/api'
 
 export const useUserStore = defineStore('user', {
   state() {
     return {
-      userInfo: {},
+      userInfo: {}
     }
   },
   getters: {
@@ -22,7 +22,7 @@ export const useUserStore = defineStore('user', {
     },
     role() {
       return this.userInfo?.role || []
-    },
+    }
   },
   actions: {
     async getUserInfo() {
@@ -39,6 +39,7 @@ export const useUserStore = defineStore('user', {
       const { resetTags } = useTagsStore()
       const { resetPermission } = usePermissionStore()
       removeToken()
+      removeMenusPermission()
       resetTags()
       resetPermission()
       resetRouter()
@@ -47,6 +48,6 @@ export const useUserStore = defineStore('user', {
     },
     setUserInfo(userInfo = {}) {
       this.userInfo = { ...this.userInfo, ...userInfo }
-    },
-  },
+    }
+  }
 })

@@ -2,12 +2,11 @@
 
 export const basicRoutes = [
   {
-    name: '404',
-    path: '/404',
-    component: () => import('@/views/error-page/404.vue'),
+    name: 'Index',
+    path: '/',
+    component: () => import('@/views/index/index.vue'),
     isHidden: true
   },
-
   {
     name: 'Login',
     path: '/login',
@@ -16,6 +15,12 @@ export const basicRoutes = [
     meta: {
       title: '登录页'
     }
+  },
+  {
+    name: '404',
+    path: '/404',
+    component: () => import('@/views/error-page/404.vue'),
+    isHidden: true
   }
 
   // {

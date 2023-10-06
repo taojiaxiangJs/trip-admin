@@ -7,6 +7,7 @@ export default {
   redirect: '/order/all',
   meta: {
     title: '订单管理',
+    requireAuth: true,
     icon: 'material-symbols:inactive-order-outline',
     roleKey: 'tenant:order',
     order: 1
@@ -18,6 +19,7 @@ export default {
       component: () => import('@/views/order/all/index.vue'),
       meta: {
         title: '全部订单',
+        requireAuth: true,
         roleKey: 'tenant:order:all'
         // icon: 'ion:reorder-four',
       }
@@ -28,6 +30,7 @@ export default {
       component: () => import('@/views/order/overdue/index.vue'),
       meta: {
         title: '逾期订单',
+        requireAuth: true,
         roleKey: 'tenant:order:overtime-order'
         // icon: 'fluent:calendar-overdue-24-regular',
       }
@@ -38,6 +41,7 @@ export default {
       component: () => import('@/views/order/withhold/index.vue'),
       meta: {
         title: '代扣管理',
+        requireAuth: true,
         roleKey: 'tenant:order:bill'
         // icon: 'tabler:list-details',
       }

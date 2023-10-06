@@ -2,7 +2,7 @@ import { request } from '@/utils'
 
 export default {
   getAll: (params = {}) => request.get('admin/order/platform/page', { params }), // 获取订单列表
-  getOrderDetail: (params = {}) => request.get('order/detail', { params }), // 获取订单详情
+  getOrderDetail: (orderNo) => request.get(`admin/order/detail/${orderNo}`), // 获取订单详情 admin/order/detail/{orderNo}
   getAgentUser: () => request.get('order/agent-user'), //
   getPayUrl: (params = {}) => request.get('order/pay-url', { params }), // 获取支付二维码
   getOverdueList: (params = {}) => request.get('order/overdue-list', { params }), // 获取逾期列表

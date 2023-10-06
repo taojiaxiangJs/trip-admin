@@ -7,6 +7,7 @@ export default {
   redirect: '/device/all',
   meta: {
     title: '设备管理',
+    requireAuth: true,
     icon: 'mingcute:ebike-fill',
     roleKey: 'tenant:device',
     order: 2
@@ -18,6 +19,7 @@ export default {
       component: () => import('@/views/device/all/index.vue'),
       meta: {
         title: '设备管理',
+        requireAuth: true,
         roleKey: 'tenant:device:device'
         // icon: 'carbon:gui-management'
       }
@@ -28,6 +30,7 @@ export default {
       component: () => import('@/views/device/model/index.vue'),
       meta: {
         title: '设备型号',
+        requireAuth: true,
         roleKey: 'tenant:device:device-type'
         // icon: 'tabler:box-model-2'
       }

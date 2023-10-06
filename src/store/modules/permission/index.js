@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { asyncRoutes, basicRoutes } from '@/router/routes'
+import { getMenusPermission } from '@/utils'
 
 function hasPermission(route, role) {
   // * 不需要权限直接返回true
@@ -50,15 +51,15 @@ export const usePermissionStore = defineStore('permission', {
     }
   },
   actions: {
-    generateRoutes(role = []) {
+    generateRoutes() {
       const accessRoutes = filterAsyncRoutes(asyncRoutes, this.menusPermission)
-      console.log(accessRoutes, role)
       this.accessRoutes = accessRoutes
       return accessRoutes
     },
-    setAllPermission(allPermission) {
+    setAllPermission() {
       const menus = [],
         btns = []
+      const allPermission = getMenusPermission()
       allPermission.forEach((e) => {
         e.type === 'directory' && menus.push(e.tag)
         e.type === 'button' && btns.push(e.tag)

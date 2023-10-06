@@ -7,6 +7,7 @@ export default {
   redirect: '/business/remit',
   meta: {
     title: '业务管理',
+    requireAuth: true,
     icon: 'material-symbols:business-messages-outline',
     roleKey: 'platform:business',
     order: 9
@@ -18,6 +19,7 @@ export default {
       component: () => import('@/views/business/remit/index.vue'),
       meta: {
         title: '分润打款',
+        requireAuth: true,
         roleKey: 'platform:business:deduct-deposit-apply',
         order: 1
       }
@@ -28,6 +30,7 @@ export default {
       component: () => import('@/views/business/seize/index.vue'),
       meta: {
         title: '扣押申请',
+        requireAuth: true,
         roleKey: 'platform:business:profit-distribution',
         order: 2
       }

@@ -9,6 +9,7 @@ export default {
     title: '代理商',
     icon: 'carbon:partnership',
     roleKey: 'tenant:store',
+    requireAuth: true,
     order: 3
   },
   children: [
@@ -18,6 +19,7 @@ export default {
       component: () => import('@/views/agent/shop/index.vue'),
       meta: {
         title: '店铺管理',
+        requireAuth: true,
         roleKey: 'tenant:store:store'
         // icon: 'solar:shop-2-linear',
       }
@@ -28,6 +30,7 @@ export default {
       component: () => import('@/views/agent/rent/index.vue'),
       meta: {
         title: '租金设置',
+        requireAuth: true,
         roleKey: 'tenant:store:rent-type'
         // icon: 'icon-park-outline:parenting-book',
       }

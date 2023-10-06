@@ -7,6 +7,7 @@ export default {
   redirect: '/setting/user',
   meta: {
     title: '系统管理',
+    requireAuth: true,
     icon: 'streamline:interface-setting-pie-chart-cog-setting-graph-cog',
     roleKey: 'tenant:system',
     order: 10
@@ -18,6 +19,7 @@ export default {
       component: () => import('@/views/setting/user/index.vue'),
       meta: {
         title: '账号管理',
+        requireAuth: true,
         roleKey: 'tenant:system:account'
       }
     },
@@ -27,6 +29,7 @@ export default {
       component: () => import('@/views/setting/role/index.vue'),
       meta: {
         title: '角色管理',
+        requireAuth: true,
         roleKey: 'tenant:system:role'
       }
     }
