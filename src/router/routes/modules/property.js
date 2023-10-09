@@ -20,7 +20,7 @@ export default {
         requireAuth: true,
         icon: 'iconoir:dashboard-dots',
         order: 1,
-        roleKey: 'tenant:statistics:assets'
+        roleKey: 'tenant:statistics'
       }
     }
   ]
