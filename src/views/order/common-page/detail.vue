@@ -8,16 +8,16 @@
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>支付宝账号：</div>
-        <div ml-8 flex-1>{{ orderDetail.rentUserInfoVo?.phone || '--' }}</div>
+        <div ml-8 flex-1>{{ userInfo.aliAccount || '--' }}</div>
       </div>
       <div class="w-1/2" mb-8 flex>
         <div w-120 text-right>身份证号码：</div>
         <div ml-8 flex flex-1 items-center>
-          <span mr-20>{{ orderDetail.rentUserInfoVo?.idCard || '--' }}</span>
+          <span mr-20>{{ userInfo.idCard || '--' }}</span>
           <n-image-group>
             <n-space text-0>
-              <n-image width="40" height="20" :src="orderDetail?.rentUserInfoVo?.idCardImgBackUrl" />
-              <n-image width="40" height="20" :src="orderDetail?.rentUserInfoVo?.idCardImgFrontUrl" />
+              <n-image width="40" height="20" :src="userInfo?.frontPicUrl" />
+              <n-image width="40" height="20" :src="userInfo?.backPicUrl" />
             </n-space>
           </n-image-group>
         </div>
@@ -83,6 +83,7 @@
       </div>
     </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">换车记录</n-text></n-h6>
+    <CrudTable ref="$table" :scroll-x="1200" :columns="changeColumns" :init-table-data="deviceChangeList"> </CrudTable>
 
     <n-h6 prefix="bar" align-text><n-text type="primary">租借方式</n-text></n-h6>
     <div flex flex-wrap p-4 text-16>
@@ -162,7 +163,7 @@
         <div ml-8 flex-1>{{ formatFee(orderDetail.productRentVo?.sumFee, 'front') }} 元</div>
       </div> -->
     </div>
-    <CrudTable ref="$table" :scroll-x="1200" :columns="columns" :init-table-data="tableData"> </CrudTable>
+    <CrudTable ref="$table" :scroll-x="1200" :columns="columns" :init-table-data="billList"> </CrudTable>
     <n-space>
       <n-button type="primary" @click="handleModal('overLease')">确认退租</n-button>
       <n-button type="primary" @click="handleModal('changeDevice')">更换车辆</n-button>
@@ -215,7 +216,8 @@
 <script setup>
 import { NButton, useDialog, useMessage } from 'naive-ui'
 import QRCode from 'qrcode'
-import { formatDateTime, formatFee } from '@/utils'
+// import { formatDateTime, formatFee } from '@/utils'
+import { formatFee } from '@/utils'
 import { useCRUD } from '@/composables'
 import { options } from '../constant'
 import api from '../api'
@@ -228,15 +230,38 @@ const { query } = useRoute()
 const orderNo = query.orderNo
 
 /** 表格数据，触发搜索的时候会更新这个值 */
-const tableData = ref([])
+
 const orderDetail = ref({})
 const getOrderDetailFn = () => {
   api.getOrderDetail(orderNo).then((res) => {
-    tableData.value = res.data?.payInfoVos || []
     orderDetail.value = res.data
   })
 }
 getOrderDetailFn()
+
+const userInfo = ref({})
+const getOrderUserInfo = () => {
+  api.getOrderUserInfo(orderNo).then((res) => {
+    userInfo.value = res.data
+  })
+}
+getOrderUserInfo()
+
+const deviceChangeList = ref([])
+const getDeviceChangeList = () => {
+  api.getDeviceChangeHistory(orderNo).then((res) => {
+    deviceChangeList.value = res.data
+  })
+}
+getDeviceChangeList()
+
+const billList = ref([])
+const getBillList = () => {
+  api.getBillList(orderNo).then((res) => {
+    billList.value = res.data
+  })
+}
+getBillList()
 
 const $table = ref(null)
 const $modalForm = ref(null)
@@ -287,26 +312,53 @@ const getAgentUser = () => {
 }
 getAgentUser()
 
+const changeColumns = [
+  {
+    title: '订单编号',
+    key: 'orderNo'
+  },
+  {
+    title: '车牌号',
+    key: 'cardNo'
+  },
+  {
+    title: '中控号',
+    key: 'centralControlNo'
+  },
+  {
+    title: '设备Id',
+    key: 'deviceId'
+  },
+  {
+    title: '更换时间',
+    key: 'changeTime'
+  },
+  {
+    title: '备注',
+    key: 'remarks'
+  }
+]
+
 const columns = [
   {
     title: '预扣日期',
-    key: 'payTime',
+    key: 'planPayTime',
     render(row) {
-      return h('span', formatDate(row.payTime))
+      return h('span', row.planPayTime?.split(' ')[0])
     }
   },
   {
     title: '支付日期',
-    key: 'realPayTime',
+    key: 'payTime',
     render(row) {
-      return h('span', formatDate(row.realPayTime))
+      return h('span', row.payTime?.split(' ')[0])
     }
   },
   {
-    title: '支付金额',
-    key: 'payFee',
+    title: '支付金额(元)',
+    key: 'amount',
     render(row) {
-      return h('span', formatFee(row.payFee, 'front'))
+      return h('span', formatFee(row.amount, 'front'))
     }
   },
   {
@@ -318,9 +370,9 @@ const columns = [
   },
   {
     title: '支付结果',
-    key: 'refundStatus',
+    key: 'payStatus',
     render(row) {
-      return h('span', valueToName(row.refundStatus, options.status))
+      return h('span', valueToName(row.payStatus, options.status))
     }
   },
   {
@@ -400,9 +452,9 @@ const valueToName = (value, options) => {
   return options.filter((e) => e.value + '' === value + '')[0]?.label || ''
 }
 
-const formatDate = (time) => {
-  return time ? formatDateTime(time) : '--'
-}
+// const formatDate = (time) => {
+//   return time ? formatDateTime(time) : '--'
+// }
 
 // 获取代扣支付的二维码url
 const getPayUrl = async (payRuleId) => {
