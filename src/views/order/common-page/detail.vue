@@ -4,43 +4,43 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借人：</div>
-        <div ml-8 flex-1>{{ orderDetail.username || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.user?.username || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>支付宝账号：</div>
-        <div ml-8 flex-1>{{ userInfo.aliAccount || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.user?.aliAccount || '--' }}</div>
       </div>
       <div class="w-1/2" mb-8 flex>
         <div w-120 text-right>身份证号码：</div>
         <div ml-8 flex flex-1 items-center>
-          <span mr-20>{{ userInfo.idCard || '--' }}</span>
+          <span mr-20>{{ orderDetail?.user?.idCard || '--' }}</span>
           <n-image-group>
             <n-space text-0>
-              <n-image width="40" height="20" :src="userInfo?.frontPicUrl" />
-              <n-image width="40" height="20" :src="userInfo?.backPicUrl" />
+              <n-image width="40" height="20" :src="orderDetail?.user?.frontPicUrl" />
+              <n-image width="40" height="20" :src="orderDetail?.user?.backPicUrl" />
             </n-space>
           </n-image-group>
         </div>
       </div>
     </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">紧急联系人</n-text></n-h6>
-    <div flex flex-wrap p-4 text-16>
+    <div v-for="item in orderDetail?.contacts" :key="item.userId" flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>姓名：</div>
         <div ml-8 flex-1>
-          {{ orderDetail.rentUserInfoVo?.emergencyContactVos[0]?.name || '--' }}
+          {{ item.name || '--' }}
         </div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>关系：</div>
         <div ml-8 flex-1>
-          {{ orderDetail.rentUserInfoVo?.emergencyContactVos[0]?.relation || '--' }}
+          {{ valueToName(item.relation, options.relationsMap) || '--' }}
         </div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>联系方式：</div>
         <div ml-8 flex-1>
-          <span>{{ orderDetail.rentUserInfoVo?.emergencyContactVos[0]?.phone || '--' }}</span>
+          <span>{{ item.phone || '--' }}</span>
         </div>
       </div>
     </div>
@@ -48,15 +48,15 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>车架号：</div>
-        <div ml-8 flex-1>{{ orderDetail.equipmentInfoVo?.chassisNumber || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.device?.frameNo || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>车牌号：</div>
-        <div ml-8 flex-1>{{ orderDetail.carNo || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.device?.carNo || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>中控号：</div>
-        <div ml-8 flex-1>{{ orderDetail.equipmentInfoVo?.equipmentCode || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.device?.centralControlNo || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>车辆来源：</div>
@@ -64,32 +64,32 @@
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>型号：</div>
-        <div ml-8 flex-1>{{ orderDetail.productInfoVo?.productName || '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.order?.deviceTypeName || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>电压：</div>
-        <div ml-8 flex-1>{{ orderDetail.productInfoVo?.voltage || '--' }} V</div>
+        <div ml-8 flex-1>{{ orderDetail?.deviceType?.battery || '--' }} V</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>速度：</div>
-        <div ml-8 flex-1>{{ orderDetail.productInfoVo?.speed || '--' }} km/h</div>
+        <div ml-8 flex-1>{{ orderDetail?.deviceType?.speed || '--' }} km/h</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>价值：</div>
         <div ml-8 flex-1>
-          {{ orderDetail.productInfoVo?.price ? formatFee(orderDetail.productInfoVo?.price, 'front') : '--' }}
+          {{ orderDetail?.deviceType?.price || '--' }}
           元
         </div>
       </div>
     </div>
     <n-h6 prefix="bar" align-text><n-text type="primary">换车记录</n-text></n-h6>
-    <CrudTable ref="$table" :scroll-x="1200" :columns="changeColumns" :init-table-data="deviceChangeList"> </CrudTable>
+    <CrudTable ref="$table" :scroll-x="1200" :columns="changeColumns" :init-table-data="orderDetail.deviceHistories"> </CrudTable>
 
     <n-h6 prefix="bar" align-text><n-text type="primary">租借方式</n-text></n-h6>
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>支付方式：</div>
-        <div ml-8 flex-1>{{ orderDetail.bizSuitPayType }}</div>
+        <div ml-8 flex-1>{{ valueToName(orderDetail?.suit?.payType, options.payType) }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借合同：</div>
@@ -97,19 +97,19 @@
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借时间：</div>
-        <div ml-8 flex-1>{{ orderDetail.rentTime }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.order?.rentTime }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>到期时间：</div>
-        <div ml-8 flex-1>{{ '--' }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.order?.endTime || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借期限：</div>
-        <div ml-8 flex-1>{{ '--' }} 天</div>
+        <div ml-8 flex-1>{{ orderDetail?.suit?.terms }} 个月</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>退租时间：</div>
-        <div ml-8 flex-1>{{ orderDetail.withdrawTime }}</div>
+        <div ml-8 flex-1>{{ orderDetail?.order?.withdrawTime || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>免押押金：</div>
@@ -238,22 +238,6 @@ const getOrderDetailFn = () => {
   })
 }
 getOrderDetailFn()
-
-const userInfo = ref({})
-const getOrderUserInfo = () => {
-  api.getOrderUserInfo(orderNo).then((res) => {
-    userInfo.value = res.data
-  })
-}
-getOrderUserInfo()
-
-const deviceChangeList = ref([])
-const getDeviceChangeList = () => {
-  api.getDeviceChangeHistory(orderNo).then((res) => {
-    deviceChangeList.value = res.data
-  })
-}
-getDeviceChangeList()
 
 const billList = ref([])
 const getBillList = () => {

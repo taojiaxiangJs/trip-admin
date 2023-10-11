@@ -48,5 +48,14 @@ export const options = {
   applyStatus: [
     { label: '是', value: '1' },
     { label: '否', value: '0' }
+  ],
+  relationsMap: [
+    { label: '父亲', value: 0 },
+    { label: '母亲', value: 1 },
+    { label: '子女', value: 2 },
+    { label: '配偶', value: 3 },
+    { label: '兄弟姐妹', value: 4 },
+    { label: '亲戚/朋友/同事', value: 5 },
+    { label: '其他', value: 6 }
   ]
 }
