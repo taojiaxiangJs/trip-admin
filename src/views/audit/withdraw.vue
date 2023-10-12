@@ -13,11 +13,30 @@
           <n-input v-model:value="queryItems.key" type="text" placeholder="输入要搜索的内容" />
         </QueryBarItem>
         <QueryBarItem :content-width="290">
-          <n-select v-model:value="queryItems.approved" :options="options.approveType" placeholder="审核状态" />
+          <n-select v-model:value="queryItems.status" :options="options.approveType" placeholder="审核状态" />
         </QueryBarItem>
       </template>
     </CrudTable>
   </CommonPage>
+  <n-modal v-model:show="showModal" preset="dialog" title="提示">
+    <n-form ref="formRef" inline :label-width="80" :model="reasonForm" :rules="rules" size="medium" class="mt-8">
+      <n-form-item
+        label="原因"
+        path="reason"
+        :rule="{
+          required: true,
+          message: '请输入原因',
+          trigger: 'blur'
+        }"
+      >
+        <n-input v-model:value="reasonForm.reason" placeholder="请输入原因" style="width: 380px" />
+      </n-form-item>
+    </n-form>
+    <div flex justify-end>
+      <n-button mr-4 @click="cancelCallback"> 取消 </n-button>
+      <n-button type="primary" @click="sureCallback"> 确定 </n-button>
+    </div>
+  </n-modal>
 </template>
 
 <script setup>
@@ -27,6 +46,7 @@ import { useCRUD } from '@/composables'
 import { options } from './constant'
 import api from './api'
 import globalApi from '@/api'
+import { ref } from 'vue'
 
 defineOptions({ name: 'Crud' })
 const dialog = useDialog()
@@ -52,86 +72,22 @@ const getStoreList = () => {
 getStoreList()
 
 const columns = [
-  { title: '租金套餐名称', key: 'name' },
-  { title: '展示名称', key: 'showName' },
-  {
-    title: '产品类型',
-    key: 'productType',
-    render(row) {
-      return h('span', options.orderType.filter((e) => e.value == row.productType)[0]?.label)
-    }
-  },
-  {
-    title: '支付类型',
-    key: 'payType',
-    render(row) {
-      return h('span', options.payType.filter((e) => e.value == row.payType + '')[0]?.label)
-    }
-  },
-  {
-    title: '价格',
-    key: 'price',
-    render(row) {
-      // return h('span', formatFee(row.price, 'front'))
-      return h('span', row.price)
-    }
-  },
-  {
-    title: '租期',
-    key: 'terms',
-    render(row) {
-      return h('span', row.terms + '个月')
-    }
-  },
-  {
-    title: '起租期',
-    key: 'minTerms',
-    render(row) {
-      return h('span', row.minTerms + '个月')
-    }
-  },
-  {
-    title: '押金（元）',
-    key: 'deposit',
-    render(row) {
-      // return h('span', formatFee(row.deposit, 'front'))
-      return h('span', row.deposit)
-    }
-  },
-  {
-    title: '滞纳金（元）',
-    key: 'overdueFine',
-    render(row) {
-      // return h('span', formatFee(row.overdueFine, 'front'))
-      return h('span', row.overdueFine)
-    }
-  },
-  {
-    title: '应用中订单数',
-    key: 'num'
-  },
-  {
-    title: '店铺',
-    key: 'storeId',
-    render(row) {
-      return h('span', storeList.value.filter((e) => e.value == row.storeId)[0]?.label)
-    }
-  },
-  {
-    title: '上下线状态',
-    key: 'status',
-    render(row) {
-      return h('span', row.status == 1 ? '已上线' : '下线中')
-    }
-  },
+  { title: '订单号', key: 'orderNo' },
+  { title: '用户名', key: 'applyUsername' },
+  { title: '店铺名称', key: 'storeName' },
+  { title: '申请时间', key: 'applyTime' },
+  { title: '审批人', key: 'approveUsername' },
+  { title: '审核时间', key: 'approveTime' },
   {
     title: '审核状态',
-    key: 'approved',
+    key: 'status',
     render(row) {
-      let classType = row.approved === 0 ? 'text-rose-500' : row.approved == 1 ? 'text-green-500' : 'text-yellow-500'
-      return h('span', { class: classType }, row.approved == 1 ? '通过' : row.approved == -1 ? '未审核' : '未通过')
+      let classType = row.status === 0 ? 'text-rose-500' : row.status == 1 ? 'text-green-500' : 'text-yellow-500'
+      return h('span', { class: classType }, row.status == 1 ? '通过' : row.status == -1 ? '未审核' : '未通过')
     }
   },
+  { title: '申请备注', key: 'applyRemarks' },
+  { title: '审批备注', key: 'approveRemarks' },
   {
     title: '操作',
     key: 'actions',
@@ -141,7 +97,7 @@ const columns = [
     hideInExcel: true,
     render(row) {
       let arr = []
-      if (row.approved === -1) {
+      if (row.status === -1) {
         arr = [
           h(
             NButton,
@@ -170,23 +126,51 @@ const columns = [
   }
 ]
 
-const handleTable = (row, type) => {
-  dialog.warning({
-    title: '警告',
-    content: `确定${type ? '同意' : '拒绝'}吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: () => {
-      let reqApi = type ? api.putPassRent : api.putRejectRent
-      reqApi(row.id).then(() => {
+const showModal = ref(false)
+const reasonForm = ref({ reason: '' })
+const formRef = ref(null)
+const sureCallback = () => {
+  formRef.value?.validate((errors) => {
+    if (!errors) {
+      api.putRejectWithdraw(handleData.id, { ...reasonForm.value }).then(() => {
+        handleData = null
         message.success('操作成功')
+        cancelCallback()
         $table.value?.handleSearch()
       })
-    },
-    onNegativeClick: () => {
-      message.error('取消')
+    } else {
+      console.log(errors)
+      message.error('Invalid')
     }
   })
+}
+const cancelCallback = () => {
+  formRef.value?.restoreValidation()
+  showModal.value = false
+}
+
+let handleData = null
+const handleTable = (row, type) => {
+  if (type) {
+    dialog.warning({
+      title: '警告',
+      content: `确定同意吗？`,
+      positiveText: '确定',
+      negativeText: '取消',
+      onPositiveClick: () => {
+        api.putPassWithdraw(row.id).then(() => {
+          message.success('操作成功')
+          $table.value?.handleSearch()
+        })
+      },
+      onNegativeClick: () => {
+        message.error('取消')
+      }
+    })
+  } else {
+    showModal.value = true
+    handleData = row
+  }
 }
 useCRUD({ refresh: () => $table.value?.handleSearch() })
 </script>

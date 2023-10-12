@@ -16,8 +16,8 @@
           <span mr-20>{{ orderDetail?.user?.idCard || '--' }}</span>
           <n-image-group>
             <n-space text-0>
-              <n-image width="40" height="20" :src="orderDetail?.user?.frontPicUrl" />
-              <n-image width="40" height="20" :src="orderDetail?.user?.backPicUrl" />
+              <n-image width="40" height="20" :src="userInfo?.frontPicUrl" />
+              <n-image width="40" height="20" :src="userInfo?.backPicUrl" />
             </n-space>
           </n-image-group>
         </div>
@@ -112,10 +112,10 @@
         <div ml-8 flex-1>{{ orderDetail?.order?.withdrawTime || '--' }}</div>
       </div>
       <div class="w-1/4" mb-8 flex>
-        <div w-120 text-right>免押押金：</div>
+        <div w-120 text-right>实付押金：</div>
         <div ml-8 flex-1>
-          <span>{{ formatFee(orderDetail.sesameDepositDetail?.unfreeze, 'front') }} 元</span>
-          <n-button v-if="orderDetail.sesameDepositDetail?.unfreeze > 0" type="primary" size="small" ml-16 @click="freeze()">冻结</n-button>
+          <span>{{ orderDetail?.order?.actualDeposit }} 元</span>
+          <!-- <n-button v-if="orderDetail.sesameDepositDetail?.unfreeze > 0" type="primary" size="small" ml-16 @click="freeze()">冻结</n-button> -->
           <n-button type="primary" size="small" ml-8 @click="handleModal('freeze')">申扣押金</n-button>
         </div>
       </div>
@@ -246,6 +246,14 @@ const getBillList = () => {
   })
 }
 getBillList()
+
+const userInfo = ref({})
+const getOrderUserInfo = () => {
+  api.getOrderUserInfo(orderNo).then((res) => {
+    userInfo.value = res.data
+  })
+}
+getOrderUserInfo()
 
 const $table = ref(null)
 const $modalForm = ref(null)
@@ -489,20 +497,20 @@ const handleTable = async (row, type) => {
 }
 
 // 冻结押金
-const freeze = () => {
-  dialog.warning({
-    title: '警告',
-    content: '确定冻结该笔押金？',
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: () => {
-      message.success('确定')
-    },
-    onNegativeClick: () => {
-      message.error('不确定')
-    }
-  })
-}
+// const freeze = () => {
+//   dialog.warning({
+//     title: '警告',
+//     content: '确定冻结该笔押金？',
+//     positiveText: '确定',
+//     negativeText: '取消',
+//     onPositiveClick: () => {
+//       message.success('确定')
+//     },
+//     onNegativeClick: () => {
+//       message.error('不确定')
+//     }
+//   })
+// }
 
 // 申扣押金\添加办单人\添加推荐人\添加备注
 const handleModal = (type) => {
