@@ -170,6 +170,7 @@
       <n-button type="primary" @click="handleDeviceCard('deviceCard')">车辆存证</n-button>
       <n-button type="primary" @click="handleMultipCancel('multipCancel')">批量取消代扣</n-button>
       <n-button type="primary" @click="handleOverOrder('overOrder')">结束订单</n-button>
+      <n-button type="primary" @click="handleBindDevice()">绑定设备</n-button>
     </n-space>
   </CommonPage>
   <n-modal v-model:show="modalVisible" :title="modalTitleMap[modalType]" preset="card" :style="{ width: '600px' }" :bordered="false">
@@ -210,6 +211,25 @@
         <n-button :loading="modalLoading" ml-20 type="primary" @click="handleSave()">确定</n-button>
       </div>
     </template>
+  </n-modal>
+  <n-modal v-model:show="showBindDeviceModal" preset="dialog" title="绑定车辆">
+    <n-form ref="bindFormRef" inline :label-width="80" :model="bindForm" :rules="rules" size="medium" class="mt-8">
+      <n-form-item
+        label="车架号"
+        path="frameNo"
+        :rule="{
+          required: true,
+          message: '请选择车架号',
+          trigger: ['blur', 'change']
+        }"
+      >
+        <n-select v-model:value="bindForm.frameNo" filterable placeholder="选择车辆" :options="deviceList" style="width: 380px" />
+      </n-form-item>
+    </n-form>
+    <div flex justify-end>
+      <n-button mr-4 @click="cancelBind"> 取消 </n-button>
+      <n-button type="primary" @click="sureBind"> 确定 </n-button>
+    </div>
   </n-modal>
 </template>
 
@@ -562,6 +582,43 @@ const handleMultipCancel = () => {
       message.error('取消')
     }
   })
+}
+
+const deviceList = ref([])
+const getDeviceList = (cb) => {
+  globalApi.getDeviceAllList().then((res) => {
+    deviceList.value = res.data.map((e) => ({ label: e.deviceNo, value: e.deviceNo }))
+    cb()
+  })
+}
+const showBindDeviceModal = ref(false)
+const handleBindDevice = () => {
+  getDeviceList(() => {
+    showBindDeviceModal.value = true
+  })
+}
+const bindFormRef = ref(null)
+const bindForm = ref({
+  frameNo: ''
+})
+const sureBind = () => {
+  bindFormRef.value?.validate((errors) => {
+    if (!errors) {
+      api.putDeviceBind({ frameNo: bindForm.value.frameNo, orderNo: orderNo }).then(() => {
+        message.success('操作成功')
+        cancelBind()
+        getOrderDetailFn()
+      })
+    } else {
+      console.log(errors)
+      message.error('Invalid')
+    }
+  })
+}
+const cancelBind = () => {
+  bindForm.value.frameNo = ''
+  bindFormRef.value?.restoreValidation()
+  showBindDeviceModal.value = false
 }
 
 useCRUD({ refresh: () => $table.value?.handleSearch() })

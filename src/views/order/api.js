@@ -6,6 +6,7 @@ export default {
 
   getOrderUserInfo: (orderNo) => request.get(`admin/order/${orderNo}/user`), // 查询订单用户信息
   getDeviceChangeHistory: (orderNo) => request.get(`admin/order/${orderNo}/device/history`), // 车辆更换记录
+  putDeviceBind: (data) => request.put(`admin/order/device-bind`, { ...data }), // 绑定设备
   getBillList: (orderNo) => request.get(`admin/bill/list?orderNo=${orderNo}`), // 获取账单
   getAgentUser: () => request.get('order/agent-user'), //
   getPayUrl: (params = {}) => request.get('order/pay-url', { params }), // 获取支付二维码
