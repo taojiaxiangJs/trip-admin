@@ -1,5 +1,27 @@
 <template>
   <CommonPage>
+    <!-- 订单状态 -->
+    <n-h6 prefix="bar" align-text>
+      <div f-b-c>
+        <n-text type="primary">订单状态</n-text>
+        <n-space>
+          <n-button
+            v-if="withdrawApplyStatus === 1 && [1, 2, 3, 4].includes(orderDetail?.order?.status)"
+            type="primary"
+            @click="handleModal('overLease')"
+            >确认退租</n-button
+          >
+          <n-button type="primary" @click="handleOverOrder('overOrder')">结束订单</n-button>
+        </n-space>
+      </div>
+    </n-h6>
+    <div flex flex-wrap p-4 text-16>
+      <div class="w-1/4" mb-8 flex>
+        <div w-120 text-right>状态：</div>
+        <div ml-8 flex-1>{{ valueToName(orderDetail?.order?.status, options.status) }}</div>
+      </div>
+    </div>
+    <!-- 基础信息 -->
     <n-h6 prefix="bar" align-text><n-text type="primary">基础信息</n-text></n-h6>
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
@@ -23,28 +45,23 @@
         </div>
       </div>
     </div>
-    <n-h6 prefix="bar" align-text><n-text type="primary">紧急联系人</n-text></n-h6>
-    <div v-for="item in orderDetail?.contacts" :key="item.userId" flex flex-wrap p-4 text-16>
-      <div class="w-1/4" mb-8 flex>
-        <div w-120 text-right>姓名：</div>
-        <div ml-8 flex-1>
-          {{ item.name || '--' }}
-        </div>
+    <!-- 租借设备 -->
+    <n-h6 prefix="bar" align-text>
+      <div f-b-c>
+        <n-text type="primary">租借设备</n-text>
+        <n-space>
+          <n-button type="info" size="small" @click="handleDeviceCard('deviceCard')">车辆存证</n-button>
+          <n-button
+            v-if="!orderDetail?.device?.frameNo && [3, 4].includes(orderDetail?.order?.status)"
+            type="info"
+            size="small"
+            @click="handleModal('bindDevice')"
+          >
+            绑定设备
+          </n-button>
+        </n-space>
       </div>
-      <div class="w-1/4" mb-8 flex>
-        <div w-120 text-right>关系：</div>
-        <div ml-8 flex-1>
-          {{ valueToName(item.relation, options.relationsMap) || '--' }}
-        </div>
-      </div>
-      <div class="w-1/4" mb-8 flex>
-        <div w-120 text-right>联系方式：</div>
-        <div ml-8 flex-1>
-          <span>{{ item.phone || '--' }}</span>
-        </div>
-      </div>
-    </div>
-    <n-h6 prefix="bar" align-text><n-text type="primary">租借设备</n-text></n-h6>
+    </n-h6>
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>车架号：</div>
@@ -82,18 +99,22 @@
         </div>
       </div>
     </div>
-    <n-h6 prefix="bar" align-text><n-text type="primary">换车记录</n-text></n-h6>
-    <CrudTable ref="$table" :scroll-x="1200" :columns="changeColumns" :init-table-data="orderDetail.deviceHistories"> </CrudTable>
-
-    <n-h6 prefix="bar" align-text><n-text type="primary">租借方式</n-text></n-h6>
+    <!-- 租借方式 -->
+    <n-h6 prefix="bar" align-text>
+      <div f-b-c>
+        <n-text type="primary">租借方式</n-text>
+        <n-space>
+          <n-button type="info" size="small">合同下载</n-button>
+          <n-button v-if="Number(orderDetail?.order?.actualDeposit) > 0" type="info" size="small" ml-8 @click="handleModal('freeze')">
+            申扣押金
+          </n-button>
+        </n-space>
+      </div>
+    </n-h6>
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>支付方式：</div>
         <div ml-8 flex-1>{{ valueToName(orderDetail?.suit?.payType, options.payType) }}</div>
-      </div>
-      <div class="w-1/4" mb-8 flex>
-        <div w-120 text-right>租借合同：</div>
-        <div ml-8 flex-1><n-button type="primary" size="small">下载</n-button></div>
       </div>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租借时间：</div>
@@ -116,11 +137,18 @@
         <div ml-8 flex-1>
           <span>{{ orderDetail?.order?.actualDeposit }} 元</span>
           <!-- <n-button v-if="orderDetail.sesameDepositDetail?.unfreeze > 0" type="primary" size="small" ml-16 @click="freeze()">冻结</n-button> -->
-          <n-button type="primary" size="small" ml-8 @click="handleModal('freeze')">申扣押金</n-button>
         </div>
       </div>
     </div>
-    <n-h6 prefix="bar" align-text><n-text type="primary">其他信息</n-text></n-h6>
+    <!-- 其他信息 -->
+    <n-h6 prefix="bar" align-text>
+      <div f-b-c>
+        <n-text type="primary">其他信息</n-text>
+        <n-space>
+          <n-button type="info" size="small" ml-16 @click="handleModal('remark')">添加备注</n-button>
+        </n-space>
+      </div>
+    </n-h6>
     <div flex flex-wrap p-4 text-16>
       <!-- <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>办单人：</div>
@@ -139,12 +167,19 @@
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>备注：</div>
         <div ml-8 flex-1>
-          <span>{{ '--' }}</span>
-          <n-button type="primary" size="small" ml-16 @click="handleModal('remark')">添加备注</n-button>
+          <span>{{ orderDetail?.order?.remarks || '--' }}</span>
         </div>
       </div>
     </div>
-    <n-h6 prefix="bar" align-text><n-text type="primary">租金支付情况</n-text></n-h6>
+    <!-- 租金支付情况 -->
+    <n-h6 prefix="bar" align-text>
+      <div f-b-c>
+        <n-text type="primary">租金支付情况</n-text>
+        <n-space>
+          <n-button type="info" size="small" ml-16 @click="handleMultipCancel('multipCancel')">批量取消代扣</n-button>
+        </n-space>
+      </div>
+    </n-h6>
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租车单价：</div>
@@ -164,14 +199,38 @@
       </div> -->
     </div>
     <CrudTable ref="$table" :scroll-x="1200" :columns="columns" :init-table-data="billList"> </CrudTable>
-    <n-space>
-      <n-button type="primary" @click="handleModal('overLease')">确认退租</n-button>
-      <n-button type="primary" @click="handleModal('changeDevice')">更换车辆</n-button>
-      <n-button type="primary" @click="handleDeviceCard('deviceCard')">车辆存证</n-button>
-      <n-button type="primary" @click="handleMultipCancel('multipCancel')">批量取消代扣</n-button>
-      <n-button type="primary" @click="handleOverOrder('overOrder')">结束订单</n-button>
-      <n-button type="primary" @click="handleBindDevice()">绑定设备</n-button>
-    </n-space>
+    <!-- 换车记录 -->
+    <n-h6 prefix="bar" align-text>
+      <div f-b-c>
+        <n-text type="primary">换车记录</n-text>
+        <n-space>
+          <n-button type="info" @click="handleModal('changeDevice')">更换车辆</n-button>
+        </n-space>
+      </div>
+    </n-h6>
+    <CrudTable ref="$table" :scroll-x="1200" :columns="changeColumns" :init-table-data="orderDetail.deviceHistories"> </CrudTable>
+    <!-- 紧急联系人 -->
+    <n-h6 prefix="bar" align-text><n-text type="primary">紧急联系人</n-text></n-h6>
+    <div v-for="item in orderDetail?.contacts" :key="item.userId" flex flex-wrap p-4 text-16>
+      <div class="w-1/4" mb-8 flex>
+        <div w-120 text-right>姓名：</div>
+        <div ml-8 flex-1>
+          {{ item.name || '--' }}
+        </div>
+      </div>
+      <div class="w-1/4" mb-8 flex>
+        <div w-120 text-right>关系：</div>
+        <div ml-8 flex-1>
+          {{ valueToName(item.relation, options.relationsMap) || '--' }}
+        </div>
+      </div>
+      <div class="w-1/4" mb-8 flex>
+        <div w-120 text-right>联系方式：</div>
+        <div ml-8 flex-1>
+          <span>{{ item.phone || '--' }}</span>
+        </div>
+      </div>
+    </div>
   </CommonPage>
   <n-modal v-model:show="modalVisible" :title="modalTitleMap[modalType]" preset="card" :style="{ width: '600px' }" :bordered="false">
     <n-form ref="$modalForm" label-placement="left" label-align="right" :label-width="80" :rules="rules" :model="modalForm">
@@ -183,6 +242,9 @@
       </n-form-item>
       <n-form-item v-if="modalType === 'freeze'" path="freeze" label="金额">
         <n-input v-model:value="modalForm.freeze" placeholder="请输入金额"><template #suffix>元</template></n-input>
+      </n-form-item>
+      <n-form-item v-if="modalType === 'freeze'" label="备注">
+        <n-input v-model:value="modalForm.reason" placeholder="请输入备注" type="textarea" :autosize="{ minRows: 3, maxRows: 5 }"></n-input>
       </n-form-item>
       <n-form-item v-if="modalType === 'remark'" path="remark" label="备注">
         <n-input v-model:value="modalForm.remark" placeholder="请输入备注" type="textarea" :autosize="{ minRows: 3, maxRows: 5 }" />
@@ -196,8 +258,11 @@
       <n-form-item v-if="modalType === 'overLease'" path="overLease" label="退到店铺">
         <n-select v-model:value="modalForm.overLease" filterable placeholder="选择店铺" :options="storeList" />
       </n-form-item>
-      <n-form-item v-if="modalType === 'changeDevice'" path="changeDevice" label="更换车辆">
-        <n-input v-model:value="modalForm.changeDevice" placeholder="请输入关键字" />
+      <n-form-item v-if="modalType === 'changeDevice'" path="changeDevice" label="车架号">
+        <n-select v-model:value="modalForm.changeDevice" filterable placeholder="选择车辆" :options="deviceList" />
+      </n-form-item>
+      <n-form-item v-if="modalType === 'bindDevice'" path="bindDevice" label="车架号">
+        <n-select v-model:value="modalForm.bindDevice" filterable placeholder="选择车辆" :options="deviceList" />
       </n-form-item>
     </n-form>
 
@@ -212,23 +277,27 @@
       </div>
     </template>
   </n-modal>
-  <n-modal v-model:show="showBindDeviceModal" preset="dialog" title="绑定车辆">
-    <n-form ref="bindFormRef" inline :label-width="80" :model="bindForm" :rules="rules" size="medium" class="mt-8">
-      <n-form-item
-        label="车架号"
-        path="frameNo"
-        :rule="{
-          required: true,
-          message: '请选择车架号',
-          trigger: ['blur', 'change']
-        }"
-      >
-        <n-select v-model:value="bindForm.frameNo" filterable placeholder="选择车辆" :options="deviceList" style="width: 380px" />
-      </n-form-item>
-    </n-form>
-    <div flex justify-end>
-      <n-button mr-4 @click="cancelBind"> 取消 </n-button>
-      <n-button type="primary" @click="sureBind"> 确定 </n-button>
+  <n-modal
+    v-model:show="showDeviceEvidenceModal"
+    preset="dialog"
+    title="车辆存证"
+    negative-text="关闭"
+    :style="{ width: '800px' }"
+    @negative-click="showDeviceEvidenceModal = false"
+  >
+    <div mt-24>
+      <n-h6 prefix="bar" align-text><n-text type="primary">收车存证</n-text></n-h6>
+      <n-image-group v-if="deviceEvidence?.receivePics?.length">
+        <n-space>
+          <n-image v-for="(item, i) in deviceEvidence?.receivePics" :key="i" width="100" :src="item.accessUrl" />
+        </n-space>
+      </n-image-group>
+      <n-h6 prefix="bar" align-text><n-text type="primary">退车存证</n-text></n-h6>
+      <n-image-group v-if="deviceEvidence?.returnPics?.length">
+        <n-space>
+          <n-image v-for="(item, i) in deviceEvidence?.returnPics" :key="i" width="100" :src="item.accessUrl" />
+        </n-space>
+      </n-image-group>
     </div>
   </n-modal>
 </template>
@@ -242,6 +311,7 @@ import { useCRUD } from '@/composables'
 import { options } from '../constant'
 import api from '../api'
 import globalApi from '@/api'
+import { ref } from 'vue'
 
 defineOptions({ name: 'Crud' })
 const message = useMessage()
@@ -275,40 +345,6 @@ const getOrderUserInfo = () => {
 }
 getOrderUserInfo()
 
-const $table = ref(null)
-const $modalForm = ref(null)
-const modalVisible = ref(false)
-const modalLoading = ref(false)
-const modalType = ref('')
-const modalTitleMap = reactive({
-  freeze: '申扣押金',
-  operator: '编辑办单人',
-  remark: '编辑备注',
-  referrer: '添加推荐人',
-  payOther: '代付',
-  editRent: '修改租金',
-  overLease: '确认退租',
-  changeDevice: '更换车辆'
-})
-const modalForm = ref({
-  freeze: '',
-  operator: null,
-  remark: '',
-  referrer: null,
-  editRent: '',
-  overLease: null,
-  changeDevice: ''
-})
-const rules = ref({
-  operator: { required: true, message: '请选择办单人', trigger: ['change'] },
-  referrer: { required: false, message: '请选择推荐人', trigger: ['change'] },
-  freeze: { required: true, message: '请输入金额', trigger: ['input', 'blur'] },
-  remark: { required: true, message: '请输入备注', trigger: ['input', 'blur'] },
-  editRent: { required: true, message: '请输入金额', trigger: ['input', 'blur'] },
-  overLease: { required: true, message: '请择办店铺', trigger: ['blur', 'change'] },
-  changeDevice: { required: true, message: '请择输入关键字', trigger: ['input', 'blur'] }
-})
-
 // 推荐人
 const agentUser = ref([])
 const getAgentUser = () => {
@@ -324,6 +360,16 @@ const getAgentUser = () => {
 }
 getAgentUser()
 
+// 店铺
+const storeList = ref([])
+const getStoreList = () => {
+  globalApi.getAllStoreAvailabel().then((res) => {
+    storeList.value = res.data.map((e) => ({ label: e.name, value: e.id }))
+  })
+}
+getStoreList()
+
+const $table = ref(null)
 const changeColumns = [
   {
     title: '订单编号',
@@ -368,10 +414,10 @@ const columns = [
   },
   {
     title: '支付金额(元)',
-    key: 'amount',
-    render(row) {
-      return h('span', formatFee(row.amount, 'front'))
-    }
+    key: 'amount'
+    // render(row) {
+    //   return h('span', formatFee(row.amount, 'front'))
+    // }
   },
   {
     title: '支付方式',
@@ -451,19 +497,6 @@ const columns = [
   }
 ]
 
-// 店铺
-const storeList = ref([])
-const getStoreList = () => {
-  globalApi.getAllStoreAvailabel().then((res) => {
-    storeList.value = res.data.map((e) => ({ label: e.name, value: e.id }))
-  })
-}
-getStoreList()
-
-const valueToName = (value, options) => {
-  return options.filter((e) => e.value + '' === value + '')[0]?.label || ''
-}
-
 // const formatDate = (time) => {
 //   return time ? formatDateTime(time) : '--'
 // }
@@ -532,10 +565,70 @@ const handleTable = async (row, type) => {
 //   })
 // }
 
-// 申扣押金\添加办单人\添加推荐人\添加备注
+const $modalForm = ref(null)
+const modalVisible = ref(false)
+const modalLoading = ref(false)
+const modalType = ref('')
+
+// 模态框标题
+const modalTitleMap = reactive({
+  freeze: '申扣押金',
+  operator: '编辑办单人',
+  remark: '编辑备注',
+  referrer: '添加推荐人',
+  payOther: '代付',
+  editRent: '修改租金',
+  overLease: '确认退租',
+  changeDevice: '更换车辆',
+  bindDevice: '绑定车辆'
+})
+
+// 表单
+const modalForm = ref({
+  freeze: '',
+  reason: '',
+  operator: null,
+  remark: '',
+  referrer: null,
+  editRent: '',
+  overLease: null,
+  changeDevice: '',
+  bindDevice: ''
+})
+
+// 表单规则
+const rules = ref({
+  operator: { required: true, message: '请选择办单人', trigger: ['change'] },
+  referrer: { required: false, message: '请选择推荐人', trigger: ['change'] },
+  freeze: {
+    required: true,
+    validator(rule, value) {
+      if (!value) {
+        return new Error('请输入金额')
+      } else if (Number(value) > Number(orderDetail.value?.order?.actualDeposit)) {
+        return new Error('输入金额不能大于原始押金')
+      }
+      return true
+    },
+    trigger: ['input', 'blur']
+  },
+  remark: { required: true, message: '请输入备注', trigger: ['input', 'blur'] },
+  editRent: { required: true, message: '请输入金额', trigger: ['input', 'blur'] },
+  overLease: { required: true, message: '请择办店铺', trigger: ['blur', 'change'] },
+  changeDevice: { required: true, message: '请选择车架号', trigger: ['change', 'blur'] },
+  bindDevice: { required: true, message: '请选择车架号', trigger: ['blur', 'change'] }
+})
+
+// 申扣押金\添加办单人\添加推荐人\添加备注\绑定车辆
 const handleModal = (type) => {
   modalType.value = type
-  modalVisible.value = true
+  if (type === 'bindDevice' || type === 'changeDevice') {
+    getDeviceList(() => {
+      modalVisible.value = true
+    })
+  } else {
+    modalVisible.value = true
+  }
 }
 
 // modal取消
@@ -543,17 +636,33 @@ const handleCancel = () => {
   $modalForm.value?.restoreValidation()
   modalVisible.value = false
   modalForm.value.freeze = ''
+  modalForm.value.reason = ''
   modalForm.value.operator = null
   modalForm.value.remark = ''
   modalForm.value.referrer = null
   modalForm.value.editRent = ''
   modalForm.value.overLease = null
   modalForm.value.changeDevice = ''
+  modalForm.value.bindDevice = ''
 }
 // modal保存
 const handleSave = () => {
   $modalForm.value?.validate((errors) => {
     if (!errors) {
+      switch (modalType.value) {
+        case 'bindDevice':
+          sureBindDevice()
+          break
+        case 'changeDevice':
+          sureChangeDevice()
+          break
+        case 'freeze': // 申扣押金
+          applyDeductDeposit()
+          break
+        case 'remark': // 申扣押金
+          sureRemark()
+          break
+      }
       console.log({ ...modalForm.value })
     } else {
       console.log(errors)
@@ -561,12 +670,74 @@ const handleSave = () => {
   })
 }
 
-const handleOverOrder = () => {
-  message.error('暂无权限')
+// 申扣押金
+const applyDeductDeposit = () => {
+  const data = {
+    amount: modalForm.value.freeze,
+    reason: modalForm.value.reason
+  }
+  api.postApplyDeductDeposit(orderNo, { ...data }).then(() => {
+    message.success('操作成功')
+    handleCancel()
+    getOrderDetailFn()
+  })
 }
 
+// 确定绑定车辆
+const sureBindDevice = () => {
+  api.putDeviceBind({ frameNo: modalForm.value.bindDevice, orderNo: orderNo }).then(() => {
+    message.success('操作成功')
+    handleCancel()
+    getOrderDetailFn()
+  })
+}
+
+// 更换车辆
+const sureChangeDevice = () => {
+  api.putChangeDevice({ newDeviceId: modalForm.value.changeDevice, orderNo: orderNo }).then(() => {
+    message.success('操作成功')
+    handleCancel()
+    getOrderDetailFn()
+  })
+}
+
+// 添加备注
+const sureRemark = () => {
+  api.postOrderRemarks({ orderNo: orderNo, remarks: modalForm.value.remark }).then(() => {
+    message.success('操作成功')
+    handleCancel()
+    getOrderDetailFn()
+  })
+}
+
+// 结束订单
+const handleOverOrder = () => {
+  dialog.warning({
+    title: '提示',
+    content: '确定要结束订单吗？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      api.putOrderEnd(orderNo).then(() => {
+        message.success('操作成功')
+        getOrderDetailFn()
+      })
+    },
+    onNegativeClick: () => {
+      message.error('取消')
+    }
+  })
+}
+
+const deviceEvidence = ref([])
+const showDeviceEvidenceModal = ref(false)
+// 获取车辆存证
 const handleDeviceCard = () => {
-  message.info('暂无车辆存证')
+  showDeviceEvidenceModal.value = true
+  api.getDeviceEvidencePic(orderNo).then((res) => {
+    deviceEvidence.value = res.data || {}
+    showDeviceEvidenceModal.value = true
+  })
 }
 
 const handleMultipCancel = () => {
@@ -587,38 +758,13 @@ const handleMultipCancel = () => {
 const deviceList = ref([])
 const getDeviceList = (cb) => {
   globalApi.getDeviceAllList().then((res) => {
-    deviceList.value = res.data.map((e) => ({ label: e.deviceNo, value: e.deviceNo }))
+    deviceList.value = res.data.map((e) => ({ label: e.frameNo, value: e.frameNo }))
     cb()
   })
 }
-const showBindDeviceModal = ref(false)
-const handleBindDevice = () => {
-  getDeviceList(() => {
-    showBindDeviceModal.value = true
-  })
-}
-const bindFormRef = ref(null)
-const bindForm = ref({
-  frameNo: ''
-})
-const sureBind = () => {
-  bindFormRef.value?.validate((errors) => {
-    if (!errors) {
-      api.putDeviceBind({ frameNo: bindForm.value.frameNo, orderNo: orderNo }).then(() => {
-        message.success('操作成功')
-        cancelBind()
-        getOrderDetailFn()
-      })
-    } else {
-      console.log(errors)
-      message.error('Invalid')
-    }
-  })
-}
-const cancelBind = () => {
-  bindForm.value.frameNo = ''
-  bindFormRef.value?.restoreValidation()
-  showBindDeviceModal.value = false
+
+const valueToName = (value, options) => {
+  return options.filter((e) => e.value + '' === value + '')[0]?.label || ''
 }
 
 useCRUD({ refresh: () => $table.value?.handleSearch() })
