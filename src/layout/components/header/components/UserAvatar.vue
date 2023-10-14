@@ -1,7 +1,8 @@
 <template>
   <n-dropdown :options="options" @select="handleSelect">
     <div flex cursor-pointer items-center>
-      <img :src="userStore.avatar" mr10 h-35 w-35 rounded-full />
+      <!-- <img :src="userStore.avatar" mr10 h-35 w-35 rounded-full /> -->
+      <img src="../../../../assets/images/logout.png" mr10 h-20 w-20 rounded-full />
       <span>{{ userStore.name }}</span>
     </div>
   </n-dropdown>
@@ -17,8 +18,8 @@ const options = [
   {
     label: '退出登录',
     key: 'logout',
-    icon: renderIcon('mdi:exit-to-app', { size: '14px' }),
-  },
+    icon: renderIcon('mdi:exit-to-app', { size: '14px' })
+  }
 ]
 
 function handleSelect(key) {
@@ -30,7 +31,7 @@ function handleSelect(key) {
       confirm() {
         userStore.logout()
         $message.success('已退出登录')
-      },
+      }
     })
   }
 }

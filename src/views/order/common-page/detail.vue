@@ -51,14 +51,7 @@
         <n-text type="primary">租借设备</n-text>
         <n-space>
           <n-button type="info" size="small" @click="handleDeviceCard('deviceCard')">车辆存证</n-button>
-          <n-button
-            v-if="!orderDetail?.device?.frameNo && [3, 4].includes(orderDetail?.order?.status)"
-            type="info"
-            size="small"
-            @click="handleModal('bindDevice')"
-          >
-            绑定设备
-          </n-button>
+          <n-button v-if="orderDetail?.order?.status === 2" type="info" size="small" @click="handleModal('bindDevice')"> 绑定设备 </n-button>
         </n-space>
       </div>
     </n-h6>
