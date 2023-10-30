@@ -21,7 +21,6 @@ export default {
         title: '全部订单',
         requireAuth: true,
         roleKey: 'tenant:order:all'
-        // icon: 'ion:reorder-four',
       }
     },
     {
@@ -32,7 +31,6 @@ export default {
         title: '逾期订单',
         requireAuth: true,
         roleKey: 'tenant:order:overtime-order'
-        // icon: 'fluent:calendar-overdue-24-regular',
       }
     },
     {
@@ -43,7 +41,6 @@ export default {
         title: '代扣管理',
         requireAuth: true,
         roleKey: 'tenant:order:bill'
-        // icon: 'tabler:list-details',
       }
     },
     // {

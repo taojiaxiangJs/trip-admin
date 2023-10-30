@@ -41,8 +41,8 @@
       <n-form-item
         v-if="modalType === 'add'"
         path="realName"
-        label="姓名"
-        :rule="[{ required: true, message: '请输入姓名', trigger: ['input', 'blur'] }]"
+        label="真实姓名"
+        :rule="[{ required: true, message: '请输入真实姓名', trigger: ['input', 'blur'] }]"
       >
         <n-input v-model:value="modalForm.realName" placeholder="请输入姓名" />
       </n-form-item>

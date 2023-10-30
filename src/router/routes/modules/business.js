@@ -14,14 +14,25 @@ export default {
   },
   children: [
     {
+      name: 'business-rent',
+      path: 'rent',
+      component: () => import('@/views/business/rent/index.vue'),
+      meta: {
+        title: '租金审核',
+        requireAuth: true,
+        roleKey: 'platform:business:rent-price',
+        order: 1
+      }
+    },
+    {
       name: 'business-remit',
       path: 'remit',
       component: () => import('@/views/business/remit/index.vue'),
       meta: {
         title: '分润打款',
         requireAuth: true,
-        roleKey: 'platform:business:deduct-deposit-apply',
-        order: 1
+        roleKey: 'platform:business:profit-devide',
+        order: 2
       }
     },
     {
@@ -31,8 +42,8 @@ export default {
       meta: {
         title: '扣押申请',
         requireAuth: true,
-        roleKey: 'platform:business:profit-distribution',
-        order: 2
+        roleKey: 'platform:business:deduct-deposit-apply',
+        order: 3
       }
     }
   ]

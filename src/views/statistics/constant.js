@@ -57,5 +57,11 @@ export const options = {
     { label: '兄弟姐妹', value: 4 },
     { label: '亲戚/朋友/同事', value: 5 },
     { label: '其他', value: 6 }
+  ],
+  billPayStatus: [
+    { label: '未支付', value: 0 },
+    { label: '已支付', value: 1 },
+    { label: '支付中', value: 2 },
+    { label: '支付失败', value: 3 }
   ]
 }

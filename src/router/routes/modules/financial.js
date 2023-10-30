@@ -20,8 +20,7 @@ export default {
       meta: {
         title: '分润明细',
         requireAuth: true,
-        roleKey: 'tenant:finance:profit-distribution'
-        // icon: 'simple-icons:microsoftsharepoint',
+        roleKey: 'tenant:finance:profit-distribution-detail'
       }
     },
     {
@@ -31,8 +30,7 @@ export default {
       meta: {
         title: '垫资记录',
         requireAuth: true,
-        roleKey: 'tenant:finance:profit-distribution-detail'
-        // icon: 'material-symbols:export-notes-outline',
+        roleKey: 'tenant:finance:tenant-pay-record'
       }
     }
   ]

@@ -168,9 +168,9 @@
     <n-h6 prefix="bar" align-text>
       <div f-b-c>
         <n-text type="primary">租金支付情况</n-text>
-        <n-space>
+        <!-- <n-space>
           <n-button type="info" size="small" ml-16 @click="handleMultipCancel('multipCancel')">批量取消代扣</n-button>
-        </n-space>
+        </n-space> -->
       </div>
     </n-h6>
     <div flex flex-wrap p-4 text-16>
@@ -423,7 +423,7 @@ const columns = [
     title: '支付结果',
     key: 'payStatus',
     render(row) {
-      return h('span', valueToName(row.payStatus, options.status))
+      return h('span', valueToName(row.payStatus, options.billPayStatus))
     }
   },
   {
@@ -445,36 +445,36 @@ const columns = [
           },
           { default: () => '立即代付' }
         ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'tertiary',
-            style: 'margin-left: 15px;',
-            onClick: () => handleTable(row, 'singleCancel')
-          },
-          { default: () => '取消代扣' }
-        ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'info',
-            style: 'margin-left: 15px;',
-            onClick: () => handleTable(row, 'recover')
-          },
-          { default: () => '恢复代扣' }
-        ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'success',
-            style: 'margin-left: 15px;',
-            onClick: () => handleTable(row, 'sponsor')
-          },
-          { default: () => '发起代扣' }
-        ),
+        // h(
+        //   NButton,
+        //   {
+        //     size: 'small',
+        //     type: 'tertiary',
+        //     style: 'margin-left: 15px;',
+        //     onClick: () => handleTable(row, 'singleCancel')
+        //   },
+        //   { default: () => '取消代扣' }
+        // ),
+        // h(
+        //   NButton,
+        //   {
+        //     size: 'small',
+        //     type: 'info',
+        //     style: 'margin-left: 15px;',
+        //     onClick: () => handleTable(row, 'recover')
+        //   },
+        //   { default: () => '恢复代扣' }
+        // ),
+        // h(
+        //   NButton,
+        //   {
+        //     size: 'small',
+        //     type: 'success',
+        //     style: 'margin-left: 15px;',
+        //     onClick: () => handleTable(row, 'sponsor')
+        //   },
+        //   { default: () => '发起代扣' }
+        // ),
         h(
           NButton,
           {
@@ -483,7 +483,7 @@ const columns = [
             style: 'margin-left: 15px;',
             onClick: () => handleTable(row, 'editRent')
           },
-          { default: () => '修改租金' }
+          { default: () => '修改违约金' }
         )
       ]
     }
@@ -570,7 +570,7 @@ const modalTitleMap = reactive({
   remark: '编辑备注',
   referrer: '添加推荐人',
   payOther: '代付',
-  editRent: '修改租金',
+  editRent: '修改违约金',
   overLease: '确认退租',
   changeDevice: '更换车辆',
   bindDevice: '绑定车辆'
@@ -733,20 +733,20 @@ const handleDeviceCard = () => {
   })
 }
 
-const handleMultipCancel = () => {
-  dialog.warning({
-    title: '批量取消代扣',
-    content: '执行后，将取消所有未欠费的代扣，且无法恢复，确定要取消吗？',
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: () => {
-      message.success('确定')
-    },
-    onNegativeClick: () => {
-      message.error('取消')
-    }
-  })
-}
+// const handleMultipCancel = () => {
+//   dialog.warning({
+//     title: '批量取消代扣',
+//     content: '执行后，将取消所有未欠费的代扣，且无法恢复，确定要取消吗？',
+//     positiveText: '确定',
+//     negativeText: '取消',
+//     onPositiveClick: () => {
+//       message.success('确定')
+//     },
+//     onNegativeClick: () => {
+//       message.error('取消')
+//     }
+//   })
+// }
 
 const deviceList = ref([])
 const getDeviceList = (cb) => {

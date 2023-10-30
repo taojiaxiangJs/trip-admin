@@ -1,0 +1,165 @@
+[
+  {
+    "title": "订单管理", ok
+    "tag": "tenant:order",
+    "children": [
+      {
+        "title": "全部订单",
+        "tag": "tenant:order:all"
+      },
+      {
+        "title": "逾期订单",
+        "tag": "tenant:order:overtime-order"
+      },
+      {
+        "title": "代扣管理",
+        "tag": "tenant:order:bill"
+      },
+      {
+        "title": "订单详情",
+        "tag": ""
+      }
+    ]
+  },
+  {
+    "title": "设备管理", ok
+    "tag": "tenant:device",
+    "children": [
+      {
+        "title": "设备管理",
+        "tag": "tenant:device:device"
+      },
+      {
+        "title": "设备型号",
+        "tag": "tenant:device:device-type"
+      }
+    ]
+  },
+  {
+    "title": "代理商",  ok
+    "tag": "tenant:store",
+    "children": [
+      {
+        "title": "店铺管理",
+        "tag": "tenant:store:store"
+      },
+      {
+        "title": "租金设置",
+        "tag": "tenant:store:rent-type"
+      }
+    ]
+  },
+  {
+    "title": "资产统计", ok
+    "tag": "tenant:statistics"
+  },
+  {
+    "title": "财务管理", ok
+    "tag": "tenant:finance",
+    "children": [
+      {
+        "title": "分润明细",
+        "tag": "tenant:finance:profit-distribution-detail"
+      },
+      {
+        "title": "垫资记录",
+        "tag": "tenant:finance:tenant-pay-record"
+      }
+    ]
+  },
+  {
+    "title": "审核管理", ok
+    "tag": "approve:manager",  replace  "tenant:approve:manager"
+    "children": [
+      {   delete
+        "title": "租金审核",
+        "tag": "platform:approve:rent-price"
+      },
+      {
+        "title": "减押申请",
+        "tag": "tenant:approve:deposit-reduce"
+      },
+      {
+        "title": "扣押申请",
+        "tag": "platform:approve:deduct-deposit"  replace   "tenant:approve:deduct-deposit"
+      },
+      {
+        "title": "退租申请",
+        "tag": "tenant:approve:withdraw-rent"
+      }
+    ]
+  },
+  {
+    "title": "系统管理", ok
+    "tag": "tenant:system",
+    "children": [
+      {
+        "title": "账号管理",
+        "tag": "tenant:system:account"
+      },
+      {
+        "title": "角色管理",
+        "tag": "tenant:system:role"
+      }
+    ]
+  },
+  {
+    "title": "平台管理", ok
+    "tag": "platform:tenant",
+    "children": [
+      {
+        "title": "租户管理",
+        "tag": "platform:tenant:tenant"
+      },
+      {
+        "title": "菜单管理",
+        "tag": "platform:tenant:menu"
+      }
+    ]
+  },
+  {
+    "title": "业务管理", ok
+    "tag": "platform:business",
+    "children": [
+      {
+        add
+        "title": "租金审核",
+        "tag": "platform:approve:rent-price"   replace   "platform:business:rent-price"
+      },
+      {
+        "title": "分润打款",
+        "tag": "platform:business:deduct-deposit-apply"   replace   "platform:business:profit-devide"
+      },
+      {
+        "title": "扣押申请",
+        "tag": "platform:approve:deduct-deposit"   replace   "platform:business:deduct-deposit-apply"
+      }
+    ]
+  },
+  {
+    "title": "数据统计", ok
+    "tag": "platform:statistics",
+    "children": [
+      {
+        "title": "资产统计",
+        "tag": "platform:statistics:assets"
+      },
+      {
+        "title": "全部订单",
+        "tag": "platform:statistics:all-order"
+      },
+      {
+        "title": "订单详情",
+        "tag": ""
+      },
+      {
+        "title": "逾期订单",
+        "tag": "platform:statistics:overtime-order"
+      },
+      {
+        "title": "代扣管理",
+        "tag": "platform:statistics:bill"
+      }
+    ]
+  }
+]

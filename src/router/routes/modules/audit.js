@@ -8,22 +8,11 @@ export default {
   meta: {
     order: 6,
     title: '审核管理',
-    roleKey: 'tenant:approve',
+    roleKey: 'tenant:approve:manager',
     requireAuth: true,
     icon: 'heroicons-outline:clipboard-document-check'
   },
   children: [
-    {
-      name: 'audit-rent',
-      path: 'rent',
-      component: () => import('@/views/audit/rent.vue'),
-      meta: {
-        title: '租金审核',
-        requireAuth: true,
-        roleKey: 'tenant:approve:rent-price',
-        order: 1
-      }
-    },
     {
       name: 'audit-deposit',
       path: 'deposit',
@@ -32,7 +21,7 @@ export default {
         title: '减押申请',
         requireAuth: true,
         roleKey: 'tenant:approve:deposit-reduce',
-        order: 2
+        order: 1
       }
     },
     {
@@ -43,7 +32,7 @@ export default {
         title: '扣押申请',
         requireAuth: true,
         roleKey: 'tenant:approve:deduct-deposit',
-        order: 3
+        order: 2
       }
     },
     {
@@ -54,7 +43,7 @@ export default {
         title: '退租申请',
         requireAuth: true,
         roleKey: 'tenant:approve:withdraw-rent',
-        order: 4
+        order: 3
       }
     }
   ]

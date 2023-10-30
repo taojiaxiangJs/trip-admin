@@ -21,7 +21,6 @@ export default {
         title: '设备管理',
         requireAuth: true,
         roleKey: 'tenant:device:device'
-        // icon: 'carbon:gui-management'
       }
     },
     {
@@ -32,7 +31,6 @@ export default {
         title: '设备型号',
         requireAuth: true,
         roleKey: 'tenant:device:device-type'
-        // icon: 'tabler:box-model-2'
       }
     }
     // {

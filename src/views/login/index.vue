@@ -50,7 +50,7 @@
         <div mt-20 h-24 f-b-c>
           <div v-if="isMessage"></div>
           <n-checkbox v-else :checked="isRemember" label="记住我" :on-update:checked="(val) => (isRemember = val)" />
-          <n-button text type="primary" @click="toMessage">{{ isMessage ? '账号登录' : '短信登录' }}</n-button>
+          <!-- <n-button text type="primary" @click="toMessage">{{ isMessage ? '账号登录' : '短信登录' }}</n-button> -->
         </div>
 
         <div mt-20>
@@ -81,9 +81,9 @@ const loginInfo = ref({
 })
 
 const isMessage = ref(false)
-const toMessage = () => {
-  isMessage.value = !isMessage.value
-}
+// const toMessage = () => {
+//   isMessage.value = !isMessage.value
+// }
 
 initLoginInfo()
 

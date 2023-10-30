@@ -25,17 +25,6 @@ export default {
       }
     },
     {
-      name: 'statistics-billing',
-      path: 'billing',
-      component: () => import('@/views/statistics/billing/index.vue'),
-      meta: {
-        title: '分润明细',
-        requireAuth: true,
-        roleKey: 'platform:statistics:profit-distribution-detail',
-        order: 2
-      }
-    },
-    {
       name: 'statistics-allorder',
       path: 'allorder',
       component: () => import('@/views/statistics/allorder/index.vue'),
@@ -43,7 +32,7 @@ export default {
         title: '全部订单',
         requireAuth: true,
         roleKey: 'platform:statistics:all-order',
-        order: 3
+        order: 2
       }
     },
     {
@@ -64,7 +53,7 @@ export default {
         title: '逾期订单',
         requireAuth: true,
         roleKey: 'platform:statistics:overtime-order',
-        order: 4
+        order: 3
       }
     },
     {
@@ -75,7 +64,7 @@ export default {
         title: '代扣管理',
         requireAuth: true,
         roleKey: 'platform:statistics:bill',
-        order: 5
+        order: 4
       }
     }
   ]

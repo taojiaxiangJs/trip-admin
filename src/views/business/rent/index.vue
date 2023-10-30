@@ -24,8 +24,8 @@
 import { NButton, useDialog, useMessage } from 'naive-ui'
 import { useCRUD } from '@/composables'
 // import { formatFee } from '@/utils'
-import { options } from './constant'
-import api from './api'
+import { options } from '../constant'
+import api from '../api'
 import globalApi from '@/api'
 
 defineOptions({ name: 'Crud' })
