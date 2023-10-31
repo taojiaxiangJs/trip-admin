@@ -750,7 +750,7 @@ const handleDeviceCard = () => {
 
 const deviceList = ref([])
 const getDeviceList = (cb) => {
-  globalApi.getDeviceAllList().then((res) => {
+  globalApi.getDeviceByStoreList({ storeId: orderDetail.value?.order?.storeId }).then((res) => {
     deviceList.value = res.data.map((e) => ({ label: e.frameNo, value: e.frameNo }))
     cb()
   })
