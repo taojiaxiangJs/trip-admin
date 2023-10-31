@@ -50,16 +50,14 @@ function getMenuItem(route, basePath = '') {
     key: route.name,
     path: resolvePath(basePath, route.path),
     icon: getIcon(route.meta),
-    order: route.meta?.order || 0,
+    order: route.meta?.order || 0
   }
 
-  const visibleChildren = route.children
-    ? route.children.filter((item) => item.name && !item.isHidden)
-    : []
+  const visibleChildren = route.children ? route.children.filter((item) => item.name && !item.isHidden) : []
 
   if (!visibleChildren.length) return menuItem
 
-  if (visibleChildren.length === 1) {
+  if (visibleChildren.length === 1 && route.path === '/') {
     // 单个子路由处理
     const singleRoute = visibleChildren[0]
     menuItem = {
@@ -67,23 +65,17 @@ function getMenuItem(route, basePath = '') {
       label: singleRoute.meta?.title || singleRoute.name,
       key: singleRoute.name,
       path: resolvePath(menuItem.path, singleRoute.path),
-      icon: getIcon(singleRoute.meta),
+      icon: getIcon(singleRoute.meta)
     }
-    const visibleItems = singleRoute.children
-      ? singleRoute.children.filter((item) => item.name && !item.isHidden)
-      : []
+    const visibleItems = singleRoute.children ? singleRoute.children.filter((item) => item.name && !item.isHidden) : []
 
     if (visibleItems.length === 1) {
       menuItem = getMenuItem(visibleItems[0], menuItem.path)
     } else if (visibleItems.length > 1) {
-      menuItem.children = visibleItems
-        .map((item) => getMenuItem(item, menuItem.path))
-        .sort((a, b) => a.order - b.order)
+      menuItem.children = visibleItems.map((item) => getMenuItem(item, menuItem.path)).sort((a, b) => a.order - b.order)
     }
   } else {
-    menuItem.children = visibleChildren
-      .map((item) => getMenuItem(item, menuItem.path))
-      .sort((a, b) => a.order - b.order)
+    menuItem.children = visibleChildren.map((item) => getMenuItem(item, menuItem.path)).sort((a, b) => a.order - b.order)
   }
   return menuItem
 }
