@@ -51,7 +51,14 @@
         <n-text type="primary">租借设备</n-text>
         <n-space>
           <n-button type="info" size="small" @click="handleDeviceCard('deviceCard')">车辆存证</n-button>
-          <n-button v-if="orderDetail?.order?.status === 2" type="info" size="small" @click="handleModal('bindDevice')"> 绑定设备 </n-button>
+          <n-button
+            v-if="orderDetail?.order?.status === 2 && !orderDetail?.device?.frameNo"
+            type="info"
+            size="small"
+            @click="handleModal('bindDevice')"
+          >
+            绑定设备
+          </n-button>
         </n-space>
       </div>
     </n-h6>
@@ -176,7 +183,7 @@
     <div flex flex-wrap p-4 text-16>
       <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>租车单价：</div>
-        <div ml-8 flex-1>{{ orderDetail.price }} 元/月</div>
+        <div ml-8 flex-1>{{ orderDetail.suit?.price }} 元/月</div>
       </div>
       <!-- <div class="w-1/4" mb-8 flex>
         <div w-120 text-right>换电单价：</div>
@@ -425,6 +432,10 @@ const columns = [
     render(row) {
       return h('span', valueToName(row.payStatus, options.billPayStatus))
     }
+  },
+  {
+    title: '违约金(元)',
+    key: 'overdueFee'
   },
   {
     title: '操作',
