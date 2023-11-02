@@ -6,6 +6,9 @@ export default {
   getOrderUserInfo: (orderNo) => request.get(`admin/order/${orderNo}/user`), // 查询订单用户信息
   postApplyDeductDeposit: (orderNo, data) => request.post(`admin/order/${orderNo}/deduct/deposit/apply`, { ...data }), // 申请押金
   putChangeDevice: (data) => request.put(`admin/order/device-change`, { ...data }), // 更换设备
+  putOrderLease: (orderNo) => request.put(`admin/order/${orderNo}/withdraw-lease`), // 退租
+  putRefreshOrder: (orderNo) => request.put(`admin/order/${orderNo}/sync`), // 订单同步
+  putRefreshBill: (billNo) => request.put(`admin/order/bill/${billNo}/sync`), // 账单同步
   getDeviceChangeHistory: (orderNo) => request.get(`admin/order/${orderNo}/device/history`), // 车辆更换记录
   putDeviceBind: (data) => request.put(`admin/order/device-bind`, { ...data }), // 绑定设备
   getBillList: (orderNo) => request.get(`admin/bill/list?orderNo=${orderNo}`), // 获取账单

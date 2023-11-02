@@ -5,12 +5,8 @@
       <div f-b-c>
         <n-text type="primary">订单状态</n-text>
         <n-space>
-          <n-button
-            v-if="withdrawApplyStatus === 1 && [1, 2, 3, 4].includes(orderDetail?.order?.status)"
-            type="primary"
-            @click="handleModal('overLease')"
-            >确认退租</n-button
-          >
+          <n-button type="primary" @click="handleRefresh('order')">订单同步</n-button>
+          <n-button v-if="[1, 2, 3, 4].includes(orderDetail?.order?.status)" type="primary" @click="handleLeaseOrder()">确认退租</n-button>
           <n-button type="primary" @click="handleOverOrder('overOrder')">结束订单</n-button>
         </n-space>
       </div>
@@ -139,6 +135,21 @@
           <!-- <n-button v-if="orderDetail.sesameDepositDetail?.unfreeze > 0" type="primary" size="small" ml-16 @click="freeze()">冻结</n-button> -->
         </div>
       </div>
+      <div class="w-1/4" mb-8 flex>
+        <div w-120 text-right>押金状态：</div>
+        <div ml-8 flex-1>
+          <span v-if="[-1, 0, 1, 2, 3].includes(orderDetail?.order?.depositPayStatus)">{{
+            valueToName(orderDetail?.order?.depositPayStatus, options.payStatus)
+          }}</span>
+        </div>
+      </div>
+      <div class="w-1/4" mb-8 flex>
+        <div w-120 text-right>已退押金：</div>
+        <div ml-8 flex-1>
+          <span v-if="orderDetail?.order?.refundDeposit">{{ orderDetail?.order?.refundDeposit }} 元</span>
+          <span v-else>--</span>
+        </div>
+      </div>
     </div>
     <!-- 其他信息 -->
     <n-h6 prefix="bar" align-text>
@@ -175,9 +186,9 @@
     <n-h6 prefix="bar" align-text>
       <div f-b-c>
         <n-text type="primary">租金支付情况</n-text>
-        <!-- <n-space>
-          <n-button type="info" size="small" ml-16 @click="handleMultipCancel('multipCancel')">批量取消代扣</n-button>
-        </n-space> -->
+        <n-space>
+          <!-- <n-button type="info" size="small" ml-16 @click="handleMultipCancel('multipCancel')">批量取消代扣</n-button> -->
+        </n-space>
       </div>
     </n-h6>
     <div flex flex-wrap p-4 text-16>
@@ -255,9 +266,9 @@
       <n-form-item v-if="modalType === 'editRent'" path="editRent" label="改租金">
         <n-input v-model:value="modalForm.editRent" placeholder="小于原租金"><template #suffix>元/月</template></n-input>
       </n-form-item>
-      <n-form-item v-if="modalType === 'overLease'" path="overLease" label="退到店铺">
+      <!-- <n-form-item v-if="modalType === 'overLease'" path="overLease" label="退到店铺">
         <n-select v-model:value="modalForm.overLease" filterable placeholder="选择店铺" :options="storeList" />
-      </n-form-item>
+      </n-form-item> -->
       <n-form-item v-if="modalType === 'changeDevice'" path="changeDevice" label="车架号">
         <n-select v-model:value="modalForm.changeDevice" filterable placeholder="选择车辆" :options="deviceList" />
       </n-form-item>
@@ -495,6 +506,16 @@ const columns = [
             onClick: () => handleTable(row, 'editRent')
           },
           { default: () => '修改违约金' }
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'tertiary',
+            style: 'margin-left: 15px;',
+            onClick: () => handleRefresh('bill', row)
+          },
+          { default: () => '账单同步' }
         )
       ]
     }
@@ -582,7 +603,7 @@ const modalTitleMap = reactive({
   referrer: '添加推荐人',
   payOther: '代付',
   editRent: '修改违约金',
-  overLease: '确认退租',
+  // overLease: '确认退租',
   changeDevice: '更换车辆',
   bindDevice: '绑定车辆'
 })
@@ -595,7 +616,7 @@ const modalForm = ref({
   remark: '',
   referrer: null,
   editRent: '',
-  overLease: null,
+  // overLease: null,
   changeDevice: '',
   bindDevice: ''
 })
@@ -618,7 +639,7 @@ const rules = ref({
   },
   remark: { required: true, message: '请输入备注', trigger: ['input', 'blur'] },
   editRent: { required: true, message: '请输入金额', trigger: ['input', 'blur'] },
-  overLease: { required: true, message: '请择办店铺', trigger: ['blur', 'change'] },
+  // overLease: { required: true, message: '请择办店铺', trigger: ['blur', 'change'] },
   changeDevice: { required: true, message: '请选择车架号', trigger: ['change', 'blur'] },
   bindDevice: { required: true, message: '请选择车架号', trigger: ['blur', 'change'] }
 })
@@ -645,7 +666,7 @@ const handleCancel = () => {
   modalForm.value.remark = ''
   modalForm.value.referrer = null
   modalForm.value.editRent = ''
-  modalForm.value.overLease = null
+  // modalForm.value.overLease = null
   modalForm.value.changeDevice = ''
   modalForm.value.bindDevice = ''
 }
@@ -714,6 +735,25 @@ const sureRemark = () => {
   })
 }
 
+// 退租
+const handleLeaseOrder = () => {
+  dialog.warning({
+    title: '提示',
+    content: '确定退租吗？',
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      api.putOrderLease(orderNo).then(() => {
+        message.success('操作成功')
+        getOrderDetailFn()
+      })
+    },
+    onNegativeClick: () => {
+      message.error('取消')
+    }
+  })
+}
+
 // 结束订单
 const handleOverOrder = () => {
   dialog.warning({
@@ -731,6 +771,21 @@ const handleOverOrder = () => {
       message.error('取消')
     }
   })
+}
+
+const handleRefresh = (type, data) => {
+  if (type === 'order') {
+    api.putRefreshOrder(orderNo).then(() => {
+      message.success('操作成功')
+      getOrderDetailFn()
+    })
+  }
+  if (type === 'bill') {
+    api.putRefreshBill(data.billNo).then(() => {
+      message.success('操作成功')
+      getBillList()
+    })
+  }
 }
 
 const deviceEvidence = ref([])

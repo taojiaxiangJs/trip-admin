@@ -61,5 +61,12 @@ export const options = {
     { label: '已支付', value: 1 },
     { label: '支付中', value: 2 },
     { label: '支付失败', value: 3 }
+  ],
+  payStatus: [
+    { label: '未支付', value: -1 },
+    { label: '支付失败', value: 0 },
+    { label: '已支付', value: 1 },
+    { label: '已退款', value: 2 },
+    { label: '部分退款', value: 3 }
   ]
 }
