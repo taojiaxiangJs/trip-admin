@@ -35,8 +35,8 @@
       <n-form-item path="frameNo" label="车架号" :rule="[{ required: true, message: '请输入车架号', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.frameNo" :disabled="!!modalForm.id" placeholder="请输入车架号" />
       </n-form-item>
-      <n-form-item path="typeId" label="品牌" :rule="[{ type: 'number', required: true, message: '请选择品牌', trigger: ['change', 'blur'] }]">
-        <n-select v-model:value="modalForm.typeId" filterable placeholder="请选择品牌" :options="brandList" />
+      <n-form-item path="typeId" label="型号" :rule="[{ type: 'number', required: true, message: '请选择型号', trigger: ['change', 'blur'] }]">
+        <n-select v-model:value="modalForm.typeId" filterable placeholder="请选择品牌" :options="productTypeList" />
       </n-form-item>
       <n-form-item path="carNo" label="车牌号">
         <n-input v-model:value="modalForm.carNo" placeholder="请输入车架号" />
@@ -125,17 +125,24 @@ const getStoreList = () => {
   })
 }
 
-// 品牌
-const brandList = ref([])
+// 型号
+const productTypeList = ref([])
 const getBrandList = () => {
   globalApi.getDeviceType().then((res) => {
-    brandList.value = res.data.map((e) => ({ ...e, label: e.name, value: e.id }))
+    productTypeList.value = res.data.map((e) => ({ ...e, label: e.name, value: e.id }))
   })
 }
 getBrandList()
 
 const columns = [
   { title: '车架号', key: 'frameNo' },
+  {
+    title: '型号',
+    key: 'typeId',
+    render(row) {
+      return h('span', valueToName(row.typeId, productTypeList.value))
+    }
+  },
   { title: '车牌', key: 'carNo' },
   { title: '设备号', key: 'deviceNo' },
   {
@@ -201,7 +208,7 @@ const columns = [
 ]
 
 const valueToName = (value, options) => {
-  return options.filter((e) => e.value === value + '')[0]?.label || ''
+  return options.filter((e) => e.value + '' === value + '')[0]?.label || ''
 }
 
 // 导出数据

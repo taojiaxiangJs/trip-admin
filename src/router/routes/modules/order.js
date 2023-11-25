@@ -34,11 +34,11 @@ export default {
       }
     },
     {
-      name: 'order-withhold',
-      path: 'withhold',
-      component: () => import('@/views/order/withhold/index.vue'),
+      name: 'order-bill',
+      path: 'bill',
+      component: () => import('@/views/order/bill/index.vue'),
       meta: {
-        title: '代扣管理',
+        title: '账单管理',
         requireAuth: true,
         roleKey: 'tenant:order:bill'
       }

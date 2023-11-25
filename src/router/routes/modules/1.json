@@ -1,6 +1,6 @@
 [
   {
-    "title": "订单管理", ok
+    "title": "订单管理",// ok
     "tag": "tenant:order",
     "children": [
       {
@@ -12,7 +12,7 @@
         "tag": "tenant:order:overtime-order"
       },
       {
-        "title": "代扣管理",
+        "title": "账单管理",
         "tag": "tenant:order:bill"
       },
       {
@@ -22,7 +22,7 @@
     ]
   },
   {
-    "title": "设备管理", ok
+    "title": "设备管理",// ok
     "tag": "tenant:device",
     "children": [
       {
@@ -36,7 +36,7 @@
     ]
   },
   {
-    "title": "代理商",  ok
+    "title": "代理商", // ok
     "tag": "tenant:store",
     "children": [
       {
@@ -50,11 +50,11 @@
     ]
   },
   {
-    "title": "资产统计", ok
+    "title": "资产统计",// ok
     "tag": "tenant:statistics"
   },
   {
-    "title": "财务管理", ok
+    "title": "财务管理",// ok
     "tag": "tenant:finance",
     "children": [
       {
@@ -68,10 +68,10 @@
     ]
   },
   {
-    "title": "审核管理", ok
+    "title": "审核管理",// ok
     "tag": "approve:manager",  replace  "tenant:approve:manager"
     "children": [
-      {   delete
+      {   //delete
         "title": "租金审核",
         "tag": "platform:approve:rent-price"
       },
@@ -90,7 +90,7 @@
     ]
   },
   {
-    "title": "系统管理", ok
+    "title": "系统管理",// ok
     "tag": "tenant:system",
     "children": [
       {
@@ -104,7 +104,7 @@
     ]
   },
   {
-    "title": "平台管理", ok
+    "title": "平台管理",// ok
     "tag": "platform:tenant",
     "children": [
       {
@@ -118,11 +118,11 @@
     ]
   },
   {
-    "title": "业务管理", ok
+    "title": "业务管理", //ok
     "tag": "platform:business",
     "children": [
       {
-        add
+        //add
         "title": "租金审核",
         "tag": "platform:approve:rent-price"   replace   "platform:business:rent-price"
       },
@@ -137,7 +137,7 @@
     ]
   },
   {
-    "title": "数据统计", ok
+    "title": "数据统计", //  ok
     "tag": "platform:statistics",
     "children": [
       {
@@ -157,7 +157,7 @@
         "tag": "platform:statistics:overtime-order"
       },
       {
-        "title": "代扣管理",
+        "title": "账单管理",
         "tag": "platform:statistics:bill"
       }
     ]

@@ -11,5 +11,9 @@ export default {
   getBeReviewedDeduct: (params = {}) => request.get('admin/deposit/deduct/apply/page/platform', { params }), // 扣押申请分页列表（平台用）
   getDepositList: (params = {}) => request.get('admin/deposit/apply/page', { params }), // 申请申请分页列表
   putPassDeposit: (data = {}) => request.put(`admin/deposit/apply/pass`, { ...data }), // 申请申请审核通过
-  putRejectDeposit: (data = {}) => request.put(`admin/deposit/apply/reject`, { ...data }) // 申请申请审核不通过
+  putRejectDeposit: (data = {}) => request.put(`admin/deposit/apply/reject`, { ...data }), // 申请申请审核不通过
+
+  getDeductList: (params = {}) => request.get('admin/deposit/deduct/apply/page/platform', { params }), // 扣押申请分页列表（平台户用）
+  putDeductApprove: (id) => request.put(`admin/deposit/deduct/apply/approve/${id}`), //  扣押申请通过
+  putDeductReject: (data = {}) => request.put(`admin/deposit/deduct/apply/reject`, { ...data }) //  扣押申请拒绝
 }

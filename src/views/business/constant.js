@@ -56,5 +56,20 @@ export const options = {
   ensure: [
     { label: '是', value: '1' },
     { label: '否', value: '0' }
+  ],
+  depositPayStatus: [
+    // 支付状态
+    { label: '未支付', value: '-1' },
+    { label: '支付失败', value: '0' },
+    { label: '已支付', value: '1' },
+    { label: '已退款', value: '2' },
+    { label: '部分退款', value: '3' }
+  ],
+  depositDeductApplyStatus: [
+    // 扣押审批状态
+    { label: '申请取消', value: '-99' },
+    { label: '未审批', value: '-1' },
+    { label: '未通过', value: '0' },
+    { label: '通过', value: '1' }
   ]
 }

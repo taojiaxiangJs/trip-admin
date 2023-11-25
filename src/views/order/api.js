@@ -19,5 +19,11 @@ export default {
   getPayUrl: (params = {}) => request.get('order/pay-url', { params }), // 获取支付二维码
   getOverdueList: (params = {}) => request.get('order/overdue-list', { params }), // 获取逾期列表
   getWithholdList: (params = {}) => request.get('order/withhold-list', { params }), // 获取代扣明细列表
-  getAdvanceList: (params = {}) => request.get('order/advance-list', { params }) // 获取垫资订单列表
+  getAdvanceList: (params = {}) => request.get('order/advance-list', { params }), // 获取垫资订单列表
+
+  //账单管理
+  getBillAllList: (params = {}) => request.get('admin/bill/page', { params }), // 账单分页列表（租户用）
+  putWithholdQRUrl: (billNo) => request.put(`admin/bill/${billNo}/replace-pay`), // 获取代扣二维码
+  putBillOverdue: (data) => request.put(`admin/bill/overdue`, { ...data }), // 修改租金
+  putDeductionCancel: (billNo) => request.put(`admin/bill/${billNo}/deduction/cancel`) // 取消代扣
 }

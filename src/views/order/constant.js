@@ -48,25 +48,31 @@ export const options = {
     { label: '否', value: '0' }
   ],
   relationsMap: [
-    { label: '父亲', value: 0 },
-    { label: '母亲', value: 1 },
-    { label: '子女', value: 2 },
-    { label: '配偶', value: 3 },
-    { label: '兄弟姐妹', value: 4 },
-    { label: '亲戚/朋友/同事', value: 5 },
-    { label: '其他', value: 6 }
+    { label: '父亲', value: '0' },
+    { label: '母亲', value: '1' },
+    { label: '子女', value: '2' },
+    { label: '配偶', value: '3' },
+    { label: '兄弟姐妹', value: '4' },
+    { label: '亲戚/朋友/同事', value: '5' },
+    { label: '其他', value: '6' }
   ],
   billPayStatus: [
-    { label: '未支付', value: 0 },
-    { label: '已支付', value: 1 },
-    { label: '支付中', value: 2 },
-    { label: '支付失败', value: 3 }
+    { label: '未支付', value: '0' },
+    { label: '已支付', value: '1' },
+    { label: '支付中', value: '2' },
+    { label: '支付失败', value: '3' }
   ],
   payStatus: [
-    { label: '未支付', value: -1 },
-    { label: '支付失败', value: 0 },
-    { label: '已支付', value: 1 },
-    { label: '已退款', value: 2 },
-    { label: '部分退款', value: 3 }
+    { label: '未支付', value: '-1' },
+    { label: '支付失败', value: '0' },
+    { label: '已支付', value: '1' },
+    { label: '已退款', value: '2' },
+    { label: '部分退款', value: '3' }
+  ],
+  billStatus: [
+    { label: '未支付', value: '0' },
+    { label: '已取消', value: '-1' },
+    { label: '已支付', value: '1' },
+    { label: '已逾期', value: '2' }
   ]
 }

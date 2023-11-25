@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { resReject, resResolve, reqReject, reqResolve } from './interceptors'
 
-export function createAxios(options = {}) {
+export function createAxios(options = {}, { reqResolve, reqReject, resResolve, resReject }) {
   const defaultOptions = {
     timeout: 12000,
     headers: {
@@ -13,11 +13,30 @@ export function createAxios(options = {}) {
     ...defaultOptions,
     ...options
   })
-  service.interceptors.request.use(reqResolve, reqReject)
-  service.interceptors.response.use(resResolve, resReject)
+  if (reqResolve && reqReject && resResolve && resReject) {
+    service.interceptors.request.use(reqResolve, reqReject)
+    service.interceptors.response.use(resResolve, resReject)
+  }
   return service
 }
 
-export const request = createAxios({
-  baseURL: import.meta.env.VITE_BASE_API
-})
+export const request = createAxios(
+  {
+    baseURL: import.meta.env.VITE_BASE_API
+  },
+  {
+    resReject,
+    resResolve,
+    reqReject,
+    reqResolve
+  }
+)
+
+export const ossUpload = createAxios(
+  {
+    headers: {
+      'Content-Type': ''
+    }
+  },
+  {}
+)

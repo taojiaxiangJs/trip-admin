@@ -60,6 +60,7 @@ import { NButton, NImage, useMessage } from 'naive-ui'
 import { useCRUD } from '@/composables'
 import api from '../api'
 import globalApi from '@/api'
+import { ossUpload } from '@/utils'
 
 defineOptions({ name: 'Crud' })
 const message = useMessage()
@@ -161,19 +162,29 @@ const handleTable = (row) => {
 }
 
 const uploadImage = ({ file, data, onFinish, onError }) => {
-  const formData = new FormData()
-  if (data) {
-    Object.keys(data).forEach((key) => {
-      formData.append(key, data[key])
-    })
-  }
-  formData.append('file', file.file)
+  console.log(file, data)
   globalApi
-    .uploadFile(formData)
-    .then(({ data }) => {
-      console.log(data)
-      modalForm.value.attachmentId = data.id
-      onFinish()
+    .uploadFileOss({
+      type: 'deviceType',
+      fileType: file.type.split('/')[1]
+    })
+    .then((res) => {
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', (event) => {
+        const arrayBuffer = event.target.result
+        ossUpload
+          .put(res.data.accessUrl, arrayBuffer)
+          .then((oss) => {
+            console.log(oss)
+            modalForm.value.attachmentId = res.data.id
+            onFinish()
+          })
+          .catch((error) => {
+            message.error(error.msg)
+            onError()
+          })
+      })
+      fileReader.readAsArrayBuffer(file.file)
     })
     .catch((error) => {
       message.error(error.msg)

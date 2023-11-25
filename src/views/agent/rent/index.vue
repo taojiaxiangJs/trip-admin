@@ -116,7 +116,7 @@
 
 <script setup>
 import { NButton, useMessage, useDialog } from 'naive-ui'
-import { debounce } from '@/utils'
+import { debounce, ossUpload } from '@/utils'
 import { useCRUD } from '@/composables'
 import globalApi from '@/api'
 import { options } from '../constant'
@@ -332,19 +332,29 @@ const handleTable = (row) => {
 }
 
 const uploadImage = ({ file, data, onFinish, onError }) => {
-  const formData = new FormData()
-  if (data) {
-    Object.keys(data).forEach((key) => {
-      formData.append(key, data[key])
-    })
-  }
-  formData.append('file', file.file)
+  console.log(data)
   globalApi
-    .uploadFile(formData)
-    .then(({ data }) => {
-      console.log(data)
-      modalForm.value.attachmentId = data.id
-      onFinish()
+    .uploadFileOss({
+      type: 'businessSuit',
+      fileType: file.type.split('/')[1]
+    })
+    .then((res) => {
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', (event) => {
+        const arrayBuffer = event.target.result
+        ossUpload
+          .put(res.data.accessUrl, arrayBuffer)
+          .then((oss) => {
+            console.log(oss)
+            modalForm.value.attachmentId = res.data.id
+            onFinish()
+          })
+          .catch((error) => {
+            message.error(error.msg)
+            onError()
+          })
+      })
+      fileReader.readAsArrayBuffer(file.file)
     })
     .catch((error) => {
       message.error(error.msg)

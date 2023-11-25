@@ -57,11 +57,11 @@ export default {
       }
     },
     {
-      name: 'statistics-withhold',
-      path: 'withhold',
-      component: () => import('@/views/statistics/withhold/index.vue'),
+      name: 'statistics-bill',
+      path: 'bill',
+      component: () => import('@/views/statistics/bill/index.vue'),
       meta: {
-        title: '代扣管理',
+        title: '账单管理',
         requireAuth: true,
         roleKey: 'platform:statistics:bill',
         order: 4

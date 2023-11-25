@@ -12,5 +12,7 @@ export default {
   getUser: () => request.get('/user'),
   getAllUser: () => request.get('/admin/system/user/all'),
   refreshToken: () => request.post('/auth/refreshToken', null, { noNeedTip: true }),
-  uploadFile: (data) => request.post('admin/attachment', data, { headers: { Accept: 'application/json', 'Content-Type': 'multipart/form-data' } })
+  uploadFile: (data) => request.post('admin/attachment', data, { headers: { Accept: 'application/json', 'Content-Type': 'multipart/form-data' } }),
+  uploadFileOss: (data) => request.post('admin/attachment/oss', data),
+  editPassword: (data) => request.put('/admin/union/password', data) // 修改密码
 }
