@@ -12,6 +12,6 @@ export default {
   postAddRent: (data) => request.post('admin/rent/type', { ...data }), // 新增租金套餐
   putEditRent: (data) => request.put('admin/rent/type', { ...data }), // 更新租金套餐
   deleteRent: (id) => request.delete(`admin/rent/type/${id}`), // 删除租金套餐
-  putOfflineRent: (id) => request.post(`admin/rent/type/offline/${id}`), // 套餐上线
-  putOnlineRent: (id) => request.post(`admin/rent/type/online/${id}`) // 套餐下线
+  putOfflineRent: (id) => request.put(`admin/rent/type/offline/${id}`), // 套餐上线
+  putOnlineRent: (id) => request.put(`admin/rent/type/online/${id}`) // 套餐下线
 }

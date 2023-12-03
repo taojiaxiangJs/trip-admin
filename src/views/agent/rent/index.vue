@@ -273,7 +273,7 @@ const columns = [
           NButton,
           {
             size: 'small',
-            type: 'primary',
+            type: row.status == 1 ? 'warning' : 'primary',
             style: 'margin-left: 15px;',
             onClick: () => handleOnline(row)
           },
@@ -346,7 +346,10 @@ const uploadImage = ({ file, data, onFinish, onError }) => {
           .put(res.data.accessUrl, arrayBuffer)
           .then((oss) => {
             console.log(oss)
-            modalForm.value.attachmentId = res.data.id
+            if (oss.status == 200) {
+              message.success('上传成功')
+              modalForm.value.attachmentId = res.data.id
+            }
             onFinish()
           })
           .catch((error) => {

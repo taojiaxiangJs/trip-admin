@@ -38,10 +38,10 @@
       <n-image width="100" :src="QRcodeUrl" />
     </div>
   </n-modal>
-  <n-modal v-model:show="showEditOverdueModal" preset="dialog" title="修改违约金" :style="{ width: '400px' }">
+  <n-modal v-model:show="showEditOverdueModal" preset="dialog" title="修改逾期费" :style="{ width: '400px' }">
     <div mt-24>
-      <QueryBarItem label="违约金" :label-width="70">
-        <n-input v-model:value="editOverdue.amount" type="text" placeholder="请输入租金" />
+      <QueryBarItem label="逾期费" :label-width="70">
+        <n-input v-model:value="editOverdue.amount" type="text" placeholder="请输入逾期费" />
       </QueryBarItem>
     </div>
     <div mt-16 flex justify-end>
@@ -136,7 +136,7 @@ const columns = [
     hideInExcel: true,
     render(row) {
       return [
-        h(NButton, { size: 'small', type: 'warning', onClick: () => handleEditOverdue(row) }, { default: () => '修改租金' }),
+        h(NButton, { size: 'small', type: 'warning', onClick: () => handleEditOverdue(row) }, { default: () => '修改逾期费' }),
         // h( NButton, { size: 'small', type: 'primary', style: 'margin-left: 10px;', onClick: () => handleView(row) }, { default: () => '发起代扣' } ),
         // h( NButton, { size: 'small', type: 'primary', style: 'margin-left: 10px;', onClick: () => handleView(row) }, { default: () => '取消代扣' } ),
         h(NButton, { size: 'small', type: 'success', style: 'margin-left: 10px;', onClick: () => handleQRcode(row) }, { default: () => '代付二维码' })
@@ -170,7 +170,7 @@ const handleEditOverdueCancel = () => {
 }
 const handleEditOverdueSave = () => {
   if (!editOverdue.value.amount) {
-    message.error('请输入租金')
+    message.error('请输入')
     return
   }
   api.putBillOverdue({ ...editOverdue.value }).then(() => {

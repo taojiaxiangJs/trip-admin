@@ -25,5 +25,7 @@ export default {
   getBillAllList: (params = {}) => request.get('admin/bill/page', { params }), // 账单分页列表（租户用）
   putWithholdQRUrl: (billNo) => request.put(`admin/bill/${billNo}/replace-pay`), // 获取代扣二维码
   putBillOverdue: (data) => request.put(`admin/bill/overdue`, { ...data }), // 修改租金
-  putDeductionCancel: (billNo) => request.put(`admin/bill/${billNo}/deduction/cancel`) // 取消代扣
+  putDeductionCancel: (billNo) => request.put(`admin/bill/${billNo}/deduction/cancel`), // 取消代扣
+
+  getDownloadContractUrl: (orderNo) => request.get(`admin/order/${orderNo}/contract`) // 获取下载合同url
 }

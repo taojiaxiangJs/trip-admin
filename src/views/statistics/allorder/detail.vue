@@ -36,12 +36,13 @@
         <div w-120 text-right>身份证号码：</div>
         <div ml-8 flex flex-1 items-center>
           <span mr-20>{{ orderDetail?.user?.idCard || '--' }}</span>
-          <n-image-group>
+          <n-button type="primary" quaternary size="small" @click="showIdentityCardModal = true">查看照片</n-button>
+          <!-- <n-image-group>
             <n-space text-0>
               <n-image width="40" height="20" :src="userInfo?.frontPicUrl" />
               <n-image width="40" height="20" :src="userInfo?.backPicUrl" />
             </n-space>
-          </n-image-group>
+          </n-image-group> -->
         </div>
       </div>
     </div>
@@ -104,7 +105,7 @@
       <div f-b-c>
         <n-text type="primary">租借方式</n-text>
         <n-space>
-          <n-button type="info" size="small">合同下载</n-button>
+          <n-button type="info" size="small" @click="downloadContract()">合同下载</n-button>
           <n-button v-if="Number(orderDetail?.order?.actualDeposit) > 0" type="info" size="small" ml-8 @click="handleModal('freeze')">
             申扣押金
           </n-button>
@@ -249,11 +250,11 @@
       <n-form-item v-if="modalType === 'remark'" path="remark" label="备注">
         <n-input v-model:value="modalForm.remark" placeholder="请输入备注" type="textarea" :autosize="{ minRows: 3, maxRows: 5 }" />
       </n-form-item>
-      <n-form-item v-if="modalType === 'editRent'" label="原租金">
-        <n-input :value="formatFee(editOrgRent, 'front')" readonly><template #suffix>元/月</template></n-input>
+      <n-form-item v-if="modalType === 'editRent'" label="原违约金">
+        <n-input :value="formatFee(editOrgRent, 'front')" readonly><template #suffix>元</template></n-input>
       </n-form-item>
-      <n-form-item v-if="modalType === 'editRent'" path="editRent" label="改租金">
-        <n-input v-model:value="modalForm.editRent" placeholder="小于原租金"><template #suffix>元/月</template></n-input>
+      <n-form-item v-if="modalType === 'editRent'" path="editRent" label="改后金额">
+        <n-input v-model:value="modalForm.editRent" placeholder="小于原违约金"><template #suffix>元</template></n-input>
       </n-form-item>
       <n-form-item v-if="modalType === 'overLease'" path="overLease" label="退到店铺">
         <n-select v-model:value="modalForm.overLease" filterable placeholder="选择店铺" :options="storeList" />
@@ -276,6 +277,23 @@
         <n-button :loading="modalLoading" ml-20 type="primary" @click="handleSave()">确定</n-button>
       </div>
     </template>
+  </n-modal>
+  <n-modal
+    v-model:show="showIdentityCardModal"
+    preset="dialog"
+    title="身份证"
+    negative-text="关闭"
+    :style="{ width: '600px' }"
+    @negative-click="showIdentityCardModal = false"
+  >
+    <div mt-24>
+      <n-image-group>
+        <n-space text-0>
+          <n-image width="100" :src="userInfo?.frontPicUrl" />
+          <n-image width="100" :src="userInfo?.backPicUrl" />
+        </n-space>
+      </n-image-group>
+    </div>
   </n-modal>
   <n-modal
     v-model:show="showDeviceEvidenceModal"
@@ -441,72 +459,108 @@ const columns = [
     fixed: 'right',
     hideInExcel: true,
     render(row) {
-      return [
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'primary',
-            style: 'margin-left: 15px;',
-            onClick: () => handleTable(row, 'payOther')
-          },
-          { default: () => '立即代付' }
-        ),
-        // h(
-        //   NButton,
-        //   {
-        //     size: 'small',
-        //     type: 'tertiary',
-        //     style: 'margin-left: 15px;',
-        //     onClick: () => handleTable(row, 'singleCancel')
-        //   },
-        //   { default: () => '取消代扣' }
-        // ),
-        // h(
-        //   NButton,
-        //   {
-        //     size: 'small',
-        //     type: 'info',
-        //     style: 'margin-left: 15px;',
-        //     onClick: () => handleTable(row, 'recover')
-        //   },
-        //   { default: () => '恢复代扣' }
-        // ),
-        // h(
-        //   NButton,
-        //   {
-        //     size: 'small',
-        //     type: 'success',
-        //     style: 'margin-left: 15px;',
-        //     onClick: () => handleTable(row, 'sponsor')
-        //   },
-        //   { default: () => '发起代扣' }
-        // ),
-        h(
-          NButton,
-          {
-            size: 'small',
-            type: 'warning',
-            style: 'margin-left: 15px;',
-            onClick: () => handleTable(row, 'editRent')
-          },
-          { default: () => '修改违约金' }
-        )
-      ]
+      let hs = []
+      if (row.payStatus != 1) {
+        hs = [
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'primary',
+              style: 'margin-left: 15px;',
+              onClick: () => handleTable(row, 'payOther')
+            },
+            { default: () => '立即代付' }
+          ),
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'warning',
+              style: 'margin-left: 15px;',
+              onClick: () => handleTable(row, 'editRent')
+            },
+            { default: () => '修改违约金' }
+          ),
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'tertiary',
+              style: 'margin-left: 15px;',
+              onClick: () => handleRefresh('bill', row)
+            },
+            { default: () => '账单同步' }
+          )
+        ]
+      }
+      return hs
+      // return [
+      //   h(
+      //     NButton,
+      //     {
+      //       size: 'small',
+      //       type: 'primary',
+      //       style: 'margin-left: 15px;',
+      //       onClick: () => handleTable(row, 'payOther')
+      //     },
+      //     { default: () => '立即代付' }
+      //   ),
+      //   h(
+      //     NButton,
+      //     {
+      //       size: 'small',
+      //       type: 'tertiary',
+      //       style: 'margin-left: 15px;',
+      //       onClick: () => handleTable(row, 'singleCancel')
+      //     },
+      //     { default: () => '取消代扣' }
+      //   ),
+      //   h(
+      //     NButton,
+      //     {
+      //       size: 'small',
+      //       type: 'info',
+      //       style: 'margin-left: 15px;',
+      //       onClick: () => handleTable(row, 'recover')
+      //     },
+      //     { default: () => '恢复代扣' }
+      //   ),
+      //   h(
+      //     NButton,
+      //     {
+      //       size: 'small',
+      //       type: 'success',
+      //       style: 'margin-left: 15px;',
+      //       onClick: () => handleTable(row, 'sponsor')
+      //     },
+      //     { default: () => '发起代扣' }
+      //   ),
+      //   h(
+      //     NButton,
+      //     {
+      //       size: 'small',
+      //       type: 'warning',
+      //       style: 'margin-left: 15px;',
+      //       onClick: () => handleTable(row, 'editRent')
+      //     },
+      //     { default: () => '修改违约金' }
+      //   )
+      // ]
     }
   }
 ]
-
+const showIdentityCardModal = ref(false)
 // const formatDate = (time) => {
 //   return time ? formatDateTime(time) : '--'
 // }
 
 // 获取代扣支付的二维码url
-const getPayUrl = async (payRuleId) => {
+const getPayUrl = async (billNo) => {
   let url = ''
   try {
-    const { data } = await api.getPayUrl({ payRuleId })
-    url = await QRCode.toDataURL(data.qrCode)
+    const { data } = await api.putWithholdQRUrl(billNo)
+    url = await QRCode.toDataURL(data)
   } catch {
     message.error('获取支付二维码失败！')
   }
@@ -534,14 +588,8 @@ const handleTable = async (row, type) => {
     message.error('暂无权限')
   }
   if (type === 'payOther') {
-    if (row.payRuleId) {
-      aliPayQrcodeUrl.value = await getPayUrl(row.payRuleId)
-      handleModal('payOther')
-      // TODO
-      // 获取支付结果
-    } else {
-      message.error('列表数据存在异常，请联系管理员')
-    }
+    aliPayQrcodeUrl.value = await getPayUrl(row.billNo)
+    handleModal('payOther')
   }
   if (type === 'editRent') {
     editOrgRent.value = row.payFee || 0
@@ -727,6 +775,29 @@ const handleOverOrder = () => {
       message.error('取消')
     }
   })
+}
+
+// 下载合同
+const downloadContract = () => {
+  api.getDownloadContractUrl(orderNo).then((res) => {
+    let url = res.data
+    window.location.href = url
+  })
+}
+
+const handleRefresh = (type, data) => {
+  if (type === 'order') {
+    api.putRefreshOrder(orderNo).then(() => {
+      message.success('操作成功')
+      getOrderDetailFn()
+    })
+  }
+  if (type === 'bill') {
+    api.putRefreshBill(data.billNo).then(() => {
+      message.success('操作成功')
+      getBillList()
+    })
+  }
 }
 
 const deviceEvidence = ref([])

@@ -31,13 +31,13 @@
       <n-form-item path="brand" label="品牌" :rule="[{ required: true, message: '请输入品牌', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.brand" placeholder="请输入品牌" />
       </n-form-item>
-      <n-form-item path="battery" label="电池" :rule="[{ required: true, message: '请输入电池规格', trigger: ['input', 'blur'] }]">
+      <n-form-item path="battery" label="电池" :rule="[{ type: 'number', required: true, message: '请输入电池规格', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.battery" placeholder="请输入电池规格"><template #suffix>伏</template></n-input>
       </n-form-item>
-      <n-form-item path="speed" label="速度" :rule="[{ required: true, message: '请输入速度', trigger: ['input', 'blur'] }]">
+      <n-form-item path="speed" label="速度" :rule="[{ type: 'number', required: true, message: '请输入速度', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.speed" placeholder="请输入速度"><template #suffix>km/h</template></n-input>
       </n-form-item>
-      <n-form-item path="price" label="价格" :rule="[{ required: true, message: '请输入价格', trigger: ['input', 'blur'] }]">
+      <n-form-item path="price" label="价格" :rule="[{ type: 'number', required: true, message: '请输入价格', trigger: ['input', 'blur'] }]">
         <n-input v-model:value="modalForm.price" placeholder="请输入价格"><template #suffix>元</template></n-input>
       </n-form-item>
       <n-form-item path="attachmentId" label="图片">
@@ -176,7 +176,10 @@ const uploadImage = ({ file, data, onFinish, onError }) => {
           .put(res.data.accessUrl, arrayBuffer)
           .then((oss) => {
             console.log(oss)
-            modalForm.value.attachmentId = res.data.id
+            if (oss.status == 200) {
+              message.success('上传成功')
+              modalForm.value.attachmentId = res.data.id
+            }
             onFinish()
           })
           .catch((error) => {

@@ -13,7 +13,7 @@ const proxyConfigMappings = {
   },
   prod: {
     prefix: '/api',
-    target: 'https://test.feibao100.com/api'
+    target: 'https://feibao100.com'
   }
 }
 
